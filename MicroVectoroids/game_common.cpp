@@ -9,3 +9,9 @@ TileMap::Scene<uint16_t> tilemap;
 namespace Time {
     uint32_t millis;
 }
+
+namespace Game {
+    void tick() {
+        buffer.drawRect(0,0,4,4)->filledRect(RGB565(255,0,0));
+    }
+}

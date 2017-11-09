@@ -9,9 +9,9 @@
 #include "lib_tilemap.h"
 
 // general assets needed
-//#include "asset_tilemap.h"
-//#include "image_data.h"
-//#include "font_asset.h"
+#include "asset_tilemap.h"
+#include "image_data.h"
+#include "font_asset.h"
 
 
 #define RENDER_COMMAND_COUNT 200
@@ -51,5 +51,9 @@ public:
         #endif
     }
 };
+
+namespace Game {
+    void tick();
+}
 
 #endif // __GAME_COMMON_H__

@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <Wire.h>
-#include <core.h>
+#include <game_common.h>
 #include <string.h>
 
 
@@ -35,8 +35,8 @@ void loop() {
     static uint32_t t = 0;
     Joystick::updateJoystick();
     Time::millis = millis();
-    uint32_t dt = Time::millis - t;
-
+    //uint32_t dt = Time::millis - t;
+    Game::tick();
     buffer.flush(display);
     stringBuffer.reset();
     t = Time::millis;
