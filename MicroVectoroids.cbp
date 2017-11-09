@@ -37,11 +37,12 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-DWIN32" />
 			<Add directory="td2play/simulator/include" />
 			<Add directory="td2play/simulator/GLFW-3/include" />
+			<Add directory="MicroVectoroids" />
 		</Compiler>
 		<Linker>
 			<Add option="-static-libstdc++ -static-libgcc" />
@@ -53,89 +54,31 @@
 		<ExtraCommands>
 			<Add before="prebuild.bat" />
 		</ExtraCommands>
-		
-		<Unit filename="td2play/simulator/src/Main.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_FixedMath.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_FixedMath.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_RenderBuffer.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_RenderBuffer.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_StringBuffer.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_StringBuffer.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_font_virtualdj.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_geom.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_image.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_input.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_input.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_math.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_math.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_spritefont.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_spritefont_structs.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="MicroVectoroids/MicroVectoroids.cpp" />
+		<Unit filename="MicroVectoroids/game_common.cpp" />
+		<Unit filename="MicroVectoroids/game_common.h" />
+		<Unit filename="td2play/simulator/src/Main.cpp" />
+		<Unit filename="td2play/srclib/lib_FixedMath.cpp" />
+		<Unit filename="td2play/srclib/lib_FixedMath.h" />
+		<Unit filename="td2play/srclib/lib_RenderBuffer.cpp" />
+		<Unit filename="td2play/srclib/lib_RenderBuffer.h" />
+		<Unit filename="td2play/srclib/lib_StringBuffer.cpp" />
+		<Unit filename="td2play/srclib/lib_StringBuffer.h" />
+		<Unit filename="td2play/srclib/lib_font_virtualdj.h" />
+		<Unit filename="td2play/srclib/lib_geom.h" />
+		<Unit filename="td2play/srclib/lib_image.h" />
+		<Unit filename="td2play/srclib/lib_input.cpp" />
+		<Unit filename="td2play/srclib/lib_input.h" />
+		<Unit filename="td2play/srclib/lib_math.cpp" />
+		<Unit filename="td2play/srclib/lib_math.h" />
+		<Unit filename="td2play/srclib/lib_spritefont.h" />
+		<Unit filename="td2play/srclib/lib_spritefont_structs.h" />
 		<Unit filename="td2play/srclib/lib_storage.cpp" />
 		<Unit filename="td2play/srclib/lib_storage.h" />
-		<Unit filename="td2play/srclib/lib_tilemap.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/lib_tilemap.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/test_FixedMath.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="td2play/srclib/test_math.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="td2play/srclib/lib_tilemap.cpp" />
+		<Unit filename="td2play/srclib/lib_tilemap.h" />
+		<Unit filename="td2play/srclib/test_FixedMath.h" />
+		<Unit filename="td2play/srclib/test_math.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
