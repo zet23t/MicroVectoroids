@@ -1,0 +1,3 @@
+[submodule "td2play"]
+	path = td2play
+	url = git@github.com:zet23t/td2play.git

@@ -1,0 +1,4 @@
+MicroVectoroids/lib_*
+obj/*
+bin/*
+*.depend
