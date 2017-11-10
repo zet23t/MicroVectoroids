@@ -2,6 +2,7 @@
 #define __GAME_COMMON_H__
 
 // common library includes
+#include "lib_FixedMath.h"
 #include "lib_input.h"
 #include "lib_RenderBuffer.h"
 #include "lib_StringBuffer.h"
@@ -13,8 +14,9 @@
 #include "image_data.h"
 #include "font_asset.h"
 
-
 #define RENDER_COMMAND_COUNT 200
+
+#define Fix4 FixedNumber16<4>
 
 // a bunch of global variables that shouldn't exist in this way (sorry)
 extern TinyScreen display;
@@ -53,6 +55,7 @@ public:
 };
 
 namespace Game {
+    void initialize();
     void tick();
 }
 

@@ -28,6 +28,8 @@ void setup() {
     display.setBrightness(8);
     display.setBitDepth(buffer.is16bit());
     buffer.setClearBackground(true,RGB565(200,205,220));
+
+    Game::initialize();
 }
 
 
