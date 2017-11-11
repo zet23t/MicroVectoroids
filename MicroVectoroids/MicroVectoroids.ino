@@ -36,8 +36,14 @@ void setup() {
 void loop() {
     static uint32_t t = 0;
     Joystick::updateJoystick();
-    Time::millis = millis();
-    //uint32_t dt = Time::millis - t;
+    while (1) {
+        Time::millis = millis();
+        uint32_t dt = Time::millis - t;
+        if (dt > 33) {
+            //printf("%d\n",dt);
+            break;
+        }
+    }
     Game::tick();
     buffer.flush(display);
     stringBuffer.reset();

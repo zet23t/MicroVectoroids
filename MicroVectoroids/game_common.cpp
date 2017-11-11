@@ -11,6 +11,56 @@ namespace Time {
 }
 
 namespace Game {
+    const uint8_t ParticleCount = 64;
+
+    struct Particle {
+        Fixed2D4 pos,vel;
+        uint8_t type, age;
+        void tick();
+        void draw();
+        void init(uint8_t type, Fixed2D4 pos, Fixed2D4 vel);
+    };
+    struct ParticleSystem {
+        Particle particles[ParticleCount];
+        void tick();
+        void draw();
+        void spawn(uint8_t type, Fixed2D4 pos, Fixed2D4 vel);
+    };
+
+    void Particle::draw() {
+        buffer.drawRect(pos.x.getIntegerPart(),pos.y.getIntegerPart(),4,4)->filledRect(RGB565(255,255,0));
+    }
+    void Particle::init(uint8_t type, Fixed2D4 pos, Fixed2D4 vel) {
+        this->type = type;
+        this->pos = pos;
+        this->vel = vel;
+        age = 0;
+    }
+    void Particle::tick() {
+        age +=1;
+        if (age > 10) type = 0;
+    }
+    void ParticleSystem::draw() {
+        for (int i=0;i<ParticleCount;i+=1) {
+            if (particles[i].type) particles[i].draw();
+        }
+    }
+    void ParticleSystem::tick() {
+        for (int i=0;i<ParticleCount;i+=1) {
+            if (particles[i].type) particles[i].tick();
+        }
+    }
+    void ParticleSystem::spawn(uint8_t type, Fixed2D4 pos, Fixed2D4 vel) {
+        for (int i=0;i<ParticleCount;i+=1) {
+            if (particles[i].type == 0){
+                particles[i].init(type,pos,vel);
+                return;
+            }
+        }
+    }
+
+    ParticleSystem particleSystem;
+
     const uint8_t ShipCount = 64;
     struct Ship {
         Fixed2D4 pos;
@@ -31,11 +81,10 @@ namespace Game {
 
     void Ship::tick() {
         pos += velocity;
-        //velocity.scale(Fix4(0,15));
-        if (velocity.x > 0) velocity.x -= Fix4(0,1);
-        if (velocity.x < 0) velocity.x += Fix4(0,1);
-        if (velocity.y > 0) velocity.y -= Fix4(0,1);
-        if (velocity.y < 0) velocity.y += Fix4(0,1);
+        velocity = velocity * (Fix4(0,15));
+        if (velocity.x.absolute() < Fix4(0,3)) velocity.x = 0;
+        if (velocity.y.absolute() < Fix4(0,3)) velocity.y = 0;
+        particleSystem.spawn(1,pos,Fixed2D4());
     }
     void Ship::draw() {
         buffer.drawRect(pos.x.getIntegerPart(),pos.y.getIntegerPart(),4,4)->filledRect(RGB565(255,0,0));
@@ -84,21 +133,24 @@ namespace Game {
     }
 
     void tick() {
+
         Ship* ship = shipManager.ships;
         Fixed2D4 input =  Joystick::getJoystick();
         ship->direction += input * Fix4(1,1);
         ship->direction.normalize();
         if (Joystick::getButton(0)) {
-            ship->velocity += ship->direction * Fix4(0,2);
+            ship->velocity += ship->direction * Fix4(0,12);
         }
         shipManager.tick();
-        Fixed2D4 cam = ship->pos + ship->direction * 4;
+        particleSystem.tick();
+        Fixed2D4 cam = ship->pos + ship->direction * 6;
         buffer.setOffset(cam.x.getIntegerPart() - 48, cam.y.getIntegerPart() -32);
 
         drawSpaceBackground(0, RGB565(62,62,62));
         drawSpaceBackground(1, RGB565(180,180,180));
         drawSpaceBackground(2, RGB565(120,120,120));
         shipManager.draw();
+        particleSystem.draw();
     }
 
     void initialize(){
