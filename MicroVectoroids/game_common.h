@@ -14,6 +14,9 @@
 #include "image_data.h"
 #include "font_asset.h"
 
+// game modules
+#include "game_particles.h"
+
 #define RENDER_COMMAND_COUNT 200
 
 #define Fix4 FixedNumber16<4u>
@@ -55,6 +58,9 @@ public:
 };
 
 namespace Game {
+    extern Texture<uint16_t> atlas;
+    extern ParticleSystem particleSystem;
+
     void initialize();
     void tick();
 }

@@ -9,10 +9,11 @@ extern const ImageData font;
 extern const unsigned char atlas_data[65536] PROGMEM;
 extern const ImageData atlas;
 namespace TextureAtlas_atlas {
-    extern const SpriteSheet star;
     extern const SpriteSheet ship_exhaust;
-    extern const SpriteSheet ship_triangle;
     extern const SpriteSheet exhaust;
+    extern const SpriteSheet star;
+    extern const SpriteSheet ship_triangle;
+    extern const SpriteSheet ship_asteroid;
 }
 extern const unsigned char tilemap_data[32768] PROGMEM;
 extern const ImageData tilemap;
