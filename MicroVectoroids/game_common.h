@@ -16,7 +16,7 @@
 
 #define RENDER_COMMAND_COUNT 200
 
-#define Fix4 FixedNumber16<4>
+#define Fix4 FixedNumber16<4u>
 
 // a bunch of global variables that shouldn't exist in this way (sorry)
 extern TinyScreen display;

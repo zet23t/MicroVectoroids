@@ -55,8 +55,14 @@
 			<Add before="prebuild.bat" />
 		</ExtraCommands>
 		<Unit filename="MicroVectoroids/MicroVectoroids.cpp" />
+		<Unit filename="MicroVectoroids/asset_tilemap.cpp" />
+		<Unit filename="MicroVectoroids/asset_tilemap.h" />
+		<Unit filename="MicroVectoroids/font_asset.cpp" />
+		<Unit filename="MicroVectoroids/font_asset.h" />
 		<Unit filename="MicroVectoroids/game_common.cpp" />
 		<Unit filename="MicroVectoroids/game_common.h" />
+		<Unit filename="MicroVectoroids/image_data.cpp" />
+		<Unit filename="MicroVectoroids/image_data.h" />
 		<Unit filename="td2play/simulator/src/Main.cpp" />
 		<Unit filename="td2play/srclib/lib_FixedMath.cpp" />
 		<Unit filename="td2play/srclib/lib_FixedMath.h" />
