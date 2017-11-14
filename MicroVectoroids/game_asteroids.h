@@ -19,5 +19,6 @@ namespace Game {
         void init();
         void tick();
         void draw();
+        Asteroid* spawn();
     };
 }

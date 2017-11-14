@@ -60,7 +60,7 @@ public:
 namespace Game {
     extern Texture<uint16_t> atlas;
     extern ParticleSystem particleSystem;
-
+    extern int frame;
     void initialize();
     void tick();
 }

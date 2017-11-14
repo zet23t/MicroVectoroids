@@ -1,4 +1,5 @@
 #include "game_asteroids.h"
+#include "game_common.h"
 
 namespace Game {
 
@@ -9,6 +10,10 @@ namespace Game {
     }
 
     void Asteroid::draw() {
+        SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_asteroid.sprites[
+            (frame >> 1) % ImageAsset::TextureAtlas_atlas::ship_asteroid.spriteCount];
+        int w = rect.width, h = rect.height;
+        buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - w/2 ,pos.y.getIntegerPart() + rect.offsetY - h/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
     }
 
     void Asteroid::tick() {
@@ -30,4 +35,11 @@ namespace Game {
         }
     }
 
+    Asteroid* AsteroidManager::spawn() {
+        for (int i=0;i<AsteroidsCount;i+=1) {
+            if (!asteroids[i].type) return &asteroids[i];
+        }
+        static Asteroid def;
+        return &def;
+    }
 }

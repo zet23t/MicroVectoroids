@@ -14,14 +14,11 @@ namespace Time {
 }
 
 namespace Game {
+    int frame;
     Texture<uint16_t> atlas;
     ParticleSystem particleSystem;
-
-
-
-
-
     ShipManager shipManager;
+    AsteroidManager asteroidManager;
 
     void drawSpaceBackground(int layer, uint16_t col) {
         int16_t x = buffer.getOffsetX();
@@ -47,7 +44,7 @@ namespace Game {
     }
 
     void tick() {
-
+        frame += 1;
         Ship* ship = shipManager.ships;
         Fixed2D4 input =  Joystick::getJoystick();
         if (input.x !=0 || input.y !=0) {
@@ -69,6 +66,7 @@ namespace Game {
         }
         shipManager.tick();
         particleSystem.tick();
+        asteroidManager.tick();
         Fixed2D4 cam = ship->pos + ship->direction * 6;
         buffer.setOffset(cam.x.getIntegerPart() - 48, cam.y.getIntegerPart() -32);
 
@@ -77,13 +75,17 @@ namespace Game {
         drawSpaceBackground(2, RGB565(120,120,120));
         shipManager.draw();
         particleSystem.draw();
+        asteroidManager.draw();
     }
 
     void initialize(){
+        frame = 0;
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,10,5,15,0);
         shipManager.ships[1].init(1,15,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
+        asteroidManager.init();
+        asteroidManager.spawn()->init(1,30,15);
     }
 }

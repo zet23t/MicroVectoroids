@@ -4,6 +4,7 @@
 namespace Game {
 void Particle::draw() {
         int sel = age * ImageAsset::TextureAtlas_atlas::ship_exhaust.spriteCount / 5;
+        if (sel >= ImageAsset::TextureAtlas_atlas::ship_exhaust.spriteCount) sel = ImageAsset::TextureAtlas_atlas::ship_exhaust.spriteCount - 1;
         SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_exhaust.sprites[sel];
         int w = rect.width, h = rect.height;
         buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - w/2 ,pos.y.getIntegerPart() + rect.offsetY - h/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::bitwiseOr);
