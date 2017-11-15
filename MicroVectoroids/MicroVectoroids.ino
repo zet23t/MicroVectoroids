@@ -6,16 +6,16 @@
 
 void initUSB() {
   #ifndef WIN32
-  USBDevice.init();
+/*  USBDevice.init();
   USBDevice.attach();
   SerialUSB.begin(57600);
-  SerialUSB.setTimeout(500);
+  SerialUSB.setTimeout(500);*/
   #endif
 }
 
 void deinitUSB() {
   #ifndef WIN32
-  USBDevice.detach();
+  //USBDevice.detach();
   #endif
 }
 

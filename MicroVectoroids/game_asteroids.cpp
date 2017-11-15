@@ -13,7 +13,7 @@ namespace Game {
         SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_asteroid.sprites[
             (frame >> 1) % ImageAsset::TextureAtlas_atlas::ship_asteroid.spriteCount];
         int w = rect.width, h = rect.height;
-        buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - w/2 ,pos.y.getIntegerPart() + rect.offsetY - h/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
+        buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - rect.origWidth/2 ,pos.y.getIntegerPart() + rect.offsetY - rect.origHeight/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
     }
 
     void Asteroid::tick() {
