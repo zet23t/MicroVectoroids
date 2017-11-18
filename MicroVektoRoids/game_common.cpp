@@ -65,8 +65,17 @@ namespace Game {
         Menu::tick();
 
         Fixed2D4 cam = ship->pos + ship->direction * Fix4(8,0) + ship->velocity * Fix4(1,8);
-        camX = (cam.x.getIntegerPart() * 7 + camX * 9) / 16;
-        camY = (cam.y.getIntegerPart() * 7 + camY * 9) / 16;
+        int16_t targetX = ship->pos.x.getIntegerPart() + ship->direction.x.getIntegerPart() * 8 + ship->velocity.x.getIntegerPart();
+        int16_t targetY = ship->pos.y.getIntegerPart() + ship->direction.y.getIntegerPart() * 8 + ship->velocity.y.getIntegerPart();
+        int16_t dx = targetX - camX;
+        int16_t dy = targetY - camY;
+        if (abs(dx) < 200 && abs(dy) < 200) {
+            camX = (targetX * 7 + camX * 9) / 16;
+            camY = (targetY * 7 + camY * 9) / 16;
+        } else {
+            camX = targetX;
+            camY = targetY;
+        }
         buffer.setOffset(camX - 48, camY -32);
 
         drawSpaceBackground(0, RGB565(62,62,62));

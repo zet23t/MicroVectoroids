@@ -9,17 +9,19 @@ namespace Game {
         uint8_t PlayerShipTrail = 1;
         uint8_t PlayerShot = 2;
         uint8_t PlayerShotImpact = 3;
+        uint8_t AsteroidFragmentWhite = 4;
     }
 
     const SpriteSheet* sheetByType[] = {
         0,
         &ImageAsset::TextureAtlas_atlas::ship_exhaust,
         &ImageAsset::TextureAtlas_atlas::player_shot,
-        &ImageAsset::TextureAtlas_atlas::player_shot
+        &ImageAsset::TextureAtlas_atlas::player_shot,
+        &ImageAsset::TextureAtlas_atlas::ship_asteroid_fragment_white,
     };
 
     const uint8_t maxAgeByType[] {
-        0,5,2,5
+        0,5,2,5,10
     };
 
     void Particle::draw() {

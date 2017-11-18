@@ -128,6 +128,7 @@ namespace Game {
                 buffer.setClipping(0,96,64,0);
             }
 
+            //buffer.drawText("MicroVektoRoids Alpha",0,0,96,64,1,1,false, FontAsset::font, 200, RenderCommandBlendMode::add);
             buffer.setOffset(camX, camY);
         }
     }

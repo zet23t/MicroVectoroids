@@ -6,7 +6,7 @@
 
 namespace Game {
     ShipManager shipManager;
-    bool directionalControls = true;
+    bool directionalControls = false;
 
     void Ship::tick() {
         if (type == 1 && takenHitCooldown == 0) {
@@ -62,19 +62,25 @@ namespace Game {
                 if (abs(dx) < rad && abs(dy) < rad && dx*dx+dy*dy < asteroidRadiusSqByType[a->type]) {
                     Fixed2D4 norm = a->pos - pos;
                     norm = norm.normalize();
-                    velocity = velocity -  norm * (Fix4(2,0) * norm.dot(velocity));
+                    Fixed2D4 v = velocity - a->velocity;
+                    Fixed2D4 change = (v -  norm * (Fix4(2,0) * norm.dot(v))) * Fix4(0,8) - norm * Fix4(0,12);
+                    a->push(-change);
+                    velocity = change;
+                    if (takenHitCooldown == 0)
+                        takeDamage(16);
                     takenHitCooldown = 8;
-                    takeDamage(16);
+
                     break;
                 }
             }
         }
 
         pos += velocity * Fix4(0,6);
-        if (frame & 1)
+        if ((frame & 2) == 2 ) {
             velocity = velocity * (Fix4(0,15));
-        if (velocity.x.absolute() < Fix4(0,3)) velocity.x = 0;
-        if (velocity.y.absolute() < Fix4(0,3)) velocity.y = 0;
+            if (velocity.x.absolute() < Fix4(0,3)) velocity.x = 0;
+            if (velocity.y.absolute() < Fix4(0,3)) velocity.y = 0;
+        }
 
         Fixed2D4 dir = pos - prevPos;
         Fix4 dist = (dir).length();

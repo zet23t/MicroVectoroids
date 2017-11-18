@@ -8,6 +8,7 @@ namespace Game {
         extern uint8_t PlayerShipTrail;
         extern uint8_t PlayerShot;
         extern uint8_t PlayerShotImpact;
+        extern uint8_t AsteroidFragmentWhite;
     }
 
     struct Particle {

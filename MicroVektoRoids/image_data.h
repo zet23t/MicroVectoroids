@@ -15,13 +15,14 @@ namespace TextureAtlas_atlas {
     extern const SpriteSheet menu_triangle_left;
     extern const SpriteSheet ship_station;
     extern const SpriteSheet menu_triangle_right;
-    extern const SpriteSheet player_shot;
-    extern const SpriteSheet ship_asteroid;
     extern const SpriteSheet ui_shield_bar_inner;
+    extern const SpriteSheet ship_asteroid_fragment_white;
+    extern const SpriteSheet ship_asteroid;
     extern const SpriteSheet ui_shield_bar;
     extern const SpriteSheet radar_triangle_blue;
-    extern const SpriteSheet ship_asteroid_small;
     extern const SpriteSheet ship_triangle;
+    extern const SpriteSheet ship_asteroid_small;
+    extern const SpriteSheet player_shot;
     extern const SpriteSheet ship_triangle_shield;
 }
 extern const unsigned char tilemap_data[32768] PROGMEM;
