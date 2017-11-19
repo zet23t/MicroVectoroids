@@ -14,6 +14,7 @@ namespace TextureAtlas_atlas {
     extern const SpriteSheet ship_exhaust;
     extern const SpriteSheet menu_triangle_left;
     extern const SpriteSheet ship_station;
+    extern const SpriteSheet ui_target_marker;
     extern const SpriteSheet menu_triangle_right;
     extern const SpriteSheet ui_shield_bar_inner;
     extern const SpriteSheet ship_asteroid_fragment_white;

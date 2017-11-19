@@ -6,6 +6,7 @@
 #include "game_menu.h"
 #include "game_ui_radar.h"
 #include "game_ui_shield.h"
+#include "game_ui_hud.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -26,6 +27,17 @@ namespace Game {
     int frame, frameUnpaused;
     Texture<uint16_t> atlas;
     int16_t camX, camY;
+
+    RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect) {
+        return buffer.drawRect(x + rect.offsetX - rect.origHeight / 2,
+                               y + rect.offsetY - rect.origWidth / 2,
+                               rect.width,rect.height)->sprite(&atlas, rect.x, rect.y);
+    }
+    RenderCommand<uint16_t>* drawSprite(int x,int y,SpriteSheetRect rect) {
+        return buffer.drawRect(x + rect.offsetX,
+                               y + rect.offsetY,
+                               rect.width,rect.height)->sprite(&atlas, rect.x, rect.y);
+    }
 
     void drawSpaceBackground(int layer, uint16_t col) {
         int16_t x = buffer.getOffsetX();
@@ -81,12 +93,13 @@ namespace Game {
         drawSpaceBackground(0, RGB565(62,62,62));
         drawSpaceBackground(1, RGB565(180,180,180));
         drawSpaceBackground(2, RGB565(120,120,120));
-        UI::Shield::draw();
-        UI::Radar::draw();
         shipManager.draw();
         particleSystem.draw();
         asteroidManager.draw();
         projectileManager.draw();
+        UI::Shield::draw();
+        UI::Radar::draw();
+        UI::HUD::draw();
         Menu::draw();
 
     }
@@ -100,10 +113,13 @@ namespace Game {
         shipManager.ships[1].init(2,15,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
-        asteroidManager.spawn()->init(1,600,145);
-        asteroidManager.spawn()->init(1,-300,215);
-        asteroidManager.spawn()->init(1,400,-385);
-        asteroidManager.spawn()->init(1,-140,-185);
+        for (int i=0;i<30;i+=1) {
+            int x = (Math::randInt() % 1024) - 512;
+            int y = (Math::randInt() % 1024) - 512;
+            if (x*x+y*y > 20)
+                asteroidManager.spawn()->init(1,x,y);
+        }
+
         projectileManager.init();
     }
 }

@@ -5,6 +5,7 @@
 namespace Game {
     namespace UI {
         namespace Shield {
+
             void draw() {
                 buffer.setOffset(0,0);
                 const SpriteSheet* bar = &ImageAsset::TextureAtlas_atlas::ui_shield_bar;

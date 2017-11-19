@@ -30,6 +30,10 @@ namespace Game {
         (uint16_t)(asteroidRadiusByType[4] * asteroidRadiusByType[4]),
     };
 
+    const uint8_t maxHitsByType[] = {
+        0,5,5,5,2
+    };
+
     void Asteroid::init(uint8_t type, int16_t x, int16_t y) {
         this->type = type;
         pos = Fixed2D4(x, y);
@@ -57,7 +61,7 @@ namespace Game {
                 if (abs(dx) < rad && abs(dy) < rad && dx*dx+dy*dy < rad2) {
                     p->impact();
                     hits+=1;
-                    if (hits > 5) {
+                    if (hits > maxHitsByType[type]) {
                         destroy();
                         return;
                     }

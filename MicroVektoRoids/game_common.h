@@ -66,6 +66,9 @@ namespace Game {
     extern int16_t camX, camY;
     void initialize();
     void tick();
+
+    RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect);
+    RenderCommand<uint16_t>* drawSprite(int x,int y,SpriteSheetRect rect);
 }
 
 #endif // __GAME_COMMON_H__

@@ -3,6 +3,7 @@
 #include "game_particles.h"
 #include "game_projectile.h"
 #include "game_asteroids.h"
+#include "game_ui_hud.h"
 
 namespace Game {
     ShipManager shipManager;
@@ -161,7 +162,12 @@ namespace Game {
     void Ship::shoot() {
         if (shootCooldown == 0) {
             shootCooldown = 8;
-            projectileManager.spawn(1, pos + direction * Fix4(3,0), direction * Fix4(6,0) + velocity * Fix4(0,6));
+            Fixed2D4 dir = direction;
+            if (UI::HUD::targetLock) {
+                dir = UI::HUD::targetPosition - pos;
+                dir = dir.normalize();
+            }
+            projectileManager.spawn(1, pos + dir * Fix4(3,0), dir * Fix4(6,0) + velocity * Fix4(0,6));
         }
     }
 

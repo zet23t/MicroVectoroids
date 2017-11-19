@@ -71,6 +71,8 @@
 		<Unit filename="MicroVektoRoids/game_projectile.h" />
 		<Unit filename="MicroVektoRoids/game_ships.cpp" />
 		<Unit filename="MicroVektoRoids/game_ships.h" />
+		<Unit filename="MicroVektoRoids/game_ui_hud.cpp" />
+		<Unit filename="MicroVektoRoids/game_ui_hud.h" />
 		<Unit filename="MicroVektoRoids/game_ui_radar.cpp" />
 		<Unit filename="MicroVektoRoids/game_ui_radar.h" />
 		<Unit filename="MicroVektoRoids/game_ui_shield.cpp" />
