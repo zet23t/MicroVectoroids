@@ -46,12 +46,26 @@ namespace Game {
             }
         };
 
+        struct SubmenuToggleDebug:Submenu {
+            virtual const char *getTitle() const {
+                return "Debug";
+            }
+            virtual const char *getText() const {
+                return showDebugInfo ? "Show info" : "Hide info";
+            }
+            virtual void activate() const {
+                showDebugInfo = !showDebugInfo;
+            }
+        };
+
         SubmenuRestart restart;
         SubmenuToggleInput toggleInput;
-        #define SubmenuCount 2
+        SubmenuToggleDebug toggleDebug;
+        #define SubmenuCount 3
         const Submenu* submenus[] = {
             &restart,
-            &toggleInput
+            &toggleInput,
+            &toggleDebug,
         };
 
         void tick() {

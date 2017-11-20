@@ -175,5 +175,18 @@ namespace FontAsset {
 		{'z',0,52,9,8,6,-1,3},
 	};
 	const SpriteFont hemifont = {13,hemifontGlyphs,76,&ImageAsset::hemifont};
+		static const SpriteGlyph numbersfontGlyphs[10] = {
+			{'0',0,0,5,7,4,-1,-1},
+		{'1',5,0,5,7,4,-1,-1},
+		{'2',10,0,5,7,4,-1,-1},
+		{'3',15,0,5,7,4,-1,-1},
+		{'4',20,0,5,7,4,-1,-1},
+		{'5',0,7,5,7,4,-1,-1},
+		{'6',5,7,5,7,4,-1,-1},
+		{'7',10,7,5,7,4,-1,-1},
+		{'8',15,7,5,7,4,-1,-1},
+		{'9',20,7,5,7,4,-1,-1},
+	};
+	const SpriteFont numbersfont = {6,numbersfontGlyphs,10,&ImageAsset::numbersfont};
 	
 }

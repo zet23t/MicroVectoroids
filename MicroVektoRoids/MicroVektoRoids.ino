@@ -51,7 +51,8 @@ void loop() {
 
     //buffer.drawText("Restart",8,vpos+18,80,16,0,0,false, FontAsset::hemifont, 200, RenderCommandBlendMode::bitwiseOr);
     buffer.setOffset(0,0);
-    buffer.drawText(stringBuffer.putDec(rest).get(), 0,1,95,16,1,-1,false,FontAsset::font,245);
+    if (Game::showDebugInfo)
+        buffer.drawText(stringBuffer.start().putDec(rest).get(), 0,1,95,16,1,-1,false,FontAsset::font,245);
     buffer.flush(display);
     stringBuffer.reset();
     t = Time::millis;

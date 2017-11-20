@@ -8,6 +8,7 @@
   - [ ] show Logo over main space system
   - [ ] show high scores
 - [ ] Main level with wormholes for difficulty selection
+  - [ ] Show target damage and info
   - [ ] Interactable space objects
   - [ ] Space station
     - [x] station object
@@ -18,7 +19,7 @@
       - [ ] Show high score
       - [ ] Enter level
     - [ ] 20 white asteroids that split into 5 small asteroids
-    - [ ] Destroying one asteroid yields points: Big: 5, small 1
+    - [x] Destroying one small asteroid yields dust particles, worth 1 credit
     - [ ] when all asteroids are destroyed, extra points are awarded based on time
     - [ ] Game over state
       - [ ] Enter name

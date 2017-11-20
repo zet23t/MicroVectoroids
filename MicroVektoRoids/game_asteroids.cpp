@@ -2,6 +2,7 @@
 #include "game_projectile.h"
 #include "game_common.h"
 #include "game_particles.h"
+#include "game_collectable.h"
 
 namespace Game {
     AsteroidManager asteroidManager;
@@ -94,6 +95,13 @@ namespace Game {
                 vel = vel.randomCircle(Fix4(2,5));
                 Particle *p = particleSystem.spawn(ParticleType::AsteroidFragmentWhite, pos, vel);
                 p->age = Math::randInt() % 4;
+            }
+            if (type == AsteroidType::WhiteSmall) {
+                for (int i=0;i<5;i+=1) {
+                    Fixed2D4 vel;
+                    vel = vel.randomCircle(Fix4(4,5));
+                    Collectable::spawn(pos,vel);
+                }
             }
         }
         type = 0;

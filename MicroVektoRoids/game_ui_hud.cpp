@@ -7,8 +7,14 @@
 namespace Game {
     namespace UI {
         namespace HUD {
+
+
             bool targetLock;
             Fixed2D4 targetPosition;
+
+            Fixed2D4 highlightPosition;
+            uint8_t highlightRadius;
+
 
             void highlightTarget(Fixed2D4 pos, uint8_t sz) {
                 int x = pos.x.getIntegerPart();
@@ -18,6 +24,27 @@ namespace Game {
                 drawCenteredSprite(x + sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[2])->blend(RenderCommandBlendMode::add)->setDepth(100);
                 drawCenteredSprite(x - sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[3])->blend(RenderCommandBlendMode::add)->setDepth(100);
             }
+            void updateTargetHighlight(bool hasTarget, Fixed2D4 target, uint8_t rad) {
+                if (hasTarget) {
+                    int dx = target.x.getIntegerPart() - highlightPosition.x.getIntegerPart();
+                    int dy = target.y.getIntegerPart() - highlightPosition.y.getIntegerPart();
+                    if (abs(dx) < 50 && abs(dy) < 50) {
+                        highlightPosition = highlightPosition * Fix4(0,6) + target * Fix4(0,10);
+                        highlightRadius = highlightRadius / 2 + rad / 2;
+                        if (rad > highlightRadius) highlightRadius += 1;
+                        if (rad < highlightRadius) highlightRadius -=1;
+                    }
+                    else {
+                        highlightPosition = target;
+                        highlightRadius = rad;
+                    }
+                } else {
+                    if (highlightRadius > 0) highlightRadius -=1;
+                }
+                if (highlightRadius > 0) highlightTarget(highlightPosition, highlightRadius);
+            }
+
+
             void draw() {
                 Ship* ship = &shipManager.ships[0];
                 if (ship->type != 1) return;
@@ -41,15 +68,17 @@ namespace Game {
                     if (dot > bestDot) {
                         bestDot = dot;
                         bestTarget = a->pos;
-                        targetRad = 8;
+                        targetRad = asteroidRadiusByType[a->type] / 2 + 2;
                     }
                 }
-                if (bestDot > Fix4(0,13)) {
+                if (bestDot > Fix4(0,12)) {
                     targetLock = true;
                     targetPosition = bestTarget;
-                    highlightTarget(bestTarget,targetRad);
+                    updateTargetHighlight(true, targetPosition, targetRad);
+                    //highlightTarget(bestTarget,targetRad);
                 } else {
                     targetLock = false;
+                    updateTargetHighlight(false, Fixed2D4(0,0),0);
                 }
             }
         }

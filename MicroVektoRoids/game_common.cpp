@@ -7,6 +7,9 @@
 #include "game_ui_radar.h"
 #include "game_ui_shield.h"
 #include "game_ui_hud.h"
+#include "game_collectable.h"
+#include "game_player_stats.h"
+#include "game_ui_info.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -23,6 +26,7 @@ namespace Game {
         const uint8_t Running = 0;
         const uint8_t Menu = 1;
     }
+    bool showDebugInfo;
     uint8_t gameState;
     int frame, frameUnpaused;
     Texture<uint16_t> atlas;
@@ -73,6 +77,8 @@ namespace Game {
             particleSystem.tick();
             asteroidManager.tick();
             projectileManager.tick();
+            Collectable::tick();
+            UI::Info::tick();
         }
         Menu::tick();
 
@@ -97,9 +103,11 @@ namespace Game {
         particleSystem.draw();
         asteroidManager.draw();
         projectileManager.draw();
+        Collectable::draw();
         UI::Shield::draw();
         UI::Radar::draw();
         UI::HUD::draw();
+        UI::Info::draw();
         Menu::draw();
 
     }
@@ -121,5 +129,8 @@ namespace Game {
         }
 
         projectileManager.init();
+        PlayerStats::init();
+        Collectable::init();
+        UI::Info::init();
     }
 }

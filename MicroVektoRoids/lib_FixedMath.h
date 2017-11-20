@@ -218,6 +218,11 @@ public:
     }
 
     Fixed2D4& normalize() {
+        while ((x != FixedNumber16<4>(0,0) && y != FixedNumber16<4>(0,0)) && (x.absolute().getIntegerPart() > 16 || y.absolute().getIntegerPart() > 16)) {
+            x = x.half();
+            y = y.half();
+        }
+
         bool xeq = x == FixedNumber16<4>(0,0);
         bool yeq = y == FixedNumber16<4>(0,0);
 

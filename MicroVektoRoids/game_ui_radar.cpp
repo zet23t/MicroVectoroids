@@ -50,7 +50,7 @@ namespace Game {
                     color = c;
                 }
             };
-            #define BlipCount 8
+            #define BlipCount 5
             void addBlip(Blip* blips, Fixed2D4 cen, Fixed2D4 p, uint16_t c) {
                 int16_t dx = cen.x.getIntegerPart() - p.x.getIntegerPart();
                 int16_t dy = cen.y.getIntegerPart() - p.y.getIntegerPart();
@@ -67,25 +67,29 @@ namespace Game {
             void draw() {
                 int16_t x = buffer.getOffsetX();
                 int16_t y = buffer.getOffsetY();
-                Blip blips[BlipCount];
-                memset(blips,0,sizeof(blips));
+                Blip blipsAsteroids[BlipCount];
+                Blip blipsShips[BlipCount];
+                memset(blipsAsteroids,0,sizeof(blipsAsteroids));
+                memset(blipsShips,0,sizeof(blipsAsteroids));
 
                 buffer.setOffset(0,0);
                 Fixed2D4 cen = Fixed2D4(x+48,y+32);
                 for (int i=0;i<AsteroidsCount;i+=1) {
                     if (asteroidManager.asteroids[i].type) {
-                        addBlip(blips, cen, asteroidManager.asteroids[i].pos, RGB565(255,0,0));
+                        addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos, RGB565(255,0,0));
                     }
                 }
                 for (int i=0;i<ShipCount;i+=1) {
                     if (shipManager.ships[i].type == 2) {
-                        addBlip(blips, cen, shipManager.ships[i].pos, RGB565(50,80,250));
+                        addBlip(blipsShips, cen, shipManager.ships[i].pos, RGB565(50,80,250));
                     }
                 }
                 for (int i=0;i<BlipCount;i+=1) {
-                    if (blips[i].dist > 0) {
-
-                        drawRadarBlip(cen, blips[i].pos, blips[i].color);
+                    if (blipsAsteroids[i].dist > 0) {
+                        drawRadarBlip(cen, blipsAsteroids[i].pos, blipsAsteroids[i].color);
+                    }
+                    if (blipsShips[i].dist > 0) {
+                        drawRadarBlip(cen, blipsShips[i].pos, blipsShips[i].color);
                     }
                 }
                 buffer.setOffset(x,y);

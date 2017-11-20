@@ -60,6 +60,7 @@ namespace Game {
         extern const uint8_t Running;
         extern const uint8_t Menu;
     }
+    extern bool showDebugInfo;
     extern uint8_t gameState;
     extern Texture<uint16_t> atlas;
     extern int frame, frameUnpaused;

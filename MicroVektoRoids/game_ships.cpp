@@ -42,6 +42,7 @@ namespace Game {
                     input.normalize();
                     direction += direction.left() * input.x * Fix4(0,4);
                     direction.normalize();
+                    if (input.y > 0) input.y = 0;
                     velocity += direction * Fix4(0,10) * -input.y;
                 }
             }
