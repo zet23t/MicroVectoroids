@@ -375,7 +375,7 @@ namespace TextureAtlas_atlas {
          player_shot_rectList, 6,
     };
     const SpriteSheetRect ship_triangle_shield_rectList[] = {
-        {52,78,-14,-14, 14,14, 16,16},
+        {52,78,0,0, 14,14, 16,16},
         {50,97,11,11, 3,3, 16,16},
         {94,66,12,12, 2,2, 16,16},
         {80,105,13,13, 2,2, 16,16},
