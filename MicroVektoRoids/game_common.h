@@ -15,6 +15,7 @@
 #include "font_asset.h"
 
 
+
 #define RENDER_COMMAND_COUNT 200
 
 #define Fix4 FixedNumber16<4u>

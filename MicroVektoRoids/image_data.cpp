@@ -406,7 +406,7 @@ namespace TextureAtlas_atlas {
          ship_exhaust_rectList, 6,
     };
     const SpriteSheetRect ship_triangle_shield_rectList[] = {
-        {52,79,-14,-14, 14,14, 16,16},
+        {52,79,0,0, 14,14, 16,16},
         {31,117,11,11, 3,3, 16,16},
         {107,26,12,12, 2,2, 16,16},
         {80,90,13,13, 2,2, 16,16},

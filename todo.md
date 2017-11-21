@@ -30,3 +30,7 @@
 - [ ] Save game / load game
   - [ ] save scores
   - [ ] 
+
+# Polishing
+
+- flash score display on collecting dust

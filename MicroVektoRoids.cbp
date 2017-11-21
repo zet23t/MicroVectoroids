@@ -61,6 +61,7 @@
 		<Unit filename="MicroVektoRoids/font_asset.h" />
 		<Unit filename="MicroVektoRoids/game_asteroids.cpp" />
 		<Unit filename="MicroVektoRoids/game_asteroids.h" />
+		<Unit filename="MicroVektoRoids/game_balancing.h" />
 		<Unit filename="MicroVektoRoids/game_collectable.cpp" />
 		<Unit filename="MicroVektoRoids/game_collectable.h" />
 		<Unit filename="MicroVektoRoids/game_common.cpp" />

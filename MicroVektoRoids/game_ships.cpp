@@ -9,72 +9,92 @@ namespace Game {
     ShipManager shipManager;
     bool directionalControls = false;
 
+    void Ship::tickPlayerControls() {
+        Fixed2D4 input =  Joystick::getJoystick();
+        //if (Joystick::getButton(0)) {
+        if (Joystick::getButton(1)) {
+            shoot();
+        }
+        if (input.x !=0 || input.y !=0) {
+            if (!directionalControls) {
+                input.normalize();
+                if (input.dot(direction) > Fix4(0,12)) {
+                    velocity += direction * Fix4(0,12);
+                }
+
+                Fix4 force = Fix4(0,7);
+                Fix4 dot = direction.dot(input);
+                if (dot < Fix4(-1,2)) {
+                    // enable turnarounds without getting stuck (switch left to right for instance)
+
+                    Fixed2D4 right = input.right();
+                    Fixed2D4 left = input.left();
+                    Fix4 leftDot = left.dot(direction);
+                    Fix4 rightDot = right.dot(direction);
+                    input = leftDot > rightDot ? left : right;
+                }
+                //force = Fix4(3,0);
+                direction += input * force;
+                direction.normalize();
+            }
+            else {
+                input.normalize();
+                direction += direction.left() * input.x * Fix4(0,4);
+                direction.normalize();
+                if (input.y > 0) input.y = 0;
+                velocity += direction * Fix4(0,10) * -input.y;
+            }
+        }
+    }
+
+    void Ship::tickPlayer() {
+        if (takenHitCooldown == 0) {
+            tickPlayerControls();
+        }
+        handleAsteroidsCollisions();
+    }
+
+    void Ship::tickEnemySmallShip() {
+    }
+
+    void Ship::handleAsteroidsCollisions() {
+        Fixed2D4 future = pos + velocity * Fix4(0,6);
+        int16_t x = future.x.getIntegerPart();
+        int16_t y = future.y.getIntegerPart();
+        for (int i=0;i<AsteroidsCount;i+=1) {
+            Asteroid *a = &asteroidManager.asteroids[i];
+            if (a->type == 0) continue;
+            int16_t dx = a->pos.x.getIntegerPart() - x;
+            int16_t dy = a->pos.y.getIntegerPart() - y;
+            uint8_t rad = asteroidRadiusByType[a->type];
+            if (abs(dx) < rad && abs(dy) < rad && dx*dx+dy*dy < asteroidRadiusSqByType[a->type]) {
+                Fixed2D4 norm = a->pos - pos;
+                norm = norm.normalize();
+                Fixed2D4 v = velocity - a->velocity;
+                Fixed2D4 change = (v -  norm * (Fix4(2,0) * norm.dot(v))) * Fix4(0,8) - norm * Fix4(0,12);
+                a->push(-change);
+                velocity = change;
+                if (takenHitCooldown == 0)
+                    takeDamage(16);
+                takenHitCooldown = 8;
+
+                break;
+            }
+        }
+    }
+
     void Ship::tick() {
-        if (type == 1 && takenHitCooldown == 0) {
-            Fixed2D4 input =  Joystick::getJoystick();
-            //if (Joystick::getButton(0)) {
-            if (Joystick::getButton(1)) {
-                shoot();
-            }
-            if (input.x !=0 || input.y !=0) {
-                if (!directionalControls) {
-                    input.normalize();
-                    if (input.dot(direction) > Fix4(0,12)) {
-                        velocity += direction * Fix4(0,12);
-                    }
-
-                    Fix4 force = Fix4(0,7);
-                    Fix4 dot = direction.dot(input);
-                    if (dot < Fix4(-1,2)) {
-                        // enable turnarounds without getting stuck (switch left to right for instance)
-
-                        Fixed2D4 right = input.right();
-                        Fixed2D4 left = input.left();
-                        Fix4 leftDot = left.dot(direction);
-                        Fix4 rightDot = right.dot(direction);
-                        input = leftDot > rightDot ? left : right;
-                    }
-                    //force = Fix4(3,0);
-                    direction += input * force;
-                    direction.normalize();
-                }
-                else {
-                    input.normalize();
-                    direction += direction.left() * input.x * Fix4(0,4);
-                    direction.normalize();
-                    if (input.y > 0) input.y = 0;
-                    velocity += direction * Fix4(0,10) * -input.y;
-                }
-            }
+        prevPos = pos;
+        if (type == 1) {
+            tickPlayer();
+        }
+        if (type == 3) {
+            tickEnemySmallShip();
         }
 
         if (shootCooldown > 0) shootCooldown -= 1;
         if (takenHitCooldown > 0) takenHitCooldown -= 1;
-        prevPos = pos;
         if (type == 1) {
-            Fixed2D4 future = pos + velocity * Fix4(0,6);
-            int16_t x = future.x.getIntegerPart();
-            int16_t y = future.y.getIntegerPart();
-            for (int i=0;i<AsteroidsCount;i+=1) {
-                Asteroid *a = &asteroidManager.asteroids[i];
-                if (a->type == 0) continue;
-                int16_t dx = a->pos.x.getIntegerPart() - x;
-                int16_t dy = a->pos.y.getIntegerPart() - y;
-                uint8_t rad = asteroidRadiusByType[a->type];
-                if (abs(dx) < rad && abs(dy) < rad && dx*dx+dy*dy < asteroidRadiusSqByType[a->type]) {
-                    Fixed2D4 norm = a->pos - pos;
-                    norm = norm.normalize();
-                    Fixed2D4 v = velocity - a->velocity;
-                    Fixed2D4 change = (v -  norm * (Fix4(2,0) * norm.dot(v))) * Fix4(0,8) - norm * Fix4(0,12);
-                    a->push(-change);
-                    velocity = change;
-                    if (takenHitCooldown == 0)
-                        takeDamage(16);
-                    takenHitCooldown = 8;
-
-                    break;
-                }
-            }
         }
 
         pos += velocity * Fix4(0,6);

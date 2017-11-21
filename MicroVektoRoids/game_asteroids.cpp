@@ -99,7 +99,7 @@ namespace Game {
             if (type == AsteroidType::WhiteSmall) {
                 for (int i=0;i<5;i+=1) {
                     Fixed2D4 vel;
-                    vel = vel.randomCircle(Fix4(4,5));
+                    vel = vel.randomCircle(Fix4(2,5));
                     Collectable::spawn(pos,vel);
                 }
             }
