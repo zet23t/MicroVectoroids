@@ -119,6 +119,7 @@ namespace Game {
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,10,5,15,0);
         shipManager.ships[1].init(2,15,8,15,0);
+        shipManager.ships[2].init(3,35,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
         for (int i=0;i<30;i+=1) {

@@ -55,6 +55,14 @@ namespace Game {
     }
 
     void Ship::tickEnemySmallShip() {
+       // printf("%f %f\n",direction.x.asFloat(),direction.y.asFloat());
+        //direction += direction.right() * Fix4(0,3);
+        Fixed2D4 diff = shipManager.ships[0].pos - pos;
+        int mdist = max(diff.x.getIntegerPart(), diff.y.getIntegerPart());
+        if (mdist > 200) return;
+
+        direction = diff;
+        direction = direction.normalize();
     }
 
     void Ship::handleAsteroidsCollisions() {
@@ -122,17 +130,22 @@ namespace Game {
     }
 
     int calcDirectionIndex(Fixed2D4 direction) {
-        FixedNumber16<4> dirModY = direction.y;
-        // making up for missing asin transformation (for converting dot to angle) - rotation ain't linear
-        if (dirModY < 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 7) dirModY += FixedNumber16<4>(0,3);
-        if (dirModY < 0 && dirModY.getFractionPart() > 11 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
-        if (dirModY > 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 9) dirModY -= FixedNumber16<4>(0,3);
-        if (dirModY > 0 && dirModY.getFractionPart() > 8 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
-        int idir = 8-((dirModY + FixedNumber16<4>(1,0)) * FixedNumber16<4>(4,0)).getIntegerPart();
-        if (idir < 0) idir = 0;
-        if (idir > 8) idir = 8;
-        if (direction.x < 0) idir = 16 - idir;
-        return idir;
+        int y = direction.y.getRaw();
+        int x = direction.x.getRaw();
+        // 16,0 = right
+        // 0,16 = bottom = 0
+        int idir = 0;
+        if (y > 15 && abs(x) < 4) return 0;
+        if (x > 15 && abs(y) < 4) return 4;
+        if (x < -15 && abs(y) < 4) return 12;
+        if (y < -15 && abs(x) < 4) return 8;
+        if (x > 14) return y<0 ? 5 : 3;
+        if (x > 10) return y<0 ? 6 : 2;
+        if (x < -14) return y<0 ? 11 : 13;
+        if (x < -10) return y<0 ? 10 : 14;
+        if (y > 0) return x<0 ? 15 : 1;
+        if (y < 0) return x<0 ? 9 : 7;
+        return 0;
     }
 
     void Ship::draw() {
@@ -145,10 +158,12 @@ namespace Game {
                 int idir = calcDirectionIndex(direction);
                 int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
                 drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
-
+                Fixed2D4 dir = (pos + direction * Fix4(15,0));
+                drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0]);
                 if (takenHitCooldown) {
                     drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown])->blend(RenderCommandBlendMode::add);
                 }
+
             }
             break;
         case 2:
@@ -161,6 +176,14 @@ namespace Game {
                 const int dy = y - cy;
                 const int px = cx + dx / 3 * 2, py = cy + dy / 3 * 2;
                 drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6])->blend(RenderCommandBlendMode::add);
+            }
+            break;
+        case 3:
+            {
+
+                int idir = calcDirectionIndex(direction);
+                int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
+                drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_enemy_small.sprites[idir])->blend(RenderCommandBlendMode::add);
             }
             break;
         }
