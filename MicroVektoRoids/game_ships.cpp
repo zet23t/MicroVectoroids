@@ -57,12 +57,26 @@ namespace Game {
     void Ship::tickEnemySmallShip() {
        // printf("%f %f\n",direction.x.asFloat(),direction.y.asFloat());
         //direction += direction.right() * Fix4(0,3);
-        Fixed2D4 diff = shipManager.ships[0].pos - pos;
-        int mdist = max(diff.x.getIntegerPart(), diff.y.getIntegerPart());
+        Ship const* player = shipManager.ships;
+        Fixed2D4 diff = player->pos - pos;
+        int mdist = diff.x.getIntegerPart() > diff.y.getIntegerPart() ? diff.x.getIntegerPart() : diff.y.getIntegerPart();
         if (mdist > 200) return;
+        Fixed2D4 six = -player->direction - player->velocity * Fix4(2,0);
+        if (six.x==0 && six.y == 0) six = -player->direction;
+        six = six.normalize();
 
-        direction = diff;
-        direction = direction.normalize();
+        Fixed2D4 target = player->pos + six * Fix4(25,0);
+        Fixed2D4 sixdiff = target - pos;
+        if (sixdiff.x.absolute()+ sixdiff.y.absolute() > Fix4(5,0)) {
+            direction = sixdiff;
+            direction = direction.normalize();
+            velocity += direction;
+
+        } else {
+            direction = diff;
+            direction = direction.normalize();
+        }
+
     }
 
     void Ship::handleAsteroidsCollisions() {
