@@ -3,6 +3,7 @@
 #include "game_common.h"
 #include "game_particles.h"
 #include "game_collectable.h"
+#include "game_balancing.h"
 
 namespace Game {
     AsteroidManager asteroidManager;
@@ -99,7 +100,7 @@ namespace Game {
             if (type == AsteroidType::WhiteSmall) {
                 for (int i=0;i<5;i+=1) {
                     Fixed2D4 vel;
-                    vel = vel.randomCircle(Fix4(2,5));
+                    vel = vel.randomCircle(ASTEROIDS_DUST_EJECTION_POWER);
                     Collectable::spawn(pos,vel);
                 }
             }

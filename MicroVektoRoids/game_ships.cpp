@@ -120,51 +120,47 @@ namespace Game {
         if (dmg > 255 - damage) damage = 255;
         else damage += dmg;
     }
+
+    int calcDirectionIndex(Fixed2D4 direction) {
+        FixedNumber16<4> dirModY = direction.y;
+        // making up for missing asin transformation (for converting dot to angle) - rotation ain't linear
+        if (dirModY < 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 7) dirModY += FixedNumber16<4>(0,3);
+        if (dirModY < 0 && dirModY.getFractionPart() > 11 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
+        if (dirModY > 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 9) dirModY -= FixedNumber16<4>(0,3);
+        if (dirModY > 0 && dirModY.getFractionPart() > 8 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
+        int idir = 8-((dirModY + FixedNumber16<4>(1,0)) * FixedNumber16<4>(4,0)).getIntegerPart();
+        if (idir < 0) idir = 0;
+        if (idir > 8) idir = 8;
+        if (direction.x < 0) idir = 16 - idir;
+        return idir;
+    }
+
     void Ship::draw() {
         switch (type) {
         case 1:
             {
                 const int pivotX = -8;
                 const int pivotY = -8;
-                FixedNumber16<4> dirModY = direction.y;
-                // making up for missing asin transformation (for converting dot to angle) - rotation ain't linear
-                if (dirModY < 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 7) dirModY += FixedNumber16<4>(0,3);
-                if (dirModY < 0 && dirModY.getFractionPart() > 11 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
-                if (dirModY > 0 && dirModY.getFractionPart() > 2 && dirModY.getFractionPart() < 9) dirModY -= FixedNumber16<4>(0,3);
-                if (dirModY > 0 && dirModY.getFractionPart() > 8 && dirModY.getFractionPart() < 13) dirModY -= FixedNumber16<4>(0,1);
-                int idir = 8-((dirModY + FixedNumber16<4>(1,0)) * FixedNumber16<4>(4,0)).getIntegerPart();
-                if (idir < 0) idir = 0;
-                if (idir > 8) idir = 8;
-                if (direction.x < 0) idir = 16 - idir;
 
-                SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16];
-
-                int w = rect.width, h = rect.height;
-                buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX + pivotX,pos.y.getIntegerPart() + rect.offsetY + pivotY,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
+                int idir = calcDirectionIndex(direction);
+                int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
+                drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
 
                 if (takenHitCooldown) {
-                    SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown];
-                    w = rect.width;
-                    h = rect.height;
-                    buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - rect.origWidth / 2,
-                                    pos.y.getIntegerPart() + rect.offsetY - rect.origHeight / 2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
+                    drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown])->blend(RenderCommandBlendMode::add);
                 }
             }
             break;
         case 2:
             {
-                SpriteSheetRect rect = ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6];
-
-                const int pivotX = -16;
-                const int pivotY = -16;
-                int w = rect.width, h = rect.height;
                 const int cx = buffer.getOffsetX()+48;
                 const int cy = buffer.getOffsetY()+32;
                 const int x = pos.x.getIntegerPart();
                 const int y = pos.y.getIntegerPart();
                 const int dx = x - cx;
                 const int dy = y - cy;
-                buffer.drawRect(cx + dx / 3 * 2 + rect.offsetX + pivotX,cy + dy / 3 * 2 + rect.offsetY + pivotY,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
+                const int px = cx + dx / 3 * 2, py = cy + dy / 3 * 2;
+                drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6])->blend(RenderCommandBlendMode::add);
             }
             break;
         }
