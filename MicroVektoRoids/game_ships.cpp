@@ -64,16 +64,26 @@ namespace Game {
         Fixed2D4 six = -player->direction - player->velocity * Fix4(2,0);
         if (six.x==0 && six.y == 0) six = -player->direction;
         six = six.normalize();
-
+        Fixed2D4 diffNorm = diff.normalize();
+        bool finalTarget = true;
+        if (diffNorm.dot(six) > 0) {
+            if (diffNorm.dot(six.right()) < 0) six = six.right();
+            else six = six.left();
+            finalTarget = false;
+        }
         Fixed2D4 target = player->pos + six * Fix4(25,0);
+        //buffer.drawRect(target.x.getIntegerPart(),target.y.getIntegerPart(),2,2)->filledRect(0xffff);
         Fixed2D4 sixdiff = target - pos;
-        if (sixdiff.x.absolute()+ sixdiff.y.absolute() > Fix4(5,0)) {
-            direction = sixdiff;
+
+        if (sixdiff.manhattanDistance() > Fix4(10,0) || !finalTarget) {
+            direction = direction * Fix4(15,5) + sixdiff;
             direction = direction.normalize();
+            velocity = velocity * Fix4(0,12);
             velocity += direction;
 
         } else {
-            direction = diff;
+            velocity = velocity * Fix4(0,12);
+            direction = diff + direction * Fix4(1,5);
             direction = direction.normalize();
         }
 
@@ -173,7 +183,7 @@ namespace Game {
                 int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
                 drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
                 Fixed2D4 dir = (pos + direction * Fix4(15,0));
-                drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0]);
+                drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0])->blend(RenderCommandBlendMode::add);
                 if (takenHitCooldown) {
                     drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown])->blend(RenderCommandBlendMode::add);
                 }
