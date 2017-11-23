@@ -55,7 +55,7 @@ namespace Game {
         int16_t rad2 = asteroidRadiusSqByType[type];
         for (int i=0;i<ProjectileMaxCount;i+=1) {
             Projectile* p = &projectileManager.projectiles[i];
-            if (p->type) {
+            if (p->type == ProjectileTypePlayer) {
                 Fixed2D4 dir = p->pos - pos;
                 int16_t dx = dir.x.getIntegerPart();
                 int16_t dy = dir.y.getIntegerPart();

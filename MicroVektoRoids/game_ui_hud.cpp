@@ -11,6 +11,7 @@ namespace Game {
 
             bool targetLock;
             Fixed2D4 targetPosition;
+            Fixed2D4 targetVelocity;
 
             Fixed2D4 highlightPosition;
             uint8_t highlightRadius;
@@ -54,6 +55,7 @@ namespace Game {
                 Fixed2D4 bestTarget;
                 uint8_t targetRad = 0;
                 Fix4 bestDot = Fix4(-1,0);
+                Fixed2D4 bestVelocity;
                 for (int i=0;i<AsteroidsCount;i+=1) {
                     Asteroid *a = &asteroidManager.asteroids[i];
                     if (!a->type) continue;
@@ -68,13 +70,38 @@ namespace Game {
                     if (dot > bestDot) {
                         bestDot = dot;
                         bestTarget = a->pos;
+                        bestVelocity = a->velocity;
                         targetRad = asteroidRadiusByType[a->type] / 2 + 2;
                     }
                 }
-                if (bestDot > Fix4(0,12)) {
+                Fixed2D4 bestTargetEnemy;
+                uint8_t targetRadEnemy = 0;
+                Fix4 bestDotEnemy = Fix4(-1,0);
+                Fixed2D4 bestVelocityEnemy;
+                for (int i=1;i<ShipCount;i+=1) {
+                    Ship *s = &shipManager.ships[i];
+                    if (s->type != 3) continue;
+                    int16_t ax = s->pos.x.getIntegerPart();
+                    int16_t ay = s->pos.y.getIntegerPart();
+                    int16_t dx = ax - sx;
+                    int16_t dy = ay - sy;
+                    if (abs(dx) > 50 ||abs(dy) > 50) continue;
+                    Fixed2D4 targetDir = s->pos - ship->pos;
+                    targetDir = targetDir.normalize();
+                    Fix4 dot = targetDir.dot(dir);
+                    if (dot > bestDotEnemy) {
+                        bestDotEnemy = dot;
+                        bestTargetEnemy = s->pos;
+                        targetRadEnemy = 6;
+                        bestVelocityEnemy = s->velocity;
+                    }
+                }
+                int sel = bestDotEnemy > Fix4(0,10) ? 1 : (bestDot > Fix4(0,12) ? 2 : 0);
+                if (sel) {
                     targetLock = true;
-                    targetPosition = bestTarget;
-                    updateTargetHighlight(true, targetPosition, targetRad);
+                    targetPosition = sel == 1 ? bestTargetEnemy : bestTarget;
+                    targetVelocity=sel == 1? bestVelocityEnemy : bestVelocity;
+                    updateTargetHighlight(true, targetPosition, sel== 1 ?targetRadEnemy : targetRad);
                     //highlightTarget(bestTarget,targetRad);
                 } else {
                     targetLock = false;

@@ -47,11 +47,25 @@ namespace Game {
         }
     }
 
+    void Ship::handleProjectileCollisions(uint8_t ptype) {
+        for (int i=0;i<ProjectileMaxCount;i+=1) {
+            Projectile* p = &projectileManager.projectiles[i];
+            if (p->type == ptype) {
+                Fixed2D4 diff = pos - p->pos;
+                if (diff.manhattanDistance() < Fix4(10,0) && diff.length() < Fix4(5,0)) {
+                    p->impact();
+                    takeDamage(8);
+                }
+            }
+        }
+    }
+
     void Ship::tickPlayer() {
         if (takenHitCooldown == 0) {
             tickPlayerControls();
         }
         handleAsteroidsCollisions();
+        handleProjectileCollisions(ProjectileTypeEnemy);
     }
 
     void Ship::tickEnemySmallShip() {
@@ -59,34 +73,49 @@ namespace Game {
         //direction += direction.right() * Fix4(0,3);
         Ship const* player = shipManager.ships;
         Fixed2D4 diff = player->pos - pos;
-        int mdist = diff.x.getIntegerPart() > diff.y.getIntegerPart() ? diff.x.getIntegerPart() : diff.y.getIntegerPart();
+        int mdist = diff.manhattanDistance().getIntegerPart();
         if (mdist > 200) return;
         Fixed2D4 six = -player->direction - player->velocity * Fix4(2,0);
         if (six.x==0 && six.y == 0) six = -player->direction;
         six = six.normalize();
-        Fixed2D4 diffNorm = diff.normalize();
+        Fixed2D4 diffNorm = diff;
+        diffNorm.normalize();
         bool finalTarget = true;
-        if (diffNorm.dot(six) > 0) {
+        //buffer.drawRect((player->pos + six * Fix4(25,0)).x.getIntegerPart(),(player->pos + six * Fix4(25,0)).y.getIntegerPart(),2,2)->filledRect(0xfc0f);
+        Fix4 dot= diffNorm.dot(six);
+        if (dot > Fix4(0,10)) {
             if (diffNorm.dot(six.right()) < 0) six = six.right();
             else six = six.left();
             finalTarget = false;
         }
         Fixed2D4 target = player->pos + six * Fix4(25,0);
-        //buffer.drawRect(target.x.getIntegerPart(),target.y.getIntegerPart(),2,2)->filledRect(0xffff);
         Fixed2D4 sixdiff = target - pos;
+        //if(sixdiff.length() > diff.length() * Fix4(2,0)) {
+            //    printf("%f %f\n", sixdiff.manhattanDistance().asFloat(), diff.manhattanDistance().asFloat());
+        //    target = player->pos + diffNorm.right() * Fix4(25,0);
+        //    finalTarget = false;
+        //}
+        //buffer.drawRect(target.x.getIntegerPart(),target.y.getIntegerPart(),2,2)->filledRect(0xffff);
 
-        if (sixdiff.manhattanDistance() > Fix4(10,0) || !finalTarget) {
-            direction = direction * Fix4(15,5) + sixdiff;
+        if ((sixdiff.manhattanDistance() > Fix4(10,0)) || !finalTarget) {
+            Fixed2D4 turn = sixdiff;
+            turn.normalize();
+            direction = direction * Fix4(3,5) + turn;
             direction = direction.normalize();
             velocity = velocity * Fix4(0,12);
-            velocity += direction;
+            velocity += direction * Fix4(1,0);
 
         } else {
+            //printf("reached %d\n",frame);
             velocity = velocity * Fix4(0,12);
-            direction = diff + direction * Fix4(1,5);
+            diff.normalize();
+            direction = diff + direction * (dot + Fix4(1,0));
             direction = direction.normalize();
         }
+        if (dot < Fix4(-1,8) && diffNorm.dot(direction) > Fix4(0,8))
+            shoot();
 
+        handleProjectileCollisions(ProjectileTypePlayer);
     }
 
     void Ship::handleAsteroidsCollisions() {
@@ -142,8 +171,9 @@ namespace Game {
             Fix4 v = Fix4(2,0)/dist;
             dir.scale(v);
             Fixed2D4 p = pos - direction * 6;
+            uint8_t exhaustType = type == 1 ? ParticleType::PlayerShipTrail : ParticleType::EnemyShipTrail;
             for (Fix4 f = 0; f<=dist + Fix4(0,8); f+=Fix4(2,0)) {
-                particleSystem.spawn(1,p,Fixed2D4());
+                particleSystem.spawn(exhaustType,p,Fixed2D4());
                 p -= dir;
             }
         }
@@ -225,13 +255,17 @@ namespace Game {
 
     void Ship::shoot() {
         if (shootCooldown == 0) {
-            shootCooldown = 8;
+            shootCooldown = type == 1 ? 8 : 12;
             Fixed2D4 dir = direction;
-            if (UI::HUD::targetLock) {
+            if (UI::HUD::targetLock && type == 1) {
+
                 dir = UI::HUD::targetPosition - pos;
+                dir += UI::HUD::targetVelocity * Fix4(0,1) * dir.length();
                 dir = dir.normalize();
             }
-            projectileManager.spawn(1, pos + dir * Fix4(3,0), dir * Fix4(6,0) + velocity * Fix4(0,6));
+
+            projectileManager.spawn(type == 1 ? ProjectileTypePlayer : ProjectileTypeEnemy, pos + dir * Fix4(3,0),
+                                    dir * Fix4(type == 1 ? 6 : 4,0) + velocity * Fix4(0,6));
         }
     }
 

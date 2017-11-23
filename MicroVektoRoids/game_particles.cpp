@@ -10,6 +10,9 @@ namespace Game {
         uint8_t PlayerShot = 2;
         uint8_t PlayerShotImpact = 3;
         uint8_t AsteroidFragmentWhite = 4;
+        uint8_t EnemyShot = 5;
+        uint8_t EnemyShotImpact = 6;
+        uint8_t EnemyShipTrail = 7;
     }
 
     const SpriteSheet* sheetByType[] = {
@@ -18,10 +21,13 @@ namespace Game {
         &ImageAsset::TextureAtlas_atlas::player_shot,
         &ImageAsset::TextureAtlas_atlas::player_shot,
         &ImageAsset::TextureAtlas_atlas::ship_asteroid_fragment_white,
+        &ImageAsset::TextureAtlas_atlas::enemy_shot,
+        &ImageAsset::TextureAtlas_atlas::enemy_shot,
+        &ImageAsset::TextureAtlas_atlas::ship_enemy_exhaust,
     };
 
     const uint8_t maxAgeByType[] {
-        0,5,2,5,10
+        0,5,2,5,10,2,5,5
     };
 
     void Particle::draw() {
@@ -34,6 +40,9 @@ namespace Game {
         buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - rect.origWidth/2 ,pos.y.getIntegerPart() + rect.offsetY - rect.origHeight/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::bitwiseOr);
         if (type == ParticleType::PlayerShotImpact) {
             particleSystem.spawn(ParticleType::PlayerShot,pos,Fixed2D4(0,0));
+        }
+        if (type == ParticleType::EnemyShotImpact) {
+            particleSystem.spawn(ParticleType::EnemyShot,pos,Fixed2D4(0,0));
         }
 //            ->blend(RenderCommandBlendMode::add)->filledRect(RGB565(255,255,32));
     }

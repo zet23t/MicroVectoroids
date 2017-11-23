@@ -17,6 +17,7 @@ namespace TextureAtlas_atlas {
     extern const SpriteSheet ui_crosshair;
     extern const SpriteSheet ship_station;
     extern const SpriteSheet menu_triangle_right;
+    extern const SpriteSheet ship_enemy_exhaust;
     extern const SpriteSheet ship_asteroid;
     extern const SpriteSheet collectable_score;
     extern const SpriteSheet ui_shield_bar_inner;
@@ -25,8 +26,9 @@ namespace TextureAtlas_atlas {
     extern const SpriteSheet ship_enemy_small;
     extern const SpriteSheet player_shot;
     extern const SpriteSheet ui_target_marker;
-    extern const SpriteSheet radar_triangle_blue;
     extern const SpriteSheet ui_shield_bar;
+    extern const SpriteSheet enemy_shot;
+    extern const SpriteSheet radar_triangle_blue;
     extern const SpriteSheet ship_asteroid_small;
     extern const SpriteSheet ship_asteroid_fragment_white;
     extern const SpriteSheet ship_triangle_shield;

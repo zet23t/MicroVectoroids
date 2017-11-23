@@ -6,6 +6,8 @@
 
 namespace Game {
     #define ProjectileMaxCount 32
+    #define ProjectileTypePlayer (uint8_t)1
+    #define ProjectileTypeEnemy (uint8_t)2
     struct Projectile {
         Fixed2D4 pos;
         Fixed2D4 prevPos;

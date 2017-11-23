@@ -73,7 +73,6 @@ namespace Game {
         if (gameState == GameState::Running) {
 
             frame += 1;
-            shipManager.tick();
             particleSystem.tick();
             asteroidManager.tick();
             projectileManager.tick();
@@ -95,6 +94,7 @@ namespace Game {
             camY = targetY;
         }
         buffer.setOffset(camX - 48, camY -32);
+            shipManager.tick();
 
         drawSpaceBackground(0, RGB565(62,62,62));
         drawSpaceBackground(1, RGB565(180,180,180));

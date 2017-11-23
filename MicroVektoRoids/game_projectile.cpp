@@ -10,10 +10,11 @@ namespace Game {
     }
 
     void Projectile::impact() {
-        particleSystem.spawn(ParticleType::PlayerShotImpact, pos, velocity.right() * Fix4(0,6));
-        particleSystem.spawn(ParticleType::PlayerShotImpact, pos, velocity.left() * Fix4(0,6));
-        particleSystem.spawn(ParticleType::PlayerShotImpact, pos, velocity.left() * Fix4(0,3) - velocity * Fix4(0,3));
-        particleSystem.spawn(ParticleType::PlayerShotImpact, pos, velocity.right() * Fix4(0,3) - velocity * Fix4(0,3));
+        uint8_t t = type == ProjectileTypePlayer ? ParticleType::PlayerShotImpact : ParticleType::EnemyShotImpact;
+        particleSystem.spawn(t, pos, velocity.right() * Fix4(0,6));
+        particleSystem.spawn(t, pos, velocity.left() * Fix4(0,6));
+        particleSystem.spawn(t, pos, velocity.left() * Fix4(0,3) - velocity * Fix4(0,3));
+        particleSystem.spawn(t, pos, velocity.right() * Fix4(0,3) - velocity * Fix4(0,3));
         type = 0;
     }
 
@@ -32,7 +33,9 @@ namespace Game {
             Fixed2D4 p = pos;
             for (Fix4 step = 0; step < len; step += Fix4(2,0)) {
                 p += dir * Fix4(2,0);
-                particleSystem.spawn(ParticleType::PlayerShot, p, velocity * Fix4(0,0));
+                particleSystem.spawn(type == ProjectileTypePlayer ?
+                                     ParticleType::PlayerShot :
+                                     ParticleType::EnemyShot, p, velocity * Fix4(0,0));
             }
         }
         //particleSystem.spawn(ParticleType::PlayerShot, pos - velocity * Fix4(0,8),  velocity * Fix4(1,0));
