@@ -23,6 +23,8 @@ namespace Game {
         void init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy);
         void shoot();
         void takeDamage(uint8_t dmg);
+        void explode();
+        uint8_t maxDamage();
     };
 
     struct ShipManager {

@@ -178,8 +178,26 @@ namespace Game {
             }
         }
     }
+
+    uint8_t Ship::maxDamage() {
+        return type == 1 ? 255: 24;
+    }
+
+    void Ship::explode() {
+        uint8_t t = type == ProjectileTypePlayer ? ParticleType::PlayerShotImpact : ParticleType::EnemyShotImpact;
+        particleSystem.spawn(t, pos, direction.right() * Fix4(0,6));
+        particleSystem.spawn(t, pos, direction.left() * Fix4(0,6));
+        particleSystem.spawn(t, pos, direction.left() * Fix4(0,3) - direction * Fix4(0,3));
+        particleSystem.spawn(t, pos, direction.right() * Fix4(0,3) - direction * Fix4(0,3));
+
+        type = 0;
+    }
+
     void Ship::takeDamage(uint8_t dmg) {
-        if (dmg > 255 - damage) damage = 255;
+        if (dmg > maxDamage() - damage) {
+            damage = maxDamage();
+            explode();
+        }
         else damage += dmg;
     }
 
