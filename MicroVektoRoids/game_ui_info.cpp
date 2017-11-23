@@ -8,9 +8,11 @@ namespace Game {
             uint32_t displayedScore;
 
             void tick() {
-                displayedScore = displayedScore / 2 + PlayerStats::score / 2;
-                if (displayedScore < PlayerStats::score) displayedScore +=1;
-                if (displayedScore > PlayerStats::score) displayedScore -=1;
+                if (frame % 2 == 0) {
+                    displayedScore = displayedScore / 2 + PlayerStats::score / 2;
+                    if (displayedScore < PlayerStats::score) displayedScore +=1;
+                    if (displayedScore > PlayerStats::score) displayedScore -=1;
+                }
             }
 
             void draw() {

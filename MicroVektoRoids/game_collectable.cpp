@@ -42,7 +42,7 @@ namespace Game {
                 int dy = sp.y.getIntegerPart() - pos.y.getIntegerPart();
                 if (abs(dx) < PLAYER_SHIP_DUST_COLLECTION_RANGE && abs(dy) < PLAYER_SHIP_DUST_COLLECTION_RANGE) {
                     collectables[i].active = false;
-                    PlayerStats::awardScore(1);
+                    PlayerStats::awardScore(5);
                     continue;
                 }
                 if (abs(dx) < PLAYER_SHIP_DUST_ATTRACTION_RANGE && abs(dy) < PLAYER_SHIP_DUST_ATTRACTION_RANGE) {

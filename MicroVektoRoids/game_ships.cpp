@@ -4,6 +4,7 @@
 #include "game_projectile.h"
 #include "game_asteroids.h"
 #include "game_ui_hud.h"
+#include "game_collectable.h"
 
 namespace Game {
     ShipManager shipManager;
@@ -184,11 +185,18 @@ namespace Game {
     }
 
     void Ship::explode() {
-        uint8_t t = type == ProjectileTypePlayer ? ParticleType::PlayerShotImpact : ParticleType::EnemyShotImpact;
-        particleSystem.spawn(t, pos, direction.right() * Fix4(0,6));
-        particleSystem.spawn(t, pos, direction.left() * Fix4(0,6));
-        particleSystem.spawn(t, pos, direction.left() * Fix4(0,3) - direction * Fix4(0,3));
-        particleSystem.spawn(t, pos, direction.right() * Fix4(0,3) - direction * Fix4(0,3));
+        uint8_t t = type == ProjectileTypePlayer ? ParticleType::PlayerShipExplosion : ParticleType::EnemyShipExplosion;
+        for (int i=0;i<20;i+=1) {
+            Fixed2D4 r;
+            Fixed2D4 p = r.randomCircle(Fix4(8,0));
+            Fixed2D4 vel = r.randomCircle(Fix4(1,6));
+            if (i < 10)
+                Collectable::spawn(pos, vel * Fix4(3,0));
+            particleSystem.spawn(t, pos + p, vel);
+        }
+        //particleSystem.spawn(t, pos, direction.left() * Fix4(0,6));
+        //particleSystem.spawn(t, pos, direction.left() * Fix4(0,3) - direction * Fix4(0,3));
+        //particleSystem.spawn(t, pos, direction.right() * Fix4(0,3) - direction * Fix4(0,3));
 
         type = 0;
     }

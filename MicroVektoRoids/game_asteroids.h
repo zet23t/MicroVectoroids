@@ -32,4 +32,5 @@ namespace Game {
     extern AsteroidManager asteroidManager;
     extern const uint8_t asteroidRadiusByType[];
     extern const uint16_t asteroidRadiusSqByType[];
+    extern const uint8_t asteroidMaxHitsByType[];
 }

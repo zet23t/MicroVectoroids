@@ -2,7 +2,7 @@
 #include "lib_FixedMath.h"
 
 namespace Game {
-    #define ShipCount 4
+    #define ShipCount 24
     struct Ship {
         Fixed2D4 pos;
         Fixed2D4 prevPos;

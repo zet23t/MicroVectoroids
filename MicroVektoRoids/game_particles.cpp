@@ -6,13 +6,15 @@ namespace Game {
     ParticleSystem particleSystem;
 
     namespace ParticleType {
-        uint8_t PlayerShipTrail = 1;
-        uint8_t PlayerShot = 2;
-        uint8_t PlayerShotImpact = 3;
-        uint8_t AsteroidFragmentWhite = 4;
-        uint8_t EnemyShot = 5;
-        uint8_t EnemyShotImpact = 6;
-        uint8_t EnemyShipTrail = 7;
+        const uint8_t PlayerShipTrail = 1;
+        const uint8_t PlayerShot = 2;
+        const uint8_t PlayerShotImpact = 3;
+        const uint8_t AsteroidFragmentWhite = 4;
+        const uint8_t EnemyShot = 5;
+        const uint8_t EnemyShotImpact = 6;
+        const uint8_t EnemyShipTrail = 7;
+        const uint8_t PlayerShipExplosion = 8;
+        const uint8_t EnemyShipExplosion = 9;
     }
 
     const SpriteSheet* sheetByType[] = {
@@ -24,10 +26,12 @@ namespace Game {
         &ImageAsset::TextureAtlas_atlas::enemy_shot,
         &ImageAsset::TextureAtlas_atlas::enemy_shot,
         &ImageAsset::TextureAtlas_atlas::ship_enemy_exhaust,
+        &ImageAsset::TextureAtlas_atlas::ship_exhaust,
+        &ImageAsset::TextureAtlas_atlas::ship_enemy_exhaust,
     };
 
     const uint8_t maxAgeByType[] {
-        0,5,2,5,10,2,5,5
+        0,5,2,5,10,2,5,5,20,20
     };
 
     void Particle::draw() {

@@ -5,13 +5,15 @@ namespace Game {
     #define ParticleCount 64
 
     namespace ParticleType {
-        extern uint8_t PlayerShipTrail;
-        extern uint8_t PlayerShot;
-        extern uint8_t PlayerShotImpact;
-        extern uint8_t AsteroidFragmentWhite;
-        extern uint8_t EnemyShot;
-        extern uint8_t EnemyShotImpact;
-        extern uint8_t EnemyShipTrail;
+        extern const uint8_t PlayerShipTrail;
+        extern const uint8_t PlayerShot;
+        extern const uint8_t PlayerShotImpact;
+        extern const uint8_t AsteroidFragmentWhite;
+        extern const uint8_t EnemyShot;
+        extern const uint8_t EnemyShotImpact;
+        extern const uint8_t EnemyShipTrail;
+        extern const uint8_t PlayerShipExplosion;
+        extern const uint8_t EnemyShipExplosion;
     }
 
     struct Particle {

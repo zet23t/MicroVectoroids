@@ -74,6 +74,7 @@ namespace Game {
 
             frame += 1;
             particleSystem.tick();
+            shipManager.tick();
             asteroidManager.tick();
             projectileManager.tick();
             Collectable::tick();
@@ -94,7 +95,6 @@ namespace Game {
             camY = targetY;
         }
         buffer.setOffset(camX - 48, camY -32);
-            shipManager.tick();
 
         drawSpaceBackground(0, RGB565(62,62,62));
         drawSpaceBackground(1, RGB565(180,180,180));
@@ -119,7 +119,7 @@ namespace Game {
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,10,5,15,0);
         shipManager.ships[1].init(2,15,8,15,0);
-        shipManager.ships[2].init(3,35,8,15,0);
+        //shipManager.ships[2].init(3,35,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
         for (int i=0;i<30;i+=1) {
@@ -127,6 +127,12 @@ namespace Game {
             int y = (Math::randInt() % 1024) - 512;
             if (x*x+y*y > 20)
                 asteroidManager.spawn()->init(1,x,y);
+        }
+        for (int i=0;i<15;i+=1) {
+            int x = (Math::randInt() % 1024) - 512;
+            int y = (Math::randInt() % 1024) - 512;
+            if (x*x+y*y > 20)
+                shipManager.ships[i+2].init(3,x,y,15,0);
         }
 
         projectileManager.init();

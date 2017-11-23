@@ -12,7 +12,8 @@ namespace Game {
             bool targetLock;
             Fixed2D4 targetPosition;
             Fixed2D4 targetVelocity;
-
+            uint8_t targetDamage;
+            uint8_t targetMaxDamage;
             Fixed2D4 highlightPosition;
             uint8_t highlightRadius;
 
@@ -45,6 +46,25 @@ namespace Game {
                 if (highlightRadius > 0) highlightTarget(highlightPosition, highlightRadius);
             }
 
+            struct BestInfo {
+                Fixed2D4 pos;
+                Fixed2D4 vel;
+                Fix4 dot;
+                uint8_t rad;
+                uint8_t dmg;
+                uint8_t maxDmg;
+
+                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd) {
+                    if (dot > d) return;
+                    pos = p;
+                    vel = v;
+                    dot = d;
+                    rad = r;
+                    dmg = dm;
+                    maxDmg = maxd;
+                }
+            };
+
 
             void draw() {
                 Ship* ship = &shipManager.ships[0];
@@ -52,10 +72,9 @@ namespace Game {
                 Fixed2D4 dir = ship->direction;
                 int16_t sx = ship->pos.x.getIntegerPart();
                 int16_t sy = ship->pos.y.getIntegerPart();
-                Fixed2D4 bestTarget;
-                uint8_t targetRad = 0;
-                Fix4 bestDot = Fix4(-1,0);
-                Fixed2D4 bestVelocity;
+                BestInfo asteroidInfo;
+                asteroidInfo.dot = Fix4(-1,0);
+
                 for (int i=0;i<AsteroidsCount;i+=1) {
                     Asteroid *a = &asteroidManager.asteroids[i];
                     if (!a->type) continue;
@@ -67,17 +86,11 @@ namespace Game {
                     Fixed2D4 targetDir = a->pos - ship->pos;
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
-                    if (dot > bestDot) {
-                        bestDot = dot;
-                        bestTarget = a->pos;
-                        bestVelocity = a->velocity;
-                        targetRad = asteroidRadiusByType[a->type] / 2 + 2;
-                    }
+                    asteroidInfo.init(a->pos, a->velocity, dot, asteroidRadiusByType[a->type] /2 + 2, a->hits,
+                                      asteroidMaxHitsByType[a->type]);
                 }
-                Fixed2D4 bestTargetEnemy;
-                uint8_t targetRadEnemy = 0;
-                Fix4 bestDotEnemy = Fix4(-1,0);
-                Fixed2D4 bestVelocityEnemy;
+                BestInfo shipInfo;
+                shipInfo.dot = Fix4(-1,0);
                 for (int i=1;i<ShipCount;i+=1) {
                     Ship *s = &shipManager.ships[i];
                     if (s->type != 3) continue;
@@ -89,19 +102,17 @@ namespace Game {
                     Fixed2D4 targetDir = s->pos - ship->pos;
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
-                    if (dot > bestDotEnemy) {
-                        bestDotEnemy = dot;
-                        bestTargetEnemy = s->pos;
-                        targetRadEnemy = 6;
-                        bestVelocityEnemy = s->velocity;
-                    }
+                    shipInfo.init(s->pos, s->velocity, dot, 6, s->damage, s->maxDamage());
                 }
-                int sel = bestDotEnemy > Fix4(0,10) ? 1 : (bestDot > Fix4(0,12) ? 2 : 0);
+                int sel = shipInfo.dot > Fix4(0,10) ? 1 : (asteroidInfo.dot > Fix4(0,12) ? 2 : 0);
                 if (sel) {
+                    BestInfo info = sel == 1 ? shipInfo : asteroidInfo;
                     targetLock = true;
-                    targetPosition = sel == 1 ? bestTargetEnemy : bestTarget;
-                    targetVelocity=sel == 1? bestVelocityEnemy : bestVelocity;
-                    updateTargetHighlight(true, targetPosition, sel== 1 ?targetRadEnemy : targetRad);
+                    targetPosition = info.pos;
+                    targetVelocity = info.vel;
+                    targetMaxDamage = info.maxDmg;
+                    targetDamage = info.dmg;
+                    updateTargetHighlight(true, targetPosition, info.rad);
                     //highlightTarget(bestTarget,targetRad);
                 } else {
                     targetLock = false;

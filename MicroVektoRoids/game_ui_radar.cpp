@@ -76,12 +76,16 @@ namespace Game {
                 Fixed2D4 cen = Fixed2D4(x+48,y+32);
                 for (int i=0;i<AsteroidsCount;i+=1) {
                     if (asteroidManager.asteroids[i].type) {
-                        addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos, RGB565(255,0,0));
+                        addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos, RGB565(128,128,128));
                     }
                 }
                 for (int i=0;i<ShipCount;i+=1) {
                     if (shipManager.ships[i].type == 2) {
                         addBlip(blipsShips, cen, shipManager.ships[i].pos, RGB565(50,80,250));
+                    }
+                    if(shipManager.ships[i].type > 2) {
+                        addBlip(blipsShips, cen, shipManager.ships[i].pos, RGB565(255,0,0));
+
                     }
                 }
                 for (int i=0;i<BlipCount;i+=1) {
