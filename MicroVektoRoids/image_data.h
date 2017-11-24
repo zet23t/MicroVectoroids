@@ -15,6 +15,7 @@ extern const ImageData atlas;
 namespace TextureAtlas_atlas {
     extern const SpriteSheet ship_triangle;
     extern const SpriteSheet ui_crosshair;
+    extern const SpriteSheet worm_hole;
     extern const SpriteSheet ship_station;
     extern const SpriteSheet menu_triangle_right;
     extern const SpriteSheet ship_enemy_exhaust;

@@ -16,6 +16,7 @@ namespace Game {
             uint8_t targetMaxDamage;
             Fixed2D4 highlightPosition;
             uint8_t highlightRadius;
+            char* highlightInfo;
 
 
             void highlightTarget(Fixed2D4 pos, uint8_t sz) {
@@ -25,14 +26,27 @@ namespace Game {
                 drawCenteredSprite(x + sz, y + sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[1])->blend(RenderCommandBlendMode::add)->setDepth(100);
                 drawCenteredSprite(x + sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[2])->blend(RenderCommandBlendMode::add)->setDepth(100);
                 drawCenteredSprite(x - sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[3])->blend(RenderCommandBlendMode::add)->setDepth(100);
+                if (highlightInfo) {
+                    int x = buffer.getOffsetX();
+                    int y = buffer.getOffsetY();
+                    buffer.setOffset(0,0);
+                    buffer.drawText(highlightInfo, 0,58,96,6,0,0,false,FontAsset::font,120, RenderCommandBlendMode::opaque);
+                    buffer.setOffset(x,y);
+                }
             }
-            void updateTargetHighlight(bool hasTarget, Fixed2D4 target, uint8_t rad) {
+
+            void updateTargetHighlight(bool hasTarget, Fixed2D4 target, int16_t* pos, uint8_t rad, char* info) {
                 if (hasTarget) {
+                    if (pos) {
+                        target.x.setIntegerPart(pos[0]);
+                        target.y.setIntegerPart(pos[1]);
+                    }
                     int dx = target.x.getIntegerPart() - highlightPosition.x.getIntegerPart();
                     int dy = target.y.getIntegerPart() - highlightPosition.y.getIntegerPart();
                     if (abs(dx) < 50 && abs(dy) < 50) {
                         highlightPosition = highlightPosition * Fix4(0,6) + target * Fix4(0,10);
                         highlightRadius = highlightRadius / 2 + rad / 2;
+                        highlightInfo = info;
                         if (rad > highlightRadius) highlightRadius += 1;
                         if (rad < highlightRadius) highlightRadius -=1;
                     }
@@ -48,13 +62,15 @@ namespace Game {
 
             struct BestInfo {
                 Fixed2D4 pos;
+                int16_t* screenPos;
                 Fixed2D4 vel;
                 Fix4 dot;
                 uint8_t rad;
                 uint8_t dmg;
                 uint8_t maxDmg;
+                char *info;
 
-                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd) {
+                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd, int16_t *screen, char *inf) {
                     if (dot > d) return;
                     pos = p;
                     vel = v;
@@ -62,6 +78,8 @@ namespace Game {
                     rad = r;
                     dmg = dm;
                     maxDmg = maxd;
+                    screenPos = screen;
+                    info = inf;
                 }
             };
 
@@ -87,13 +105,13 @@ namespace Game {
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
                     asteroidInfo.init(a->pos, a->velocity, dot, asteroidRadiusByType[a->type] /2 + 2, a->hits,
-                                      asteroidMaxHitsByType[a->type]);
+                                      asteroidMaxHitsByType[a->type], 0,0);
                 }
                 BestInfo shipInfo;
                 shipInfo.dot = Fix4(-1,0);
                 for (int i=1;i<ShipCount;i+=1) {
                     Ship *s = &shipManager.ships[i];
-                    if (s->type != 3) continue;
+                    if (s->type < 3) continue;
                     int16_t ax = s->pos.x.getIntegerPart();
                     int16_t ay = s->pos.y.getIntegerPart();
                     int16_t dx = ax - sx;
@@ -102,7 +120,7 @@ namespace Game {
                     Fixed2D4 targetDir = s->pos - ship->pos;
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
-                    shipInfo.init(s->pos, s->velocity, dot, 6, s->damage, s->maxDamage());
+                    shipInfo.init(s->pos, s->velocity, dot, s->type == ShipTypeWormHole ? 12 : 6, s->damage, s->maxDamage(), s->screenPos,s->info);
                 }
                 int sel = shipInfo.dot > Fix4(0,10) ? 1 : (asteroidInfo.dot > Fix4(0,12) ? 2 : 0);
                 if (sel) {
@@ -112,11 +130,11 @@ namespace Game {
                     targetVelocity = info.vel;
                     targetMaxDamage = info.maxDmg;
                     targetDamage = info.dmg;
-                    updateTargetHighlight(true, targetPosition, info.rad);
+                    updateTargetHighlight(true, targetPosition, info.screenPos, info.rad, info.info);
                     //highlightTarget(bestTarget,targetRad);
                 } else {
                     targetLock = false;
-                    updateTargetHighlight(false, Fixed2D4(0,0),0);
+                    updateTargetHighlight(false, Fixed2D4(0,0), 0,0, 0);
                 }
             }
         }

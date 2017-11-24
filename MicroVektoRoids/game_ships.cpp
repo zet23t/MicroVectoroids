@@ -237,6 +237,8 @@ namespace Game {
 
                 int idir = calcDirectionIndex(direction);
                 int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
+                screenPos[0] = (int16_t)x;
+                screenPos[1] = (int16_t)y;
                 drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
                 Fixed2D4 dir = (pos + direction * Fix4(15,0));
                 drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0])->blend(RenderCommandBlendMode::add);
@@ -246,7 +248,7 @@ namespace Game {
 
             }
             break;
-        case 2:
+        case ShipTypeStation:
             {
                 const int cx = buffer.getOffsetX()+48;
                 const int cy = buffer.getOffsetY()+32;
@@ -254,11 +256,27 @@ namespace Game {
                 const int y = pos.y.getIntegerPart();
                 const int dx = x - cx;
                 const int dy = y - cy;
-                const int px = cx + dx / 3 * 2, py = cy + dy / 3 * 2;
+                const int px = cx + dx *2/3, py = cy + dy * 2 / 3;
+                screenPos[0] = (int16_t)px;
+                screenPos[1] = (int16_t)py;
                 drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6])->blend(RenderCommandBlendMode::add);
             }
             break;
-        case 3:
+        case ShipTypeWormHole:
+            {
+                const int cx = buffer.getOffsetX()+48;
+                const int cy = buffer.getOffsetY()+32;
+                const int x = pos.x.getIntegerPart();
+                const int y = pos.y.getIntegerPart();
+                const int dx = x - cx;
+                const int dy = y - cy;
+                const int px = cx + dx * 2 / 3, py = cy + dy * 2 / 3;
+                screenPos[0] = (int16_t)px;
+                screenPos[1] = (int16_t)py;
+                drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::worm_hole.sprites[3-(frame>>1)%4])->blend(RenderCommandBlendMode::add);
+            }
+            break;
+        case ShipTypeEnmeySmall:
             {
 
                 int idir = calcDirectionIndex(direction);
@@ -270,8 +288,9 @@ namespace Game {
 //
 //        buffer.drawRect(pos.x.getIntegerPart(),pos.y.getIntegerPart(),4,4)->filledRect(RGB565(255,0,0));
     }
-    void Ship::init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy) {
+    void Ship::init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy, char *inf) {
         this->type = type;
+        info = inf;
         pos.setXY(x,y);
         prevPos = pos;
         damage = 0;
