@@ -28,11 +28,11 @@
       - [ ] Enter name
       - [ ] show scores
   - [ ] Medium Level
-    - 
+  - [ ] Hard Level
 - [ ] Highscores
 - [ ] Save game / load game
   - [ ] save scores
-  - [ ] 
+  - [ ] load game state
 - [ ] sounds
   - [ ] investigate how sound works 
   - [ ] add effects 
