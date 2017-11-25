@@ -3,12 +3,15 @@
 - [x] Projectile impact effect
 - [x] Ship-Asteroid impact effect
 - [x] Ship damage & damage bar
-- [ ] Ship destruction
+- [x] Ship destruction
 - [ ] Game start screen
   - [ ] show Logo over main space system
   - [ ] show high scores
 - [ ] Main level with wormholes for difficulty selection
   - [ ] Show target damage and info
+    - [x] Damage
+    - [x] Info text
+    - [ ] menu with extended information
   - [ ] Interactable space objects
   - [ ] Space station
     - [x] station object
@@ -30,7 +33,12 @@
 - [ ] Save game / load game
   - [ ] save scores
   - [ ] 
+- [ ] sounds
+  - [ ] investigate how sound works 
+  - [ ] add effects 
+  - [ ] add music
 
 # Polishing
 
 - flash score display on collecting dust
+- font with glow
