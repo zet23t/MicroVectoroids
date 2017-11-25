@@ -15,6 +15,7 @@ namespace Game {
         const uint8_t EnemyShipTrail = 7;
         const uint8_t PlayerShipExplosion = 8;
         const uint8_t EnemyShipExplosion = 9;
+        const uint8_t WormHoleParticle = 10;
     }
 
     const SpriteSheet* sheetByType[] = {
@@ -28,10 +29,11 @@ namespace Game {
         &ImageAsset::TextureAtlas_atlas::ship_enemy_exhaust,
         &ImageAsset::TextureAtlas_atlas::ship_exhaust,
         &ImageAsset::TextureAtlas_atlas::ship_enemy_exhaust,
+        &ImageAsset::TextureAtlas_atlas::wormhole_particle,
     };
 
     const uint8_t maxAgeByType[] {
-        0,5,2,5,10,2,5,5,20,20
+        0,5,2,5,10,2,5,5,20,20,9,
     };
 
     void Particle::draw() {

@@ -181,7 +181,11 @@ namespace Game {
     }
 
     uint8_t Ship::maxDamage() {
-        return type == 1 ? 255: 24;
+        switch (type) {
+        case ShipTypePlayer: return 255;
+        case ShipTypeEnmeySmall: return 24;
+        default: return 0;
+        }
     }
 
     void Ship::explode() {
@@ -228,6 +232,18 @@ namespace Game {
         return 0;
     }
 
+    bool Ship::calcParallaxScreenPos() {
+        const int cx = buffer.getOffsetX()+48;
+        const int cy = buffer.getOffsetY()+32;
+        const int x = pos.x.getIntegerPart();
+        const int y = pos.y.getIntegerPart();
+        const int dx = x - cx;
+        const int dy = y - cy;
+        const int px = cx + dx * 2 / 3, py = cy + dy * 2 / 3;
+        screenPos[0] = (int16_t)px;
+        screenPos[1] = (int16_t)py;
+        return abs(px - cx) < 64 && abs(py - cy) < 48;
+    }
     void Ship::draw() {
         switch (type) {
         case 1:
@@ -250,32 +266,38 @@ namespace Game {
             break;
         case ShipTypeStation:
             {
-                const int cx = buffer.getOffsetX()+48;
-                const int cy = buffer.getOffsetY()+32;
-                const int x = pos.x.getIntegerPart();
-                const int y = pos.y.getIntegerPart();
-                const int dx = x - cx;
-                const int dy = y - cy;
-                const int px = cx + dx *2/3, py = cy + dy * 2 / 3;
-                screenPos[0] = (int16_t)px;
-                screenPos[1] = (int16_t)py;
-                drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6])->blend(RenderCommandBlendMode::add);
+                calcParallaxScreenPos();
+                drawCenteredSprite(screenPos[0],screenPos[1],ImageAsset::TextureAtlas_atlas::ship_station.sprites[(frame>>4)%6])->blend(RenderCommandBlendMode::add);
             }
             break;
         case ShipTypeWormHole:
             {
-                const int cx = buffer.getOffsetX()+48;
-                const int cy = buffer.getOffsetY()+32;
-                const int x = pos.x.getIntegerPart();
-                const int y = pos.y.getIntegerPart();
-                const int dx = x - cx;
-                const int dy = y - cy;
-                const int px = cx + dx * 2 / 3, py = cy + dy * 2 / 3;
-                screenPos[0] = (int16_t)px;
-                screenPos[1] = (int16_t)py;
-                drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::worm_hole.sprites[3-(frame>>1)%4])->blend(RenderCommandBlendMode::add);
+                calcParallaxScreenPos();
+                drawCenteredSprite(screenPos[0],screenPos[1],ImageAsset::TextureAtlas_atlas::worm_hole.sprites[3-(frame>>1)%4])->blend(RenderCommandBlendMode::add);
             }
             break;
+        case ShipTypeWormHoleInactive:
+            {
+                if (calcParallaxScreenPos()) {
+                    //if ((frame>>2) *251 % 17 < 5)
+                    //    drawCenteredSprite(screenPos[0],screenPos[1],ImageAsset::TextureAtlas_atlas::worm_hole.sprites[3-(frame>>1)%4])->blend(RenderCommandBlendMode::add);
+                    for (int i=0;i<4;i+=1) {
+                        int px = (Math::randInt() + frame * 211)%32 - 16;
+                        int py = (Math::randInt() + frame * 371)%32 - 16;
+                        if (px * px + py*py < (2 + i*4)*16) {
+                            particleSystem.spawn(ParticleType::WormHoleParticle,
+                                                 Fixed2D4((int16_t)(screenPos[0]+px),(int16_t)(screenPos[1]+py)),
+                                                 Fixed2D4((int16_t)(-px),(int16_t)(-py)) * Fix4(0,2));
+                            //drawCenteredSprite(screenPos[0]+px,screenPos[1]+py,
+                            //                   ImageAsset::TextureAtlas_atlas::wormhole_particle.sprites[(frame + i) * 17 % ImageAsset::TextureAtlas_atlas::worm_hole.spriteCount])->blend(RenderCommandBlendMode::add);
+                        }
+                    }
+                }
+
+            }
+
+            break;
+
         case ShipTypeEnmeySmall:
             {
 

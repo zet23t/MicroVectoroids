@@ -14,6 +14,7 @@ namespace Game {
         extern const uint8_t EnemyShipTrail;
         extern const uint8_t PlayerShipExplosion;
         extern const uint8_t EnemyShipExplosion;
+        extern const uint8_t WormHoleParticle;
     }
 
     struct Particle {

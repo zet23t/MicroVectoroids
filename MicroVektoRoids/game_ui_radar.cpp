@@ -79,13 +79,16 @@ namespace Game {
                         addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos, RGB565(128,128,128));
                     }
                 }
+                const uint16_t colors[] = {
+                    0xffff,0xffff,
+                    RGB565(50,80,250), //station
+                    RGB565(255,0,0), // enemy
+                    RGB565(80,255,0), // wormhole
+                    RGB565(255,255,0), // wormhole inakt
+                };
                 for (int i=0;i<ShipCount;i+=1) {
-                    if (shipManager.ships[i].type == 2) {
-                        addBlip(blipsShips, cen, shipManager.ships[i].pos, RGB565(50,80,250));
-                    }
-                    if(shipManager.ships[i].type > 2) {
-                        addBlip(blipsShips, cen, shipManager.ships[i].pos, RGB565(255,0,0));
-
+                    if (shipManager.ships[i].type >= 2) {
+                        addBlip(blipsShips, cen, shipManager.ships[i].pos, colors[shipManager.ships[i].type]);
                     }
                 }
                 for (int i=0;i<BlipCount;i+=1) {

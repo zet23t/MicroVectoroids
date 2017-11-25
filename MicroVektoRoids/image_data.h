@@ -22,6 +22,7 @@ namespace TextureAtlas_atlas {
     extern const SpriteSheet ship_asteroid;
     extern const SpriteSheet collectable_score;
     extern const SpriteSheet ui_shield_bar_inner;
+    extern const SpriteSheet wormhole_particle;
     extern const SpriteSheet ship_exhaust;
     extern const SpriteSheet menu_triangle_left;
     extern const SpriteSheet ship_enemy_small;

@@ -30,7 +30,7 @@ namespace Game {
                     int x = buffer.getOffsetX();
                     int y = buffer.getOffsetY();
                     buffer.setOffset(0,0);
-                    buffer.drawText(highlightInfo, 0,58,96,6,0,0,false,FontAsset::font,120, RenderCommandBlendMode::opaque);
+                    buffer.drawText(highlightInfo, 0,50,96,14,0,1,false,FontAsset::font,120, RenderCommandBlendMode::opaque);
                     buffer.setOffset(x,y);
                 }
             }
@@ -120,7 +120,8 @@ namespace Game {
                     Fixed2D4 targetDir = s->pos - ship->pos;
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
-                    shipInfo.init(s->pos, s->velocity, dot, s->type == ShipTypeWormHole ? 12 : 6, s->damage, s->maxDamage(), s->screenPos,s->info);
+                    shipInfo.init(s->pos, s->velocity, dot, s->type == ShipTypeWormHole ? 12 : 6,
+                                  s->damage, s->maxDamage(), s->screenPos,s->info);
                 }
                 int sel = shipInfo.dot > Fix4(0,10) ? 1 : (asteroidInfo.dot > Fix4(0,12) ? 2 : 0);
                 if (sel) {
