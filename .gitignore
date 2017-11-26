@@ -1,4 +1,4 @@
-MicroVectoroids/lib_*
+MicroVektoroids/lib_*
 obj/*
 bin/*
 *.depend

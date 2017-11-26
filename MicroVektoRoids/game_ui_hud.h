@@ -8,6 +8,7 @@ namespace Game {
             extern Fixed2D4 targetVelocity;
             extern uint8_t targetDamage;
             extern uint8_t targetMaxDamage;
+            extern const char* highlightInfo;
             void draw();
         }
     }

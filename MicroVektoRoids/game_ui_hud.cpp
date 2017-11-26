@@ -16,7 +16,7 @@ namespace Game {
             uint8_t targetMaxDamage;
             Fixed2D4 highlightPosition;
             uint8_t highlightRadius;
-            char* highlightInfo;
+            const char* highlightInfo;
 
 
             void highlightTarget(Fixed2D4 pos, uint8_t sz) {
@@ -35,7 +35,7 @@ namespace Game {
                 }
             }
 
-            void updateTargetHighlight(bool hasTarget, Fixed2D4 target, int16_t* pos, uint8_t rad, char* info) {
+            void updateTargetHighlight(bool hasTarget, Fixed2D4 target, int16_t* pos, uint8_t rad, const char* info) {
                 if (hasTarget) {
                     if (pos) {
                         target.x.setIntegerPart(pos[0]);
@@ -68,9 +68,9 @@ namespace Game {
                 uint8_t rad;
                 uint8_t dmg;
                 uint8_t maxDmg;
-                char *info;
+                const char *info;
 
-                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd, int16_t *screen, char *inf) {
+                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd, int16_t *screen, const char *inf) {
                     if (dot > d) return;
                     pos = p;
                     vel = v;
