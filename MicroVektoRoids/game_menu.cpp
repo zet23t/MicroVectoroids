@@ -23,7 +23,7 @@ namespace Game {
 
         struct SubmenuRestart:Submenu {
             virtual const char *getTitle() const {
-                return "Game";
+                return "SHIP COMPUTER";
             }
             virtual const char *getText() const {
                 return "Restart";
@@ -83,11 +83,12 @@ namespace Game {
             }
         }
         void draw() {
+            const int menuHeight = 56;
             buffer.setOffset(0,0);
 
             if (gameState == GameState::Menu) {
-                if (transition < 48) {
-                    transition += (48 - transition) / 2 + 1;
+                if (transition < menuHeight) {
+                    transition += (menuHeight - transition) / 2 + 1;
                     blockInput = 1;
                 }
             }
@@ -97,7 +98,25 @@ namespace Game {
             }
             if (transition > 0) {
                 uint16_t col = RGB565(118-transition,140-transition,180-transition);
-                buffer.drawRect(8,32-transition/2,96-16,transition)->filledRect(RGB565(180,160,120))->blend(RenderCommandBlendMode::subtract)->setDepth(200);
+                int16_t h = transition/2;
+                uint8_t mode = RenderCommandBlendMode::average;
+                buffer.drawRect(8,32-h,96-16,h*2)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(9,32-h-1,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(9,32+h,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(10,32-h-2,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(10,32+h+1,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
+                int16_t vpos = menuHeight/2 - h;
+                buffer.setClipping(vpos+1,88,64-vpos-2,8);
+                buffer.drawText(submenus[submenuSelected]->getTitle(),8,vpos,80,16,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                buffer.drawRect(0,vpos + 11,96,1)->filledRect(RGB565(255,255,255))->setDepth(200);
+                const int menuWidth = 30;
+                buffer.drawRect(menuWidth + 8,vpos + 11,1,60)->filledRect(RGB565(255,255,255))->setDepth(200);
+                buffer.drawText("TARGET",8,vpos + 12,menuWidth,8,1,0,false,FontAsset::font,200, RenderCommandBlendMode::opaque);
+                buffer.drawText("SHIP",8,vpos + 19,menuWidth,8,1,0,false,FontAsset::font,200, RenderCommandBlendMode::opaque);
+                buffer.drawText("RADAR",8,vpos + 26,menuWidth,8,1,0,false,FontAsset::font,200, RenderCommandBlendMode::opaque);
+                buffer.drawText("CREDITS",8,vpos + 33,menuWidth,8,1,0,false,FontAsset::font,200, RenderCommandBlendMode::opaque);
+
+                /*buffer.drawRect(8,32-transition/2,96-16,transition)->filledRect(RGB565(180,160,120))->blend(RenderCommandBlendMode::subtract)->setDepth(200);
 
                 buffer.drawRect(7,32-transition/2,3,transition+1)->filledRect(col)->blend(RenderCommandBlendMode::add)->setDepth(200);
                 buffer.drawRect(8,32-transition/2-1,1,transition+2)->filledRect(col)->blend(RenderCommandBlendMode::add)->setDepth(200);
@@ -138,7 +157,7 @@ namespace Game {
                 }
 
                 buffer.drawRect(7,vpos + (menuSelected ? 18 : 35),82,15)->filledRect(RGB565(anim,anim,anim))->blend(RenderCommandBlendMode::add)->setDepth(200);
-
+                */
                 buffer.setClipping(0,96,64,0);
             }
 

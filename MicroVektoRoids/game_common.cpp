@@ -107,10 +107,12 @@ namespace Game {
         asteroidManager.draw();
         projectileManager.draw();
         Collectable::draw();
-        UI::Shield::draw();
         UI::Radar::draw();
         UI::HUD::draw();
-        UI::Info::draw();
+        if (gameState == GameState::Running) {
+            UI::Shield::draw();
+            UI::Info::draw();
+        }
         Menu::draw();
 
     }

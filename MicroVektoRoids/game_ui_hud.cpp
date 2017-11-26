@@ -26,7 +26,7 @@ namespace Game {
                 drawCenteredSprite(x + sz, y + sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[1])->blend(RenderCommandBlendMode::add)->setDepth(100);
                 drawCenteredSprite(x + sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[2])->blend(RenderCommandBlendMode::add)->setDepth(100);
                 drawCenteredSprite(x - sz, y - sz, ImageAsset::TextureAtlas_atlas::ui_target_marker.sprites[3])->blend(RenderCommandBlendMode::add)->setDepth(100);
-                if (highlightInfo) {
+                if (highlightInfo && gameState == GameState::Running) {
                     int x = buffer.getOffsetX();
                     int y = buffer.getOffsetY();
                     buffer.setOffset(0,0);
