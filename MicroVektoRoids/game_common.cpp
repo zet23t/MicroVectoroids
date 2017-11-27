@@ -33,8 +33,8 @@ namespace Game {
     int16_t camX, camY;
 
     RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect) {
-        return buffer.drawRect(x + rect.offsetX - rect.origHeight / 2,
-                               y + rect.offsetY - rect.origWidth / 2,
+        return buffer.drawRect(x + rect.offsetX - rect.origWidth / 2,
+                               y + rect.offsetY - rect.origHeight / 2,
                                rect.width,rect.height)->sprite(&atlas, rect.x, rect.y);
     }
     RenderCommand<uint16_t>* drawSprite(int x,int y,SpriteSheetRect rect) {
