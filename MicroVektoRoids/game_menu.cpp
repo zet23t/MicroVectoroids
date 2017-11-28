@@ -7,6 +7,7 @@
 
 #define SCREEN_MAIN 0
 #define SCREEN_CREDITS 1
+#define SCREEN_SCREEN 2
 
 namespace Game {
     namespace Menu {
@@ -18,67 +19,10 @@ namespace Game {
         uint16_t creditsAnim;
 
 
-        struct Submenu {
-            virtual const char *getTitle() const {
-                return "Menu";
-            }
-            virtual const char *getText() const {
-                return "undefined";
-            }
-            virtual void activate() const {
-
-            }
-        };
-
-        struct SubmenuRestart:Submenu {
-            virtual const char *getTitle() const {
-                return "SHIP COMPUTER";
-            }
-            virtual const char *getText() const {
-                return "Restart";
-            }
-            virtual void activate() const {
-                gameState = GameState::Running;
-                initialize();
-            }
-        };
-
-        struct SubmenuToggleInput:Submenu {
-            virtual const char *getTitle() const {
-                return "Controls";
-            }
-            virtual const char *getText() const {
-                return directionalControls ? "Directional" : "Absolute";
-            }
-            virtual void activate() const {
-                directionalControls = !directionalControls;
-            }
-        };
-
-        struct SubmenuToggleDebug:Submenu {
-            virtual const char *getTitle() const {
-                return "Debug";
-            }
-            virtual const char *getText() const {
-                return showDebugInfo ? "Show info" : "Hide info";
-            }
-            virtual void activate() const {
-                showDebugInfo = !showDebugInfo;
-            }
-        };
-
         const int menuHeight = 56;
-        SubmenuRestart restart;
-        SubmenuToggleInput toggleInput;
-        SubmenuToggleDebug toggleDebug;
         bool activate;
 
         #define SubmenuCount 4
-        const Submenu* submenus[] = {
-            &restart,
-            &toggleInput,
-            &toggleDebug,
-        };
 
         void tick() {
             if (Joystick::getButton(0, Joystick::Phase::CURRENT) && !Joystick::getButton(0, Joystick::Phase::PREVIOUS)) {
@@ -110,9 +54,9 @@ namespace Game {
             //buffer.drawRect(48,0,1,64)->filledRect(RGB565(60,80,255))->blend(RenderCommandBlendMode::add)->setDepth(200);
             int y = 40;
             putText(y,"DEVELOPED BY",0);
-            putText(y,"EIKE DECKER",5);
+            putText(y,"Eike Decker",5);
 
-            putText(y,"PATRONS",2);
+            putText(y,"MY PATRONS",2);
             putText(y,"Ken Burns",0);
             putText(y,"Flaki",5);
 
@@ -121,28 +65,33 @@ namespace Game {
             putText(y,"Support me on",0);
             putText(y,"patreon.com/zet23t",5);
 
-            putText(y,"MICRO VECTOROIDS",0);
-            putText(y,"IS BASED ON",0);
-            putText(y,"SUPER VEKTOROIDS",0);
-            putText(y,"BY",0);
+            putText(y,"MICRO VEKTOROIDS",0);
+            putText(y,"is based on",2);
+            putText(y,"SUPER VEKTOROIDS",2);
+            putText(y,"by",2);
             putText(y,"PIXEL STRIKE GAMES",5);
 
             putText(y,"FONTS",2);
             putText(y,"HEMI HEAD",0);
             putText(y,"by TypoDermic Fonts",15);
 
-            putText(y,"THANKS TO",8);
+            putText(y,"THANKS TO",3);
             putText(y,"TINY CIRCUITS",0);
-            putText(y,"for the Tiny Arcade",5);
+            putText(y,"for the Tiny Arcade",8);
 
-            putText(y,"SPECIAL THANKS TO",8);
+            putText(y,"SPECIAL THANKS TO",3);
             putText(y,"Swantje,",0);
-            putText(y,"Hilda, Till and Piet",5);
+            putText(y,"Hilda, Till and Piet",15);
 
+            putText(y,"Thank you for playing",0);
+            putText(y,"Micro VektoRoids",15);
+            putText(y,"Let me know if",0);
+            putText(y,"you liked it!",0);
             buffer.setOffset(0,0);
+
             if (frameUnpaused % 4 == 0) {
                 creditsAnim +=1;
-                if (creditsAnim > y + 70) creditsAnim = 0;
+                if (creditsAnim > y + 60) creditsAnim = 0;
             }
         }
 
