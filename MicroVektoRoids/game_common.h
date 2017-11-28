@@ -66,6 +66,9 @@ namespace Game {
     extern Texture<uint16_t> atlas;
     extern int frame, frameUnpaused;
     extern int16_t camX, camY;
+
+    void setScreenBrightness(uint8_t b);
+    uint8_t getScreenBrightness();
     void initialize();
     void tick();
 

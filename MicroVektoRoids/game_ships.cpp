@@ -189,12 +189,12 @@ namespace Game {
     }
 
     void Ship::explode() {
-        uint8_t t = type == ProjectileTypePlayer ? ParticleType::PlayerShipExplosion : ParticleType::EnemyShipExplosion;
+        uint8_t t = type == ShipTypePlayer ? ParticleType::PlayerShipExplosion : ParticleType::EnemyShipExplosion;
         for (int i=0;i<20;i+=1) {
             Fixed2D4 r;
             Fixed2D4 p = r.randomCircle(Fix4(8,0));
             Fixed2D4 vel = r.randomCircle(Fix4(1,6));
-            if (i < 10)
+            if (i < 10 && type != ShipTypePlayer)
                 Collectable::spawn(pos, vel * Fix4(3,0));
             particleSystem.spawn(t, pos + p, vel);
         }

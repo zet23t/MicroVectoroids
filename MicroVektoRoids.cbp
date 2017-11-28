@@ -76,6 +76,8 @@
 		<Unit filename="MicroVektoRoids/game_projectile.h" />
 		<Unit filename="MicroVektoRoids/game_ships.cpp" />
 		<Unit filename="MicroVektoRoids/game_ships.h" />
+		<Unit filename="MicroVektoRoids/game_sound.cpp" />
+		<Unit filename="MicroVektoRoids/game_sound.h" />
 		<Unit filename="MicroVektoRoids/game_ui_hud.cpp" />
 		<Unit filename="MicroVektoRoids/game_ui_hud.h" />
 		<Unit filename="MicroVektoRoids/game_ui_info.cpp" />

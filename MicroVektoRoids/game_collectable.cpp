@@ -33,7 +33,7 @@ namespace Game {
                 if (!collectables[i].active) continue;
                 collectables[i].position += collectables[i].velocity;
                 collectables[i].velocity = collectables[i].velocity  * COLLECTABLE_DRAG;
-                if (collectables[i].age < COLLECTABLE_SPAWN_TIME) {
+                if (collectables[i].age < COLLECTABLE_SPAWN_TIME || !ship->type) {
                     collectables[i].age+=1;
                     continue;
                 }

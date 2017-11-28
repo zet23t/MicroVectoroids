@@ -32,6 +32,19 @@ namespace Game {
     Texture<uint16_t> atlas;
     int16_t camX, camY;
 
+    uint8_t screenBrightness = 255;
+
+    void setScreenBrightness(uint8_t b) {
+        if(b> 15) b = 15;
+        if (b==screenBrightness) return;
+        screenBrightness = b;
+        display.setBrightness(b);
+    }
+
+    uint8_t getScreenBrightness() {
+        return screenBrightness;
+    }
+
     RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect) {
         return buffer.drawRect(x + rect.offsetX - rect.origWidth / 2,
                                y + rect.offsetY - rect.origHeight / 2,
@@ -107,17 +120,20 @@ namespace Game {
         asteroidManager.draw();
         projectileManager.draw();
         Collectable::draw();
-        UI::Radar::draw();
-        UI::HUD::draw();
-        if (gameState == GameState::Running) {
-            UI::Shield::draw();
-            UI::Info::draw();
+        if (shipManager.ships[0].type) {
+            UI::Radar::draw();
+            UI::HUD::draw();
+            if (gameState == GameState::Running) {
+                UI::Shield::draw();
+                UI::Info::draw();
+            }
         }
         Menu::draw();
 
     }
 
     void initialize(){
+        setScreenBrightness(8);
         frame = 0;
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         shipManager.init();

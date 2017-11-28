@@ -3,11 +3,15 @@
 #include "game_common.h"
 #include "game_ui_hud.h"
 #include "game_ships.h"
+#include "game_sound.h"
 #include "game_player_stats.h"
 
 #define SCREEN_MAIN 0
 #define SCREEN_CREDITS 1
-#define SCREEN_SCREEN 2
+#define SCREEN_BRIGHTNESS 2
+#define SCREEN_SOUND 3
+#define SCREEN_CONTROLS 4
+#define SCREEN_SELF_DESTRUCT 5
 
 namespace Game {
     namespace Menu {
@@ -26,13 +30,19 @@ namespace Game {
 
         void tick() {
             if (Joystick::getButton(0, Joystick::Phase::CURRENT) && !Joystick::getButton(0, Joystick::Phase::PREVIOUS)) {
-                if (gameState == GameState::Running)
-                    gameState = GameState::Menu;
+                if (gameState == GameState::Running) {
+                    if (shipManager.ships[0].type) {
+                        gameState = GameState::Menu;
+                    }
+                    else {
+                        Game::initialize();
+                    }
+                }
                 else {
                     gameState = GameState::Running;
                 }
             }
-            if (Joystick::getButton(1, Joystick::Phase::CURRENT) && !Joystick::getButton(1, Joystick::Phase::PREVIOUS))
+            if (gameState == GameState::Menu && Joystick::getButton(1, Joystick::Phase::CURRENT) && !Joystick::getButton(1, Joystick::Phase::PREVIOUS))
             {
                 activate = true;
             }
@@ -45,6 +55,99 @@ namespace Game {
         void putText(int &y, const char *tx, int space) {
             buffer.drawText(tx,8,y,80,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
             y+=7+space;
+        }
+
+        void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t col, uint8_t mode, bool filled) {
+            if(filled) {
+                buffer.drawRect(x,y,w,h)->filledRect(col)->blend(mode)->setDepth(200);
+            }
+            else {
+                buffer.drawRect(x,y,w,1)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(x,y+h-1,w,1)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(x,y,1,h)->filledRect(col)->blend(mode)->setDepth(200);
+                buffer.drawRect(x+w-1,y,1,h)->filledRect(col)->blend(mode)->setDepth(200);
+            }
+        }
+
+        void drawScreenBars(const char *title, int16_t vpos) {
+            uint8_t mode = RenderCommandBlendMode::opaque;
+            buffer.drawText(title,8,vpos,80,16,0,0,false, FontAsset::font, 200, mode);
+            buffer.drawRect(0,vpos + 11,96,1)->filledRect(RGB565(255,255,255))->blend(mode)->setDepth(200);
+            buffer.drawRect(0,vpos + 53,96,1)->filledRect(RGB565(255,255,255))->blend(mode)->setDepth(200);
+            buffer.drawText("CLOSE",8,vpos + 54,80,8,0,0,false, FontAsset::font, 200, mode);
+
+        }
+
+        void drawLevelControls(uint8_t &v,uint8_t maxLevel) {
+            int targetWidth = 60;
+            int blockWidth = targetWidth / maxLevel;
+            int rectWidth = blockWidth - 2;
+            int actualWidth = blockWidth * maxLevel - 2;
+            int left = 48 - actualWidth/2;
+            for (int i=0;i<maxLevel;i+=1) {
+                drawRect(left + i*blockWidth,28,rectWidth,8,0xffff,RenderCommandBlendMode::opaque, v > i);
+            }
+            Fixed2D4 stick = Joystick::getJoystick();
+            if (stick.y != 0 || stick.x != 0) {
+                if (!blockInput) {
+                    blockInput = 1;
+                    if (stick.x > 0 && v < maxLevel) v++;
+                    if (stick.x < 0 && v > 0) v--;
+                }
+            } else {
+                blockInput = 0;
+            }
+        }
+
+        void drawScreenControls(int16_t vpos) {
+            if (activate) activeScreen = SCREEN_MAIN;
+            uint8_t mode = RenderCommandBlendMode::opaque;
+            drawScreenBars("SHIP CONTROLS", vpos);
+            buffer.drawText("ABSOLUTE",19,32-8,72,8,-1,0,false, FontAsset::font, 200, mode);
+            buffer.drawText("DIRECTIONAL",19,35,72,8,-1,0,false, FontAsset::font, 200, mode);
+            drawRect(10,32-8,7,7,0xffff,mode,false);
+            drawRect(10,32+3,7,7,0xffff,mode,false);
+            if (!directionalControls) drawRect(12,32-6,3,3,0xffff,mode,true);
+            else drawRect(12,32+5,3,3,0xffff,mode,true);
+            Fixed2D4 stick = Joystick::getJoystick();
+            if (stick.y != 0 || stick.x != 0) {
+                if (!blockInput) {
+                    blockInput = 1;
+                    if (stick.y != 0) directionalControls = !directionalControls;
+                }
+            } else {
+                blockInput = 0;
+            }
+        }
+        void drawScreenSelfDestruct(int16_t vpos) {
+            static uint8_t counter = 0;
+            if (activate) {
+                activeScreen = SCREEN_MAIN;
+                counter = 0;
+            }
+            drawScreenBars("SELF DESTRUCT", vpos);
+            drawLevelControls(counter, 4);
+            if (counter == 4) {
+                counter = 0;
+                activeScreen = SCREEN_MAIN;
+                gameState = GameState::Running;
+                shipManager.ships[0].takeDamage(255);
+                shipManager.ships[0].explode();
+            }
+        }
+
+        void drawScreenBrightness(int16_t vpos) {
+            if (activate) activeScreen = SCREEN_MAIN;
+            drawScreenBars("SCREEN BRIGHTNESS", vpos);
+            uint8_t b = (getScreenBrightness()+1)/2;
+            drawLevelControls(b, 8);
+            setScreenBrightness(b*2);
+        }
+
+        void drawScreenSound(int16_t vpos) {
+            if (activate) activeScreen = SCREEN_MAIN;
+            drawScreenBars("SOUND VOLUME", vpos);
+            drawLevelControls(Sound::volume, 4);
         }
 
         void drawCredits(int16_t vpos) {
@@ -96,13 +199,13 @@ namespace Game {
         }
 
         void drawSubmenus(int16_t vpos) {
-            uint8_t mode = RenderCommandBlendMode::opaque;
             const char *menuTitle[] = {
                 "TARGET",
                 "RADAR",
                 "SHIP",
                 "OPTIONS",
             };
+            uint8_t mode = RenderCommandBlendMode::opaque;
             buffer.drawText(menuTitle[submenuSelected],8,vpos,80,16,0,0,false, FontAsset::font, 200, mode);
             buffer.drawRect(0,vpos + 11,96,1)->filledRect(RGB565(255,255,255))->blend(mode)->setDepth(200);
             buffer.drawRect(0,vpos + 53,96,1)->filledRect(RGB565(255,255,255))->blend(mode)->setDepth(200);
@@ -126,14 +229,14 @@ namespace Game {
             case 2: // ship
                 buffer.drawText(stringBuffer.start().put("STATUS: ").putDec(100-s->damage*100/s->maxDamage()).put("%").get(),0,vpos+12,96,8,0,0,false, FontAsset::font, 200, mode);
                 buffer.drawText(stringBuffer.start().put("DUST: ").putDec(PlayerStats::score).get(),0,vpos+20,96,8,0,0,false, FontAsset::font, 200, mode);
-                if (menuSelected < 0) menuSelected +=3;
-                menuSelected %= 3;
+                if (menuSelected < 0) menuSelected +=2;
+                menuSelected %= 2;
                 buffer.drawText(getMenuText(menuSelected == 0, "CONTROLS"),0,vpos+30,96,8,0,0,false, FontAsset::font, 200, mode);
-                buffer.drawText(getMenuText(menuSelected == 1, "SHIP INFO"),0,vpos+38,96,8,0,0,false, FontAsset::font, 200, mode);
-                buffer.drawText(getMenuText(menuSelected == 2, "SELF DESTRUCT"),0,vpos+46,96,8,0,0,false, FontAsset::font, 200, mode);
+                buffer.drawText(getMenuText(menuSelected == 1, "SELF DESTRUCT"),0,vpos+38,96,8,0,0,false, FontAsset::font, 200, mode);
                 if (activate) {
-                    if (menuSelected == 0) {
-
+                    switch (menuSelected) {
+                        case 0: activeScreen = SCREEN_CONTROLS; break;
+                        case 1: activeScreen = SCREEN_SELF_DESTRUCT; break;
                     }
                 }
                 break;
@@ -142,17 +245,35 @@ namespace Game {
             case 3:
                 if (menuSelected < 0) menuSelected +=3;
                 menuSelected %= 3;
-                buffer.drawText(getMenuText(menuSelected == 0, "SOUND"),0,vpos+20,96,8,0,0,false, FontAsset::font, 200, mode);
-                buffer.drawText(getMenuText(menuSelected == 1, "SCREEN"),0,vpos+28,96,8,0,0,false, FontAsset::font, 200, mode);
+                buffer.drawText(getMenuText(menuSelected == 0, "SOUND VOLUME"),0,vpos+20,96,8,0,0,false, FontAsset::font, 200, mode);
+                buffer.drawText(getMenuText(menuSelected == 1, "BRIGHTNESS"),0,vpos+28,96,8,0,0,false, FontAsset::font, 200, mode);
                 buffer.drawText(getMenuText(menuSelected == 2, "CREDITS"),0,vpos+36,96,8,0,0,false, FontAsset::font, 200, mode);
                 if (activate) {
-                    if (menuSelected == 2) {
-                        creditsAnim = 0;
-                        activeScreen = SCREEN_CREDITS;
+                    switch (menuSelected) {
+                        case 0: activeScreen = SCREEN_SOUND; break;
+                        case 1: activeScreen = SCREEN_BRIGHTNESS; break;
+                        case 2:
+                            creditsAnim = 0;
+                            activeScreen = SCREEN_CREDITS;
+                            break;
                     }
                 }
             }
 
+            Fixed2D4 stick = Joystick::getJoystick();
+            if (stick.y != 0 || stick.x != 0) {
+                if (!blockInput) {
+                    blockInput = 1;
+                    if (stick.y > 0)
+                        menuSelected = (menuSelected + 1);
+                    if (stick.y < 0)
+                        menuSelected = (menuSelected - 1);
+                    if (stick.x > 0) submenuSelected = (submenuSelected + 1) % SubmenuCount;
+                    if (stick.x < 0) submenuSelected = (submenuSelected - 1 + SubmenuCount) % SubmenuCount;
+                }
+            } else {
+                blockInput = 0;
+            }
         }
 
         void draw() {
@@ -170,44 +291,37 @@ namespace Game {
                 if (transition > 0) transition -= (transition) / 2 + 1;
             }
             if (transition > 0) {
-                uint16_t col = RGB565(148-transition,160-transition,240-transition);
-                int16_t h = transition/2;
-                uint8_t mode = RenderCommandBlendMode::average;
-                buffer.drawRect(8,32-h,96-16,h*2)->filledRect(col)->blend(mode)->setDepth(200);
-                buffer.drawRect(9,32-h-1,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
-                buffer.drawRect(9,32+h,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
-                buffer.drawRect(10,32-h-2,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
-                buffer.drawRect(10,32+h+1,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
-                int16_t vpos = menuHeight/2 - h;
-                buffer.setClipping(vpos+1,88,64-vpos-2,8);
+                if (shipManager.ships[0].type) {
+                    uint16_t col = RGB565(148-transition,160-transition,240-transition);
+                    int16_t h = transition/2;
+                    uint8_t mode = RenderCommandBlendMode::average;
+                    buffer.drawRect(8,32-h,96-16,h*2)->filledRect(col)->blend(mode)->setDepth(200);
+                    buffer.drawRect(9,32-h-1,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
+                    buffer.drawRect(9,32+h,96-18,1)->filledRect(col)->blend(mode)->setDepth(200);
+                    buffer.drawRect(10,32-h-2,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
+                    buffer.drawRect(10,32+h+1,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
+                    int16_t vpos = menuHeight/2 - h;
+                    buffer.setClipping(vpos+1,88,64-vpos-2,8);
 
-                switch (activeScreen) {
-                default:
-                    drawSubmenus(vpos);
-                    break;
-                case SCREEN_CREDITS:
-                    drawCredits(vpos);
-                    break;
-                }
-                activate = false;
-
-                buffer.setClipping(0,96,64,0);
-                Fixed2D4 stick = Joystick::getJoystick();
-                if (stick.y != 0 || stick.x != 0) {
-                    if (!blockInput) {
-                        blockInput = 1;
-                        if (stick.y > 0)
-                            menuSelected = (menuSelected + 1);
-                        if (stick.y < 0)
-                            menuSelected = (menuSelected - 1);
-                        if (stick.x > 0) submenuSelected = (submenuSelected + 1) % SubmenuCount;
-                        if (stick.x < 0) submenuSelected = (submenuSelected - 1 + SubmenuCount) % SubmenuCount;
+                    switch (activeScreen) {
+                    default: drawSubmenus(vpos); break;
+                    case SCREEN_BRIGHTNESS: drawScreenBrightness(vpos); break;
+                    case SCREEN_SOUND: drawScreenSound(vpos); break;
+                    case SCREEN_CREDITS: drawCredits(vpos); break;
+                    case SCREEN_CONTROLS: drawScreenControls(vpos); break;
+                    case SCREEN_SELF_DESTRUCT: drawScreenSelfDestruct(vpos); break;
                     }
+                    activate = false;
+                    buffer.setClipping(0,96,64,0);
                 } else {
-                    blockInput = 0;
-                }
-            }
 
+                }
+
+
+            }
+            if (shipManager.ships[0].type == 0) {
+                buffer.drawText("GAME\nOVER",0,0,96,64,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            }
             //buffer.drawText("MicroVektoRoids Alpha",0,0,96,64,1,1,false, FontAsset::font, 200, RenderCommandBlendMode::add);
             buffer.setOffset(camX, camY);
         }
