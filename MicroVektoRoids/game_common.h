@@ -16,7 +16,7 @@
 
 
 
-#define RENDER_COMMAND_COUNT 200
+#define RENDER_COMMAND_COUNT 512
 
 #define Fix4 FixedNumber16<4u>
 
@@ -56,6 +56,10 @@ public:
     }
 };
 
+#define DESTINATION_MAIN 0
+#define DESTINATION_EASY 1
+#define DESTINATION_MEDIUM 2
+
 namespace Game {
     namespace GameState {
         extern const uint8_t Running;
@@ -67,6 +71,7 @@ namespace Game {
     extern int frame, frameUnpaused;
     extern int16_t camX, camY;
 
+    void initializeLevel(uint8_t id);
     void setScreenBrightness(uint8_t b);
     uint8_t getScreenBrightness();
     void initialize();

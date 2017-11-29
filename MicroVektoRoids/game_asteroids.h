@@ -15,6 +15,7 @@ namespace Game {
         uint8_t type;
         uint8_t hits;
         void tick();
+        void drawOnUI(int8_t x, int8_t y);
         void draw();
         void destroy();
         void push(Fixed2D4 change);

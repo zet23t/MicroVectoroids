@@ -49,6 +49,12 @@ namespace Game {
         int w = rect.width, h = rect.height;
         buffer.drawRect(pos.x.getIntegerPart() + rect.offsetX - rect.origWidth/2 ,pos.y.getIntegerPart() + rect.offsetY - rect.origHeight/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add);
     }
+    void Asteroid::drawOnUI(int8_t x, int8_t y) {
+        const SpriteSheet* sheet = spriteSheetByType[type];
+        SpriteSheetRect rect = sheet->sprites[(frameUnpaused >> 1) % sheet->spriteCount];
+        int w = rect.width, h = rect.height;
+        buffer.drawRect(x + rect.offsetX - rect.origWidth/2 ,y + rect.offsetY - rect.origHeight/2,w,h)->sprite(&atlas,rect.x,rect.y)->blend(RenderCommandBlendMode::add)->setDepth(200);
+    }
 
     void Asteroid::tick() {
         int16_t rad = asteroidRadiusByType[type];

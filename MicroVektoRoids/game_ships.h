@@ -5,7 +5,7 @@ namespace Game {
     #define ShipCount 24
     #define ShipTypePlayer ((uint8_t)1)
     #define ShipTypeStation ((uint8_t)2)
-    #define ShipTypeEnmeySmall ((uint8_t)3)
+    #define ShipTypeEnemySmall ((uint8_t)3)
     #define ShipTypeWormHole ((uint8_t)4)
     #define ShipTypeWormHoleInactive ((uint8_t)5)
     struct Ship {
@@ -19,6 +19,7 @@ namespace Game {
         uint8_t takenHitCooldown;
         int16_t screenPos[2];
         char* info;
+        uint8_t destinationId;
 
         void tickPlayer();
         void tickPlayerControls();
@@ -33,6 +34,7 @@ namespace Game {
         void takeDamage(uint8_t dmg);
         void explode();
         uint8_t maxDamage();
+        void drawOnUI(int8_t x, int8_t y);
     };
 
     struct ShipManager {

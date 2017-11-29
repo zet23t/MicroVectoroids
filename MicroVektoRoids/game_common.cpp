@@ -132,35 +132,47 @@ namespace Game {
 
     }
 
-    void initialize(){
-        setScreenBrightness(8);
+    void initializeLevel(uint8_t id) {
         frame = 0;
-        atlas = Texture<uint16_t>(ImageAsset::atlas);
         shipManager.init();
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,10,5,15,0,0);
-        shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
         //shipManager.ships[2].init(3,35,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
-        for (int i=0;i<30;i+=1) {
-            int x = (Math::randInt() % 1024) - 512;
-            int y = (Math::randInt() % 1024) - 512;
-            if (x*x+y*y > 20)
-                asteroidManager.spawn()->init(1,x,y);
-        }
-        for (int i=0;i<15;i+=1) {
-            int x = (Math::randInt() % 1024) - 512;
-            int y = (Math::randInt() % 1024) - 512;
-            if (x*x+y*y > 20)
-                shipManager.ships[i+2].init(3,x,y,15,0,0);
-        }//*/
-        shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
-        shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL\nUNSTABLE");
-
         projectileManager.init();
         PlayerStats::init();
         Collectable::init();
         UI::Info::init();
+        gameState = GameState::Running;
+
+        switch (id) {
+        case DESTINATION_MAIN:
+            shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
+            shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
+            shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL\nUNSTABLE");
+            shipManager.ships[2].destinationId = 1;            shipManager.ships[3].destinationId = 2;
+            break;
+        case DESTINATION_EASY:
+            for (int i=0;i<30;i+=1) {
+                int x = (Math::randInt() % 1024) - 512;
+                int y = (Math::randInt() % 1024) - 512;
+                if (x*x+y*y > 20)
+                    asteroidManager.spawn()->init(1,x,y);
+            }
+            for (int i=0;i<15;i+=1) {
+                int x = (Math::randInt() % 1024) - 512;
+                int y = (Math::randInt() % 1024) - 512;
+                if (x*x+y*y > 20)
+                    shipManager.ships[i+2].init(3,x,y,15,0,0);
+            }
+            break;
+        }
+    }
+
+    void initialize() {
+        atlas = Texture<uint16_t>(ImageAsset::atlas);
+        setScreenBrightness(8);
+        initializeLevel(0);
     }
 }

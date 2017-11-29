@@ -49,6 +49,11 @@ namespace Game {
                 activate = true;
             }
         }
+
+        void setClipping(int16_t vpos) {
+            buffer.setClipping(vpos+2,88,64-vpos-2,8);
+        }
+
         const char *getMenuText(bool selected, const char* str) {
             if (!selected) return str;
             return stringBuffer.start().put(">").put(str).put("<").get();
@@ -203,14 +208,40 @@ namespace Game {
         void drawTargetInfo(int16_t vpos) {
             uint8_t mode = RenderCommandBlendMode::opaque;
             if (UI::HUD::targetLock) {
+                drawRect(12,20,24,24,0,RenderCommandBlendMode::average,true);
+                drawRect(12,20,24,24,0xffff,RenderCommandBlendMode::average,false);
+                buffer.setClipping(19,36,44,12);
+                const uint8_t yoff = 12;
                 if (UI::HUD::targetIsShip) {
                     Ship *s = &shipManager.ships[UI::HUD::targetIndex];
-                    buffer.setOffset(s->pos.x.getIntegerPart() + 48, s->pos.y.getIntegerPart() + 32);
-                    s->draw();
-                    buffer.setOffset(0,0);
-                    buffer.drawText(s->info ? s->info : "Ship",8,32-menuHeight / 2+8,80,menuHeight-16,1,1,false, FontAsset::font, 200, mode);
+                    s->drawOnUI(24,32);
+                    setClipping(vpos);
+                    const char* typeName[] = {0,"Player ship","Station","ENEMY-01","WORMHOLE\nACTIVE","WORMHOLE\nINACTIVE"};
+
+                    buffer.drawText(typeName[s->type],40,32-menuHeight / 2+yoff,38,16,-1,-1,false, FontAsset::font, 200, mode);
+                    if (s->info) {
+                        buffer.drawText("DESTINATION",40,32-menuHeight / 2+yoff+14,38,16,-1,-1,false, FontAsset::font, 200, mode);
+                        buffer.drawText(s->info,40,32-menuHeight / 2+yoff+21,38,16,-1,-1,false, FontAsset::font, 200, mode);
+                    }
+                    if (s->type == ShipTypeEnemySmall) {
+                        buffer.drawText(stringBuffer.start().put("#").putDec(UI::HUD::targetIndex).get(),40,32-menuHeight / 2+yoff+14,38,16,-1,-1,false, FontAsset::font, 200, mode);
+                    }
+                    if (s->type == ShipTypeWormHole) {
+                        drawRect(40,32-menuHeight / 2+yoff+28,46,7,RGB565(255,0,0), RenderCommandBlendMode::average, true);
+                        drawRect(40,32-menuHeight / 2+yoff+28,46,7,RGB565(255,0,0), RenderCommandBlendMode::average, false);
+                        if (frameUnpaused / 8 % 2 == 0)
+                            buffer.drawText("ACTIVATE?",40,32-menuHeight / 2+yoff+29,46,16,0,-1,false, FontAsset::font, 200, mode);
+                        if (activate) {
+                            initializeLevel(s->destinationId);
+                        }
+                    }
                 } else {
                     Asteroid *a = &asteroidManager.asteroids[UI::HUD::targetIndex];
+                    a->drawOnUI(24,32);
+                    setClipping(vpos);
+                    const char* typeName[] = {0,"WHITE-A\nFRAGMENTING","","","WHITE-B\nHARVESTABLE"};
+
+                    buffer.drawText(typeName[a->type],40,32-menuHeight / 2+yoff,38,16,-1,-1,false, FontAsset::font, 200, mode);
 
                 }
             } else {
@@ -224,6 +255,8 @@ namespace Game {
             if (mode > 0) {
                 uint8_t zoom = mode + 2;
                 Fixed2D4 origin = shipManager.ships[0].pos;
+                uint8_t rs = mode > 2 ? 1 : (mode < 2 ? 3 : 2);
+                uint8_t rso = rs / 2;
                 for (int i=0;i<ShipCount;i+=1) {
                     Ship *s = &shipManager.ships[i];
                     if (s->type) {
@@ -231,7 +264,7 @@ namespace Game {
                         int x = rel.x.getIntegerPart() >> zoom;
                         int y = rel.y.getIntegerPart() >> zoom;
                         if (abs(x) < 40&& abs(y) < 20) {
-                            drawRect(x + 47,y + 31,2,2,UI::Radar::blipShipColors[s->type],RenderCommandBlendMode::opaque,true);
+                            drawRect(x + 48 - rso,y + 32-rso,rs,rs,UI::Radar::blipShipColors[s->type],RenderCommandBlendMode::opaque,true);
                         }
                     }
                 }
@@ -242,7 +275,7 @@ namespace Game {
                         int x = rel.x.getIntegerPart() >> zoom;
                         int y = rel.y.getIntegerPart() >> zoom;
                         if (abs(x) < 40&& abs(y) < 20) {
-                            drawRect(x + 47,y + 31,2,2,RGB565(128,128,128),RenderCommandBlendMode::opaque,true);
+                            drawRect(x + 48 - rso,y + 32-rso,rs,rs,RGB565(128,128,128),RenderCommandBlendMode::opaque,true);
                         }
 
                     }
@@ -261,7 +294,7 @@ namespace Game {
                     drawRect(8,y,80,1,RGB565(20,20,80),RenderCommandBlendMode::add,true);
                 }
 
-                buffer.drawText(stringBuffer.start().put("1:").putDec(1<<zoom).put("x").get(),8,12,80,41,1,1,false,FontAsset::font,200);
+                buffer.drawText(stringBuffer.start().put("1:").putDec(1<<zoom).get(),8,12,80,41,1,1,false,FontAsset::font,200);
             } else {
                 drawRect(8,14,3,5,RGB565(128,128,128), RenderCommandBlendMode::opaque,true);
                 drawRect(8,20,3,5,UI::Radar::blipShipColors[1], RenderCommandBlendMode::opaque,true);
@@ -324,11 +357,15 @@ namespace Game {
                 drawRadarContent();
                 break;
             case 3:
-                if (menuSelected < 0) menuSelected +=3;
-                menuSelected %= 3;
-                buffer.drawText(getMenuText(menuSelected == 0, "SOUND VOLUME"),0,vpos+20,96,8,0,0,false, FontAsset::font, 200, mode);
-                buffer.drawText(getMenuText(menuSelected == 1, "BRIGHTNESS"),0,vpos+28,96,8,0,0,false, FontAsset::font, 200, mode);
-                buffer.drawText(getMenuText(menuSelected == 2, "CREDITS"),0,vpos+36,96,8,0,0,false, FontAsset::font, 200, mode);
+                if (menuSelected < 0) menuSelected +=4;
+                menuSelected %= 4;
+                {
+                    const uint8_t yoff = 16;
+                    buffer.drawText(getMenuText(menuSelected == 0, "SOUND VOLUME"),0,vpos+yoff,96,8,0,0,false, FontAsset::font, 200, mode);
+                    buffer.drawText(getMenuText(menuSelected == 1, "BRIGHTNESS"),0,vpos+yoff+8,96,8,0,0,false, FontAsset::font, 200, mode);
+                    buffer.drawText(getMenuText(menuSelected == 2, "CREDITS"),0,vpos+yoff+16,96,8,0,0,false, FontAsset::font, 200, mode);
+                    buffer.drawText(getMenuText(menuSelected == 3, Game::showDebugInfo ? "DEBUG INFO ON" : "DEBUG INFO OFF"),0,vpos+yoff+24,96,8,0,0,false, FontAsset::font, 200, mode);
+                }
                 if (activate) {
                     switch (menuSelected) {
                         case 0: activeScreen = SCREEN_SOUND; break;
@@ -337,6 +374,7 @@ namespace Game {
                             creditsAnim = 0;
                             activeScreen = SCREEN_CREDITS;
                             break;
+                        case 3: showDebugInfo = !showDebugInfo; break;
                     }
                 }
             }
@@ -382,7 +420,7 @@ namespace Game {
                     buffer.drawRect(10,32-h-2,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
                     buffer.drawRect(10,32+h+1,96-20,1)->filledRect(col)->blend(mode)->setDepth(200);
                     int16_t vpos = menuHeight/2 - h;
-                    buffer.setClipping(vpos+1,88,64-vpos-2,8);
+                    setClipping(vpos);
 
                     switch (activeScreen) {
                     default: drawSubmenus(vpos); break;

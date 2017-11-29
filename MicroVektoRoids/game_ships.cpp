@@ -183,7 +183,7 @@ namespace Game {
     uint8_t Ship::maxDamage() {
         switch (type) {
         case ShipTypePlayer: return 255;
-        case ShipTypeEnmeySmall: return 24;
+        case ShipTypeEnemySmall: return 24;
         default: return 0;
         }
     }
@@ -244,6 +244,32 @@ namespace Game {
         screenPos[1] = (int16_t)py;
         return abs(px - cx) < 64 && abs(py - cy) < 48;
     }
+    void Ship::drawOnUI(int8_t x, int8_t y) {
+        switch (type) {
+        case 1:
+        break;
+        case ShipTypeStation:
+            drawCenteredSprite(x,y,ImageAsset::TextureAtlas_atlas::ship_station.sprites[0])->blend(RenderCommandBlendMode::add)->setDepth(200);
+            break;
+        case ShipTypeWormHole:
+            drawCenteredSprite(x,y,ImageAsset::TextureAtlas_atlas::worm_hole.sprites[frameUnpaused / 4 % ImageAsset::TextureAtlas_atlas::worm_hole.spriteCount])->blend(RenderCommandBlendMode::add)->setDepth(200);
+            break;
+        case ShipTypeWormHoleInactive:
+            for (int i=0;i<4;i+=1) {
+                int px = (Math::randInt() + frameUnpaused * 211)%32 - 16;
+                int py = (Math::randInt() + frameUnpaused * 371)%32 - 16;
+                if (px * px + py*py < (2 + i*4)*16) {
+                    drawCenteredSprite(x+px,y+py,ImageAsset::TextureAtlas_atlas::wormhole_particle.sprites[2])->blend(RenderCommandBlendMode::add)->setDepth(200);
+                }
+            }
+            break;
+
+        case ShipTypeEnemySmall:
+            drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_enemy_small.sprites[(frameUnpaused / 4) % 16])->blend(RenderCommandBlendMode::add)->setDepth(200);
+            break;
+        }
+    }
+
     void Ship::draw() {
         switch (type) {
         case 1:
@@ -298,11 +324,13 @@ namespace Game {
 
             break;
 
-        case ShipTypeEnmeySmall:
+        case ShipTypeEnemySmall:
             {
 
                 int idir = calcDirectionIndex(direction);
                 int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
+                screenPos[0] = x;
+                screenPos[1] = y;
                 drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_enemy_small.sprites[idir])->blend(RenderCommandBlendMode::add);
             }
             break;
