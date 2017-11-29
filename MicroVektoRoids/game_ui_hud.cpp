@@ -7,8 +7,6 @@
 namespace Game {
     namespace UI {
         namespace HUD {
-
-
             bool targetLock;
             Fixed2D4 targetPosition;
             Fixed2D4 targetVelocity;
@@ -17,6 +15,8 @@ namespace Game {
             Fixed2D4 highlightPosition;
             uint8_t highlightRadius;
             const char* highlightInfo;
+            bool targetIsShip;
+            uint8_t targetIndex;
 
 
             void highlightTarget(Fixed2D4 pos, uint8_t sz) {
@@ -69,8 +69,9 @@ namespace Game {
                 uint8_t dmg;
                 uint8_t maxDmg;
                 const char *info;
-
-                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd, int16_t *screen, const char *inf) {
+                bool isShip;
+                uint8_t index;
+                void init(Fixed2D4 p, Fixed2D4 v, Fix4 d, uint8_t r, uint8_t dm, uint8_t maxd, int16_t *screen, const char *inf, bool isShip, uint8_t index) {
                     if (dot > d) return;
                     pos = p;
                     vel = v;
@@ -80,6 +81,8 @@ namespace Game {
                     maxDmg = maxd;
                     screenPos = screen;
                     info = inf;
+                    this->index = index;
+                    this->isShip = isShip;
                 }
             };
 
@@ -105,7 +108,7 @@ namespace Game {
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
                     asteroidInfo.init(a->pos, a->velocity, dot, asteroidRadiusByType[a->type] /2 + 2, a->hits,
-                                      asteroidMaxHitsByType[a->type], 0,0);
+                                      asteroidMaxHitsByType[a->type], 0,0, false, i);
                 }
                 BestInfo shipInfo;
                 shipInfo.dot = Fix4(-1,0);
@@ -121,7 +124,7 @@ namespace Game {
                     targetDir = targetDir.normalize();
                     Fix4 dot = targetDir.dot(dir);
                     shipInfo.init(s->pos, s->velocity, dot, s->type == ShipTypeWormHole ? 12 : 6,
-                                  s->damage, s->maxDamage(), s->screenPos,s->info);
+                                  s->damage, s->maxDamage(), s->screenPos,s->info, true, i);
                 }
                 int sel = shipInfo.dot > Fix4(0,10) ? 1 : (asteroidInfo.dot > Fix4(0,12) ? 2 : 0);
                 if (sel) {
@@ -131,6 +134,8 @@ namespace Game {
                     targetVelocity = info.vel;
                     targetMaxDamage = info.maxDmg;
                     targetDamage = info.dmg;
+                    targetIndex = info.index;
+                    targetIsShip = info.isShip;
                     updateTargetHighlight(true, targetPosition, info.screenPos, info.rad, info.info);
                     //highlightTarget(bestTarget,targetRad);
                 } else {

@@ -200,6 +200,24 @@ namespace Game {
             }
         }
 
+        void drawTargetInfo(int16_t vpos) {
+            uint8_t mode = RenderCommandBlendMode::opaque;
+            if (UI::HUD::targetLock) {
+                if (UI::HUD::targetIsShip) {
+                    Ship *s = &shipManager.ships[UI::HUD::targetIndex];
+                    buffer.setOffset(s->pos.x.getIntegerPart() + 48, s->pos.y.getIntegerPart() + 32);
+                    s->draw();
+                    buffer.setOffset(0,0);
+                    buffer.drawText(s->info ? s->info : "Ship",8,32-menuHeight / 2+8,80,menuHeight-16,1,1,false, FontAsset::font, 200, mode);
+                } else {
+                    Asteroid *a = &asteroidManager.asteroids[UI::HUD::targetIndex];
+
+                }
+            } else {
+                buffer.drawText("NO TARGET",0,0,96,64,0,0,false, FontAsset::font, 200, mode);
+            }
+        }
+
         void drawRadarContent() {
             static uint8_t mode = 1;
             drawRect(8,32-19,80,40,0x0000,RenderCommandBlendMode::average, true);
@@ -286,11 +304,7 @@ namespace Game {
             int menuCount = 1;
             switch(submenuSelected) {
             case 0: // target
-                if (UI::HUD::targetLock) {
-                    buffer.drawText(UI::HUD::highlightInfo ? UI::HUD::highlightInfo : "< ??? >",8,32-menuHeight / 2+8,80,menuHeight-16,1,1,false, FontAsset::font, 200, mode);
-                } else {
-                    buffer.drawText("NO TARGET",0,0,96,64,0,0,false, FontAsset::font, 200, mode);
-                }
+                drawTargetInfo(vpos);
                 break;
             case 2: // ship
                 buffer.drawText(stringBuffer.start().put("STATUS: ").putDec(100-s->damage*100/s->maxDamage()).put("%").get(),0,vpos+12,96,8,0,0,false, FontAsset::font, 200, mode);
