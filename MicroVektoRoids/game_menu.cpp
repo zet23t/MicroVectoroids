@@ -2,9 +2,11 @@
 #include "game_ships.h"
 #include "game_common.h"
 #include "game_ui_hud.h"
+#include "game_ui_radar.h"
 #include "game_ships.h"
 #include "game_sound.h"
 #include "game_player_stats.h"
+#include "game_asteroids.h"
 
 #define SCREEN_MAIN 0
 #define SCREEN_CREDITS 1
@@ -198,6 +200,70 @@ namespace Game {
             }
         }
 
+        void drawRadarContent() {
+            static uint8_t mode = 1;
+            drawRect(8,32-19,80,40,0x0000,RenderCommandBlendMode::average, true);
+            if (mode > 0) {
+                uint8_t zoom = mode + 2;
+                Fixed2D4 origin = shipManager.ships[0].pos;
+                for (int i=0;i<ShipCount;i+=1) {
+                    Ship *s = &shipManager.ships[i];
+                    if (s->type) {
+                        Fixed2D4 rel = s->pos - origin;
+                        int x = rel.x.getIntegerPart() >> zoom;
+                        int y = rel.y.getIntegerPart() >> zoom;
+                        if (abs(x) < 40&& abs(y) < 20) {
+                            drawRect(x + 47,y + 31,2,2,UI::Radar::blipShipColors[s->type],RenderCommandBlendMode::opaque,true);
+                        }
+                    }
+                }
+                for (int i=0;i<AsteroidsCount;i+=1) {
+                    Asteroid *a = &asteroidManager.asteroids[i];
+                    if (a->type) {
+                        Fixed2D4 rel = a->pos - origin;
+                        int x = rel.x.getIntegerPart() >> zoom;
+                        int y = rel.y.getIntegerPart() >> zoom;
+                        if (abs(x) < 40&& abs(y) < 20) {
+                            drawRect(x + 47,y + 31,2,2,RGB565(128,128,128),RenderCommandBlendMode::opaque,true);
+                        }
+
+                    }
+                }
+                uint8_t step = 128>>zoom;
+                for (int x=48;x<=88;x+=step) {
+                    drawRect(x,32-20,1,41,RGB565(20,20,80),RenderCommandBlendMode::add,true);
+                }
+                for (int x=48 - step;x>=8;x-=step) {
+                    drawRect(x,32-20,1,41,RGB565(20,20,80),RenderCommandBlendMode::add,true);
+                }
+                for (int y = 32; y<=53;y+=step) {
+                    drawRect(8,y,80,1,RGB565(20,20,80),RenderCommandBlendMode::add,true);
+                }
+                for (int y = 32-step; y>=12;y-=step) {
+                    drawRect(8,y,80,1,RGB565(20,20,80),RenderCommandBlendMode::add,true);
+                }
+
+                buffer.drawText(stringBuffer.start().put("1:").putDec(1<<zoom).put("x").get(),8,12,80,41,1,1,false,FontAsset::font,200);
+            } else {
+                drawRect(8,14,3,5,RGB565(128,128,128), RenderCommandBlendMode::opaque,true);
+                drawRect(8,20,3,5,UI::Radar::blipShipColors[1], RenderCommandBlendMode::opaque,true);
+                drawRect(8,26,3,5,UI::Radar::blipShipColors[2], RenderCommandBlendMode::opaque,true);
+                drawRect(8,32,3,5,UI::Radar::blipShipColors[3], RenderCommandBlendMode::opaque,true);
+                drawRect(8,38,3,5,UI::Radar::blipShipColors[4], RenderCommandBlendMode::opaque,true);
+
+                buffer.drawText("ASTEROID\n"
+                                "YOU\n"
+                                "STATION\n"
+                                "ACTIVE WORMHOLE\n"
+                                "INACTIVE WORMHOLE\n"
+                                ,12,14,75,41,-1,-1,false,FontAsset::font,200);
+
+            }
+            if (activate) {
+                mode = (mode + 1) % 4;
+            }
+        }
+
         void drawSubmenus(int16_t vpos) {
             const char *menuTitle[] = {
                 "TARGET",
@@ -241,6 +307,7 @@ namespace Game {
                 }
                 break;
             case 1:
+                drawRadarContent();
                 break;
             case 3:
                 if (menuSelected < 0) menuSelected +=3;

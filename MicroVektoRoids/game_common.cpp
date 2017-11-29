@@ -140,12 +140,10 @@ namespace Game {
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,10,5,15,0,0);
         shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
-        shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
-        shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL\nUNSTABLE");
         //shipManager.ships[2].init(3,35,8,15,0);
         buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
-        /*for (int i=0;i<30;i+=1) {
+        for (int i=0;i<30;i+=1) {
             int x = (Math::randInt() % 1024) - 512;
             int y = (Math::randInt() % 1024) - 512;
             if (x*x+y*y > 20)
@@ -155,8 +153,10 @@ namespace Game {
             int x = (Math::randInt() % 1024) - 512;
             int y = (Math::randInt() % 1024) - 512;
             if (x*x+y*y > 20)
-                shipManager.ships[i+2].init(3,x,y,15,0);
-        }*/
+                shipManager.ships[i+2].init(3,x,y,15,0,0);
+        }//*/
+        shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
+        shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL\nUNSTABLE");
 
         projectileManager.init();
         PlayerStats::init();

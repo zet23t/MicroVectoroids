@@ -13,10 +13,10 @@ namespace Game {
                 SpriteSheetRect rect = bar->sprites[0];
                 SpriteSheetRect innerRect = inner->sprites[0];
                 uint8_t y = 32-rect.origHeight/2;
-                buffer.drawRect(x+rect.offsetX,y + rect.offsetY,rect.width,rect.height)->sprite(&atlas, rect.x, rect.y)->blend(RenderCommandBlendMode::add);
+                buffer.drawRect(x+rect.offsetX,y + rect.offsetY,rect.width,rect.height)->sprite(&atlas, rect.x, rect.y)->blend(RenderCommandBlendMode::add)->setDepth(100);
                 uint8_t dmg = dmgAbs * 35 / (maxDmg + 1);
                 buffer.setClipping(y+7+dmg,96,64,0);
-                buffer.drawRect(x+innerRect.offsetX,y + innerRect.offsetY,innerRect.width,innerRect.height)->sprite(&atlas, innerRect.x, innerRect.y)->blend(RenderCommandBlendMode::add);
+                buffer.drawRect(x+innerRect.offsetX,y + innerRect.offsetY,innerRect.width,innerRect.height)->sprite(&atlas, innerRect.x, innerRect.y)->blend(RenderCommandBlendMode::add)->setDepth(100);
                 buffer.setClipping(0,96,64,0);
 
             }
