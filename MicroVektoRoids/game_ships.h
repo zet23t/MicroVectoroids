@@ -8,6 +8,8 @@ namespace Game {
     #define ShipTypeEnemySmall ((uint8_t)3)
     #define ShipTypeWormHole ((uint8_t)4)
     #define ShipTypeWormHoleInactive ((uint8_t)5)
+    #define ShipJumpStart 64
+    #define ShipJumpEnd 128
     struct Ship {
         Fixed2D4 pos;
         Fixed2D4 prevPos;
@@ -19,7 +21,10 @@ namespace Game {
         uint8_t takenHitCooldown;
         int16_t screenPos[2];
         char* info;
-        uint8_t destinationId;
+        union {
+            uint8_t destinationId;
+            uint8_t charge;
+        };
 
         void tickPlayer();
         void tickPlayerControls();

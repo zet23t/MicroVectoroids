@@ -31,6 +31,8 @@ namespace Game {
     int frame, frameUnpaused;
     Texture<uint16_t> atlas;
     int16_t camX, camY;
+    int8_t currentLevelId;
+    uint8_t whiteInAnimation;
 
     uint8_t screenBrightness = 255;
 
@@ -81,6 +83,14 @@ namespace Game {
 
 
     void tick() {
+        if(whiteInAnimation > 0) {
+            if (whiteInAnimation > 16) whiteInAnimation -= 16;
+            else whiteInAnimation = 0;
+
+
+            buffer.setClearBackground(true, RGB565(whiteInAnimation,whiteInAnimation,whiteInAnimation));
+
+        }
         Ship* ship = shipManager.ships;
         frameUnpaused += 1;
         if (gameState == GameState::Running) {
@@ -133,18 +143,25 @@ namespace Game {
     }
 
     void initializeLevel(uint8_t id) {
+        currentLevelId = id;
         frame = 0;
         shipManager.init();
-        const Ship* ship = shipManager.ships;
-        shipManager.ships[0].init(1,10,5,15,0,0);
-        //shipManager.ships[2].init(3,35,8,15,0);
-        buffer.setClearBackground(true, RGB565(0,0,0));
         asteroidManager.init();
         projectileManager.init();
         PlayerStats::init();
         Collectable::init();
         UI::Info::init();
         gameState = GameState::Running;
+        if (id == DESTINATION_INTRO) {
+            buffer.setClearBackground(true, RGB565(0,0,0));
+            return;
+        }
+
+        const Ship* ship = shipManager.ships;
+        shipManager.ships[0].init(1,0,0,15,0,0);
+        //shipManager.ships[2].init(3,35,8,15,0);
+        whiteInAnimation = 255;
+        buffer.setClearBackground(true, RGB565(255,255,255));
 
         switch (id) {
         case DESTINATION_MAIN:
@@ -172,7 +189,7 @@ namespace Game {
 
     void initialize() {
         atlas = Texture<uint16_t>(ImageAsset::atlas);
-        setScreenBrightness(8);
+        setScreenBrightness(DESTINATION_INTRO);
         initializeLevel(0);
     }
 }

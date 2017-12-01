@@ -59,6 +59,7 @@ public:
 #define DESTINATION_MAIN 0
 #define DESTINATION_EASY 1
 #define DESTINATION_MEDIUM 2
+#define DESTINATION_INTRO 222
 
 namespace Game {
     namespace GameState {
@@ -70,6 +71,7 @@ namespace Game {
     extern Texture<uint16_t> atlas;
     extern int frame, frameUnpaused;
     extern int16_t camX, camY;
+    extern int8_t currentLevelId;
 
     void initializeLevel(uint8_t id);
     void setScreenBrightness(uint8_t b);

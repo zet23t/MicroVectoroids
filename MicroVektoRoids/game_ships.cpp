@@ -13,10 +13,12 @@ namespace Game {
     void Ship::tickPlayerControls() {
         Fixed2D4 input =  Joystick::getJoystick();
         //if (Joystick::getButton(0)) {
-        if (Joystick::getButton(1)) {
+        if (Joystick::getButton(1) || (charge > ShipJumpStart && UI::HUD::targetLock)) {
             shoot();
+        } else {
+            charge = charge / 2;
         }
-        if (input.x !=0 || input.y !=0) {
+        if ((input.x !=0 || input.y !=0) && charge <=ShipJumpEnd) {
             if (!directionalControls) {
                 input.normalize();
                 if (input.dot(direction) > Fix4(0,12)) {
@@ -274,18 +276,49 @@ namespace Game {
         switch (type) {
         case 1:
             {
-                const int pivotX = -8;
-                const int pivotY = -8;
+                if (charge <
+                     ShipJumpStart) {
+                    const int pivotX = -8;
+                    const int pivotY = -8;
 
-                int idir = calcDirectionIndex(direction);
-                int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
-                screenPos[0] = (int16_t)x;
-                screenPos[1] = (int16_t)y;
-                drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
-                Fixed2D4 dir = (pos + direction * Fix4(15,0));
-                drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0])->blend(RenderCommandBlendMode::add);
-                if (takenHitCooldown) {
-                    drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown])->blend(RenderCommandBlendMode::add);
+                    int idir = calcDirectionIndex(direction);
+                    int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
+                    screenPos[0] = (int16_t)x;
+                    screenPos[1] = (int16_t)y;
+                    drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle.sprites[(idir + 8) % 16])->blend(RenderCommandBlendMode::add);
+                    Fixed2D4 dir = (pos + direction * Fix4(15,0));
+                    drawCenteredSprite(dir.x.getIntegerPart(), dir.y.getIntegerPart(), ImageAsset::TextureAtlas_atlas::ui_crosshair.sprites[0])->blend(RenderCommandBlendMode::add);
+                    if (takenHitCooldown) {
+                        drawCenteredSprite(x,y, ImageAsset::TextureAtlas_atlas::ship_triangle_shield.sprites[takenHitCooldown])->blend(RenderCommandBlendMode::add);
+                    }
+                }
+
+                if (charge > 0 && UI::HUD::targetLock) {
+                    int x1 = pos.x.getIntegerPart();
+                    int y1 = pos.y.getIntegerPart();
+                    int x2 = shipManager.ships[UI::HUD::targetIndex].screenPos[0];
+                    int y2 = shipManager.ships[UI::HUD::targetIndex].screenPos[1];
+                    int num= charge;
+                    if (num > ShipJumpStart) {
+                        num = ShipJumpStart - (charge - ShipJumpStart) * 2;
+                        if (num < 0) num = 0;
+                    }
+                    for (int i=0;i<num;i+=1) {
+                        uint8_t perc = Math::randInt() & 0xff;
+                        int px = x1 * perc / 256 + x2 *(255-perc)/256;
+                        int py = y1 * perc / 256 + y2 *(255-perc)/256;
+                        drawCenteredSprite(px,py,ImageAsset::TextureAtlas_atlas::wormhole_particle.sprites[i/16%ImageAsset::TextureAtlas_atlas::wormhole_particle.spriteCount])->blend(RenderCommandBlendMode::add);
+                    }
+                    if (charge > ShipJumpStart) {
+                        int index = ImageAsset::TextureAtlas_atlas::jump_flare.spriteCount * (charge - ShipJumpStart)/(ShipJumpEnd - ShipJumpStart);
+                        drawCenteredSprite(x1,y1,ImageAsset::TextureAtlas_atlas::jump_flare.sprites[index])->blend(RenderCommandBlendMode::add);
+                        int col = 1024 * (charge - ShipJumpStart)/(ShipJumpEnd - ShipJumpStart)-768;
+                        if (col > 0) {
+                            int b = col * 2;
+                            if (b > 255) b = 255;
+                            buffer.setClearBackground(true, RGB565(col,col,b));
+                        }
+                    }
                 }
 
             }
@@ -344,11 +377,27 @@ namespace Game {
         pos.setXY(x,y);
         prevPos = pos;
         damage = 0;
+        charge = 0;
         direction.x = Fix4(0,dx);
         direction.y = Fix4(0,dy);
     }
 
     void Ship::shoot() {
+        if (UI::HUD::targetLock && type == ShipTypePlayer && UI::HUD::targetIsShip
+            && shipManager.ships[UI::HUD::targetIndex].type == ShipTypeWormHole)
+        {
+            if (charge >=ShipJumpEnd) {
+                initializeLevel(shipManager.ships[UI::HUD::targetIndex].destinationId);
+            } else {
+                charge+=2;
+                Fixed2D4 diff = UI::HUD::targetPosition - pos;
+                //Fix4 dist = diff.length();
+                diff = diff.normalize();
+                direction = (direction * 4 + diff * charge).normalize();
+                //if (dist > Fix4(4,0)) pos += diff;
+            }
+            return;
+        }
         if (shootCooldown == 0) {
             shootCooldown = type == 1 ? 8 : 12;
             Fixed2D4 dir = direction;

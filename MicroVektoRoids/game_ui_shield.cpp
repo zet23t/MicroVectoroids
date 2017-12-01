@@ -25,6 +25,10 @@ namespace Game {
                 drawBar(-3, shipManager.ships[0].damage, shipManager.ships[0].maxDamage());
                 if (Game::UI::HUD::targetMaxDamage > 0 && Game::UI::HUD::targetLock)
                     drawBar(82, Game::UI::HUD::targetDamage, Game::UI::HUD::targetMaxDamage);
+                else if (shipManager.ships[0].charge) {
+                    drawBar(82, 64-shipManager.ships[0].charge, 64);
+
+                }
 
                 buffer.setOffset(camX-48,camY-32);
             }

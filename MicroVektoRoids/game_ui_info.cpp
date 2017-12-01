@@ -16,6 +16,7 @@ namespace Game {
             }
 
             void draw() {
+                if (displayedScore == 0) return;
                 int x = buffer.getOffsetX();
                 int y = buffer.getOffsetY();
                 buffer.setOffset(0,0);
