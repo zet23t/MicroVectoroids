@@ -5,14 +5,14 @@
 - [x] Ship damage & damage bar
 - [x] Ship destruction
 - [ ] Game start screen
-  - [ ] show Logo over main space system
+  - [x] show Logo over main space system
   - [ ] show high scores
 - [ ] Main level with wormholes for difficulty selection
   - [ ] Show target damage and info
     - [x] Damage
     - [x] Info text
-    - [ ] menu with extended information
-  - [ ] Interactable space objects
+    - [x] menu with extended information
+  - [x] Interactable space objects
   - [ ] Space station
     - [x] station object
     - [ ] selectable station
@@ -34,8 +34,8 @@
   - [ ] save scores
   - [ ] load game state
 - [ ] sounds
-  - [ ] investigate how sound works 
-  - [ ] add effects 
+  - [ ] investigate how sound works
+  - [ ] add effects
   - [ ] add music
 
 # Polishing

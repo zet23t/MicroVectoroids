@@ -31,7 +31,7 @@ namespace Game {
     int frame, frameUnpaused;
     Texture<uint16_t> atlas;
     int16_t camX, camY;
-    int8_t currentLevelId;
+    uint8_t currentLevelId;
     uint8_t whiteInAnimation;
 
     uint8_t screenBrightness = 255;
@@ -58,7 +58,7 @@ namespace Game {
                                rect.width,rect.height)->sprite(&atlas, rect.x, rect.y);
     }
 
-    void drawSpaceBackground(int layer, uint16_t col) {
+    void drawSpaceBackground(int layer, uint16_t col, uint8_t cntMask) {
         int16_t x = buffer.getOffsetX();
         int16_t y = buffer.getOffsetY();
         int16_t mask= (64 << layer)-1;
@@ -69,11 +69,13 @@ namespace Game {
             for (int8_t j=0;j<2;j+=1) {
                 int16_t xx = ox + (i << (6 + layer));
                 int16_t yy = oy + (j << (6 + layer));
-                Math::setSeed(xx + layer * 17,yy + layer * 7);
-                for (int8_t k = 0;k<8;k+=1) {
+                Math::setSeed(xx + layer * 17 - yy/8,yy + xx / 4 + layer * 7);
+                uint8_t n = (Math::randInt() & cntMask)+1;
+                for (int8_t k = 0;k<n;k+=1) {
                     int16_t px = xx + (Math::randInt()&mask);
                     int16_t py = yy + (Math::randInt()&mask);
-                    buffer.drawRect(px>>layer,py>>layer,1,1)->filledRect(col);
+                    drawCenteredSprite(px>>layer,py>>layer,ImageAsset::TextureAtlas_atlas::stars.sprites[px&7])->blend(RenderCommandBlendMode::bitwiseOr);
+                    //buffer.drawRect(px>>layer,py>>layer,1,1)->filledRect(col)->blend(RenderCommandBlendMode::bitwiseOr);
                 }
             }
         }
@@ -81,8 +83,34 @@ namespace Game {
         //buffer.drawRect(ox,oy,64,64)->filledRect(RGB565(0,255,0));
     }
 
+    void drawBackgrounds() {
+
+        drawSpaceBackground(0, RGB565(62,62,62),1);
+        drawSpaceBackground(1, RGB565(180,180,180),3);
+        drawSpaceBackground(2, RGB565(120,120,120),3);
+        drawSpaceBackground(3, RGB565(120,120,120),7);
+    }
+
+    void tickIntro() {
+        for(int i=0;i<1;i+=1) {
+            buffer.setOffset(frameUnpaused * 2 + i,0);
+            drawBackgrounds();
+        }
+        buffer.setOffset(0,0);
+        drawCenteredSprite(48,32,ImageAsset::TextureAtlas_atlas::logo.sprites[0])->blend(RenderCommandBlendMode::add);
+        for (int i=0;i<abs(frameUnpaused/2%8-4);i+=1)
+            buffer.drawText("START",0,48,96,16,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::average);
+        if (Joystick::getButton(0)) {
+            initializeLevel(DESTINATION_MAIN);
+        }
+    }
 
     void tick() {
+        frameUnpaused += 1;
+        if (currentLevelId == DESTINATION_INTRO) {
+            tickIntro();
+            return;
+        }
         if(whiteInAnimation > 0) {
             if (whiteInAnimation > 16) whiteInAnimation -= 16;
             else whiteInAnimation = 0;
@@ -92,7 +120,6 @@ namespace Game {
 
         }
         Ship* ship = shipManager.ships;
-        frameUnpaused += 1;
         if (gameState == GameState::Running) {
 
             frame += 1;
@@ -118,10 +145,7 @@ namespace Game {
             camY = targetY;
         }
         buffer.setOffset(camX - 48, camY -32);
-
-        drawSpaceBackground(0, RGB565(62,62,62));
-        drawSpaceBackground(1, RGB565(180,180,180));
-        drawSpaceBackground(2, RGB565(120,120,120));
+        drawBackgrounds();
 
         Math::setSeed(frame, frame * frame - 1283321);
 
@@ -167,29 +191,45 @@ namespace Game {
         case DESTINATION_MAIN:
             shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
             shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
-            shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL\nUNSTABLE");
+            shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL");
             shipManager.ships[2].destinationId = 1;            shipManager.ships[3].destinationId = 2;
             break;
         case DESTINATION_EASY:
-            for (int i=0;i<30;i+=1) {
+            for (int i=0;i<1;i+=1) {
                 int x = (Math::randInt() % 1024) - 512;
                 int y = (Math::randInt() % 1024) - 512;
                 if (x*x+y*y > 20)
                     asteroidManager.spawn()->init(1,x,y);
             }
-            for (int i=0;i<15;i+=1) {
+            for (int i=0;i<1;i+=1) {
                 int x = (Math::randInt() % 1024) - 512;
                 int y = (Math::randInt() % 1024) - 512;
                 if (x*x+y*y > 20)
                     shipManager.ships[i+2].init(3,x,y,15,0,0);
             }
+            shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W0:MAIN");
             break;
+        }
+    }
+
+    void checkLevelTermination(int16_t x, int16_t y) {
+        for (int i=0;i<AsteroidsCount;i+=1) {
+            if (asteroidManager.asteroids[i].type) return;
+        }
+        for (int i=0;i<ShipCount;i+=1) {
+            if (shipManager.ships[i].type == ShipTypeEnemySmall) return;
+        }
+        for (int i=0;i<ShipCount;i+=1) {
+            if (shipManager.ships[i].type == ShipTypeWormHoleInactive) {
+                shipManager.ships[i].type = ShipTypeWormHole;
+                return;
+            }
         }
     }
 
     void initialize() {
         atlas = Texture<uint16_t>(ImageAsset::atlas);
-        setScreenBrightness(DESTINATION_INTRO);
-        initializeLevel(0);
+        setScreenBrightness(8);
+        initializeLevel(DESTINATION_INTRO);
     }
 }

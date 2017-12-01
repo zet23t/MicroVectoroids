@@ -80,6 +80,10 @@ namespace Game {
                 memset(blipsShips,0,sizeof(blipsAsteroids));
 
                 buffer.setOffset(0,0);
+                buffer.drawRect(0,0,96,1)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
+                buffer.drawRect(0,63,96,1)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
+                buffer.drawRect(0,0,1,64)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
+                buffer.drawRect(95,0,1,64)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
                 Fixed2D4 cen = Fixed2D4(x+48,y+32);
                 for (int i=0;i<AsteroidsCount;i+=1) {
                     if (asteroidManager.asteroids[i].type) {

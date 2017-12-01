@@ -71,7 +71,9 @@ namespace Game {
     extern Texture<uint16_t> atlas;
     extern int frame, frameUnpaused;
     extern int16_t camX, camY;
-    extern int8_t currentLevelId;
+    extern uint8_t currentLevelId;
+
+    void checkLevelTermination(int16_t x, int16_t y);
 
     void initializeLevel(uint8_t id);
     void setScreenBrightness(uint8_t b);

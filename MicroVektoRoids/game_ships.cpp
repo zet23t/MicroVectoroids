@@ -205,6 +205,7 @@ namespace Game {
         //particleSystem.spawn(t, pos, direction.right() * Fix4(0,3) - direction * Fix4(0,3));
 
         type = 0;
+        checkLevelTermination(pos.x.getIntegerPart(),pos.y.getIntegerPart());
     }
 
     void Ship::takeDamage(uint8_t dmg) {

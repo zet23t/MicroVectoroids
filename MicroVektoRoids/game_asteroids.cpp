@@ -112,6 +112,7 @@ namespace Game {
             }
         }
         type = 0;
+        checkLevelTermination(pos.x.getIntegerPart(),pos.y.getIntegerPart());
     }
 
     void AsteroidManager::init() {
