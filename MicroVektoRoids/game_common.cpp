@@ -10,6 +10,10 @@
 #include "game_collectable.h"
 #include "game_player_stats.h"
 #include "game_ui_info.h"
+#include "game_ui_intermission.h"
+
+#include "game_level_main.h"
+#include "game_level_01.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -119,18 +123,25 @@ namespace Game {
             buffer.setClearBackground(true, RGB565(whiteInAnimation,whiteInAnimation,whiteInAnimation));
 
         }
-        Ship* ship = shipManager.ships;
-        if (gameState == GameState::Running) {
-
-            frame += 1;
-            particleSystem.tick();
-            shipManager.tick();
-            asteroidManager.tick();
-            projectileManager.tick();
-            Collectable::tick();
-            UI::Info::tick();
+        switch (currentLevelId) {
+        case DESTINATION_MAIN: Level::Main::tick(); break;
+        case DESTINATION_EASY: Level::L01::tick(); break;
         }
-        Menu::tick();
+        Ship* ship = shipManager.ships;
+        if (!UI::Intermission::isActive()) {
+            if (gameState == GameState::Running) {
+
+                frame += 1;
+                particleSystem.tick();
+                shipManager.tick();
+                asteroidManager.tick();
+                projectileManager.tick();
+                Collectable::tick();
+                UI::Info::tick();
+            }
+            Menu::tick();
+        }
+        UI::Intermission::tick();
 
         Fixed2D4 cam = ship->pos + ship->direction * Fix4(8,0) + ship->velocity * Fix4(1,8);
         int16_t targetX = ship->pos.x.getIntegerPart() + ship->direction.x.getIntegerPart() * 8 + ship->velocity.x.getIntegerPart();
@@ -163,7 +174,7 @@ namespace Game {
             }
         }
         Menu::draw();
-
+        UI::Intermission::draw();
     }
 
     void initializeLevel(uint8_t id) {
@@ -172,7 +183,6 @@ namespace Game {
         shipManager.init();
         asteroidManager.init();
         projectileManager.init();
-        PlayerStats::init();
         Collectable::init();
         UI::Info::init();
         gameState = GameState::Running;
@@ -180,6 +190,7 @@ namespace Game {
             buffer.setClearBackground(true, RGB565(0,0,0));
             return;
         }
+        PlayerStats::jumped();
 
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,0,0,15,0,0);
@@ -189,25 +200,10 @@ namespace Game {
 
         switch (id) {
         case DESTINATION_MAIN:
-            shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
-            shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
-            shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL");
-            shipManager.ships[2].destinationId = 1;            shipManager.ships[3].destinationId = 2;
+            Level::Main::init();
             break;
         case DESTINATION_EASY:
-            for (int i=0;i<1;i+=1) {
-                int x = (Math::randInt() % 1024) - 512;
-                int y = (Math::randInt() % 1024) - 512;
-                if (x*x+y*y > 20)
-                    asteroidManager.spawn()->init(1,x,y);
-            }
-            for (int i=0;i<1;i+=1) {
-                int x = (Math::randInt() % 1024) - 512;
-                int y = (Math::randInt() % 1024) - 512;
-                if (x*x+y*y > 20)
-                    shipManager.ships[i+2].init(3,x,y,15,0,0);
-            }
-            shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W0:MAIN");
+            Level::L01::init();
             break;
         }
     }
@@ -228,6 +224,7 @@ namespace Game {
     }
 
     void initialize() {
+        PlayerStats::init();
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         setScreenBrightness(8);
         initializeLevel(DESTINATION_INTRO);

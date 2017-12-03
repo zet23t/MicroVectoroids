@@ -66,6 +66,10 @@
 		<Unit filename="MicroVektoRoids/game_collectable.h" />
 		<Unit filename="MicroVektoRoids/game_common.cpp" />
 		<Unit filename="MicroVektoRoids/game_common.h" />
+		<Unit filename="MicroVektoRoids/game_level_01.cpp" />
+		<Unit filename="MicroVektoRoids/game_level_01.h" />
+		<Unit filename="MicroVektoRoids/game_level_main.cpp" />
+		<Unit filename="MicroVektoRoids/game_level_main.h" />
 		<Unit filename="MicroVektoRoids/game_menu.cpp" />
 		<Unit filename="MicroVektoRoids/game_menu.h" />
 		<Unit filename="MicroVektoRoids/game_particles.cpp" />
@@ -82,6 +86,8 @@
 		<Unit filename="MicroVektoRoids/game_ui_hud.h" />
 		<Unit filename="MicroVektoRoids/game_ui_info.cpp" />
 		<Unit filename="MicroVektoRoids/game_ui_info.h" />
+		<Unit filename="MicroVektoRoids/game_ui_intermission.cpp" />
+		<Unit filename="MicroVektoRoids/game_ui_intermission.h" />
 		<Unit filename="MicroVektoRoids/game_ui_radar.cpp" />
 		<Unit filename="MicroVektoRoids/game_ui_radar.h" />
 		<Unit filename="MicroVektoRoids/game_ui_shield.cpp" />

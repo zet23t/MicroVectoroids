@@ -28,6 +28,7 @@ namespace Game {
         void tick();
         void draw();
         Asteroid* spawn();
+        uint8_t countAll();
     };
 
     extern AsteroidManager asteroidManager;

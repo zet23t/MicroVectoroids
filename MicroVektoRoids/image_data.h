@@ -8,8 +8,6 @@ extern const unsigned char font_data[8192] PROGMEM;
 extern const ImageData font;
 extern const unsigned char hemifont_data[16384] PROGMEM;
 extern const ImageData hemifont;
-extern const unsigned char numbersfont_data[1024] PROGMEM;
-extern const ImageData numbersfont;
 extern const unsigned char atlas_data[65536] PROGMEM;
 extern const ImageData atlas;
 namespace TextureAtlas_atlas {

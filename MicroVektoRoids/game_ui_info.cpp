@@ -20,7 +20,7 @@ namespace Game {
                 int x = buffer.getOffsetX();
                 int y = buffer.getOffsetY();
                 buffer.setOffset(0,0);
-                buffer.drawText(stringBuffer.start().putDec(displayedScore).get(), 0,2,96,16,0,-1,false,FontAsset::numbersfont,100,RenderCommandBlendMode::add);
+                buffer.drawText(stringBuffer.start().putDec(displayedScore).get(), 0,2,96,16,0,-1,false,FontAsset::font,100,RenderCommandBlendMode::add);
                 buffer.setOffset(x,y);
             }
 

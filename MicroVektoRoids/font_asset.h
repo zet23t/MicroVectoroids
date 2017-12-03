@@ -6,7 +6,6 @@
 namespace FontAsset {
 	extern const SpriteFont font;
 		extern const SpriteFont hemifont;
-		extern const SpriteFont numbersfont;
 	
 }
 #endif

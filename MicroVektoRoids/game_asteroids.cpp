@@ -77,6 +77,7 @@ namespace Game {
             }
         }
         pos += velocity;
+        if (velocity.length() > Fix4(1,0)) velocity = velocity * Fix4(0,15);
     }
 
     void Asteroid::push(Fixed2D4 change) {
@@ -117,6 +118,14 @@ namespace Game {
 
     void AsteroidManager::init() {
         memset(asteroids,0,sizeof(asteroids));
+    }
+
+    uint8_t AsteroidManager::countAll() {
+        uint8_t n = 0;
+        for (int i=0;i<AsteroidsCount;i+=1) {
+            if (asteroids[i].type) n+=1;
+        }
+        return n;
     }
 
     void AsteroidManager::draw() {
