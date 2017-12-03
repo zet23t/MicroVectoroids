@@ -34,7 +34,7 @@ namespace Game {
                 if (dist < 120 && (frame / 4 & 1)) {
                     w = 2;
                 }
-                int barlen = max(1,8-dist/32);
+                int barlen = max(1,8-dist/32) + (frame >> 3 & 1)*2;
 
                 if (abs(sdx) >= abs(sdy)) {
                     sdy /= abs(sdx) / 32;
@@ -59,14 +59,22 @@ namespace Game {
             };
             #define BlipCount 5
             void addBlip(Blip* blips, Fixed2D4 cen, Fixed2D4 p, uint16_t c) {
-                int16_t dx = cen.x.getIntegerPart() - p.x.getIntegerPart();
-                int16_t dy = cen.y.getIntegerPart() - p.y.getIntegerPart();
-                uint32_t d = dx*dx + dy*dy;
+                int dx = cen.x.getIntegerPart() - p.x.getIntegerPart();
+                int dy = cen.y.getIntegerPart() - p.y.getIntegerPart();
+                int d = dx*dx + dy*dy;
+                //printf("%d\n",d);
                 for(int i=0;i<BlipCount;i+=1) {
-                    if (blips[i].dist == 0 || blips[i].dist > d) {
+                    if (blips[i].dist == 0) {
                         //printf("%d %d\n",i,d);
                         blips[i].init(p,d,c);
-                        break;
+                        return;
+                    }
+                }
+                for(int i=0;i<BlipCount;i+=1) {
+                    if (blips[i].dist > d) {
+                        //printf("%d %d\n",i,d);
+                        blips[i].init(p,d,c);
+                        return;
                     }
                 }
             }
@@ -77,7 +85,7 @@ namespace Game {
                 Blip blipsAsteroids[BlipCount];
                 Blip blipsShips[BlipCount];
                 memset(blipsAsteroids,0,sizeof(blipsAsteroids));
-                memset(blipsShips,0,sizeof(blipsAsteroids));
+                memset(blipsShips,0,sizeof(blipsShips));
 
                 buffer.setOffset(0,0);
                 buffer.drawRect(0,0,96,1)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
