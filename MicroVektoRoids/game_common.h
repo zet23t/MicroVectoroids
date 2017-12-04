@@ -57,8 +57,8 @@ public:
 };
 
 #define DESTINATION_MAIN 0
-#define DESTINATION_EASY 1
-#define DESTINATION_MEDIUM 2
+#define DESTINATION_01 1
+#define DESTINATION_02 2
 #define DESTINATION_INTRO 222
 
 namespace Game {

@@ -14,15 +14,20 @@ namespace Game {
                 "Welcome, Triangle.",
                 "Use the EDGE RADAR - fly to the green marker",
                 0,
-                "Activate this wormhole.",
+                "Activate this WORMHOLE.",
+                0,
+                "Welcome back. ",
+                "There's a new active WORMHOLE waiting for you.",
                 0,
             };
             void init() {
                 shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
-                shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W1:EASY");
-                shipManager.ships[3].init(ShipTypeWormHoleInactive,-235,-100,15,0,"W2:NORMAL");
+                shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W-01");
+                shipManager.ships[3].init(PlayerStats::getJumpCount() == 1 ? ShipTypeWormHoleInactive : ShipTypeWormHole,-235,-100,15,0,"W-02");
                 shipManager.ships[2].destinationId = 1;                shipManager.ships[3].destinationId = 2;
-                if (PlayerStats::getJumpCount() == 1) {
+                if (PlayerStats::hasVisited(DESTINATION_01)) {
+                    textId = 5;
+                } else {
                     textId = 0;
                 }
             }

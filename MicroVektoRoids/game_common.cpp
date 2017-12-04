@@ -14,6 +14,7 @@
 
 #include "game_level_main.h"
 #include "game_level_01.h"
+#include "game_level_02.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -125,7 +126,8 @@ namespace Game {
         }
         switch (currentLevelId) {
         case DESTINATION_MAIN: Level::Main::tick(); break;
-        case DESTINATION_EASY: Level::L01::tick(); break;
+        case DESTINATION_01: Level::L01::tick(); break;
+        case DESTINATION_02: Level::L02::tick(); break;
         }
         Ship* ship = shipManager.ships;
         if (!UI::Intermission::isActive()) {
@@ -178,6 +180,7 @@ namespace Game {
     }
 
     void initializeLevel(uint8_t id) {
+        PlayerStats::jumped(currentLevelId, id);
         currentLevelId = id;
         frame = 0;
         shipManager.init();
@@ -190,7 +193,6 @@ namespace Game {
             buffer.setClearBackground(true, RGB565(0,0,0));
             return;
         }
-        PlayerStats::jumped();
 
         const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,0,0,15,0,0);
@@ -202,8 +204,11 @@ namespace Game {
         case DESTINATION_MAIN:
             Level::Main::init();
             break;
-        case DESTINATION_EASY:
+        case DESTINATION_01:
             Level::L01::init();
+            break;
+        case DESTINATION_02:
+            Level::L02::init();
             break;
         }
     }
@@ -224,6 +229,7 @@ namespace Game {
     }
 
     void initialize() {
+        currentLevelId = DESTINATION_INTRO;
         PlayerStats::init();
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         setScreenBrightness(8);

@@ -55,7 +55,7 @@ namespace Game {
                     if (x*x+y*y > 20)
                         shipManager.ships[i+2].init(3,x,y,15,0,0);
                 }*/
-                shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W0:MAIN");
+                shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W-HOME");
             }
             void tick() {
                 if (!dmgTexts[damageId] && dmgTexts[damageId+1] && shipManager.ships[0].damage != damageWarned) {

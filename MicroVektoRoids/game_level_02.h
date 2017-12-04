@@ -1,9 +1,9 @@
 #pragma once
 
+
 namespace Game {
     namespace Level {
-        namespace Main {
-            void reset();
+        namespace L02 {
             void init();
             void tick();
         }
