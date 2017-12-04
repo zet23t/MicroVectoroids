@@ -66,6 +66,8 @@
 		<Unit filename="MicroVektoRoids/game_collectable.h" />
 		<Unit filename="MicroVektoRoids/game_common.cpp" />
 		<Unit filename="MicroVektoRoids/game_common.h" />
+		<Unit filename="MicroVektoRoids/game_intro.cpp" />
+		<Unit filename="MicroVektoRoids/game_intro.h" />
 		<Unit filename="MicroVektoRoids/game_level_01.cpp" />
 		<Unit filename="MicroVektoRoids/game_level_01.h" />
 		<Unit filename="MicroVektoRoids/game_level_02.cpp" />

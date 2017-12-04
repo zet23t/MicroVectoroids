@@ -21,7 +21,7 @@ namespace Game {
                 0
             };
             void init() {
-                if (PlayerStats::getJumpCount() == 4) {
+                if (!PlayerStats::hasVisited(DESTINATION_02)) {
                     textId = 0;
                 }
                 /*for (int i=0;i<3;i+=1) {

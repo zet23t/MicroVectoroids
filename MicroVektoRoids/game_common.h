@@ -80,6 +80,9 @@ namespace Game {
     uint8_t getScreenBrightness();
     void initialize();
     void tick();
+    void drawBackgrounds();
+    bool isPressed(int id);
+    bool isReleased(int id);
 
     RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect);
     RenderCommand<uint16_t>* drawSprite(int x,int y,SpriteSheetRect rect);

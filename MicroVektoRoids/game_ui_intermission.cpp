@@ -7,12 +7,7 @@ namespace Game {
         namespace Intermission {
             const char *text;
             uint8_t isArmed;
-            bool isPressed(int id) {
-                return Joystick::getButton(id,Joystick::Phase::CURRENT) && !Joystick::getButton(id,Joystick::Phase::PREVIOUS);
-            }
-            bool isReleased(int id) {
-                return !Joystick::getButton(id,Joystick::Phase::CURRENT) && Joystick::getButton(id,Joystick::Phase::PREVIOUS);
-            }
+
             void show(const char *tx) {
                 text = tx;
                 isArmed = 0;

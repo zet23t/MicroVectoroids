@@ -38,7 +38,7 @@ namespace Game {
                 0
             };
             void init() {
-                if (PlayerStats::getJumpCount() == 2) {
+                if (!PlayerStats::hasVisited(DESTINATION_01)) {
                     textId = 0;
                     damageWarned = 0;
                     damageId = 0;

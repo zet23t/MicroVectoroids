@@ -15,6 +15,7 @@
 #include "game_level_main.h"
 #include "game_level_01.h"
 #include "game_level_02.h"
+#include "game_intro.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -63,6 +64,13 @@ namespace Game {
                                rect.width,rect.height)->sprite(&atlas, rect.x, rect.y);
     }
 
+    bool isPressed(int id) {
+        return Joystick::getButton(id,Joystick::Phase::CURRENT) && !Joystick::getButton(id,Joystick::Phase::PREVIOUS);
+    }
+    bool isReleased(int id) {
+        return !Joystick::getButton(id,Joystick::Phase::CURRENT) && Joystick::getButton(id,Joystick::Phase::PREVIOUS);
+    }
+
     void drawSpaceBackground(int layer, uint16_t col, uint8_t cntMask) {
         int16_t x = buffer.getOffsetX();
         int16_t y = buffer.getOffsetY();
@@ -96,24 +104,10 @@ namespace Game {
         drawSpaceBackground(3, RGB565(120,120,120),7);
     }
 
-    void tickIntro() {
-        for(int i=0;i<1;i+=1) {
-            buffer.setOffset(frameUnpaused * 2 + i,0);
-            drawBackgrounds();
-        }
-        buffer.setOffset(0,0);
-        drawCenteredSprite(48,32,ImageAsset::TextureAtlas_atlas::logo.sprites[0])->blend(RenderCommandBlendMode::add);
-        for (int i=0;i<abs(frameUnpaused/2%8-4);i+=1)
-            buffer.drawText("START",0,48,96,16,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::average);
-        if (Joystick::getButton(0)) {
-            initializeLevel(DESTINATION_MAIN);
-        }
-    }
-
     void tick() {
         frameUnpaused += 1;
         if (currentLevelId == DESTINATION_INTRO) {
-            tickIntro();
+            Intro::tick();
             return;
         }
         if(whiteInAnimation > 0) {
@@ -180,7 +174,7 @@ namespace Game {
     }
 
     void initializeLevel(uint8_t id) {
-        PlayerStats::jumped(currentLevelId, id);
+        uint8_t from = currentLevelId;
         currentLevelId = id;
         frame = 0;
         shipManager.init();
@@ -190,7 +184,7 @@ namespace Game {
         UI::Info::init();
         gameState = GameState::Running;
         if (id == DESTINATION_INTRO) {
-            buffer.setClearBackground(true, RGB565(0,0,0));
+            Intro::init();
             return;
         }
 
@@ -211,6 +205,7 @@ namespace Game {
             Level::L02::init();
             break;
         }
+        PlayerStats::jumped(from, id);
     }
 
     void checkLevelTermination(int16_t x, int16_t y) {
