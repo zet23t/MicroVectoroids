@@ -119,7 +119,7 @@ namespace Game {
 
         }
         switch (currentLevelId) {
-        case DESTINATION_MAIN: Level::Main::tick(); break;
+        case DESTINATION_TUTORIAL: Level::Main::tick(); break;
         case DESTINATION_01: Level::L01::tick(); break;
         case DESTINATION_02: Level::L02::tick(); break;
         }
@@ -195,7 +195,7 @@ namespace Game {
         buffer.setClearBackground(true, RGB565(255,255,255));
 
         switch (id) {
-        case DESTINATION_MAIN:
+        case DESTINATION_TUTORIAL:
             Level::Main::init();
             break;
         case DESTINATION_01:
