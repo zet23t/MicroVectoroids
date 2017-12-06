@@ -9,7 +9,6 @@
 #include "game_asteroids.h"
 
 #define SCREEN_MAIN 0
-#define SCREEN_CREDITS 1
 #define SCREEN_BRIGHTNESS 2
 #define SCREEN_SOUND 3
 #define SCREEN_CONTROLS 4
@@ -22,7 +21,6 @@ namespace Game {
         uint8_t submenuSelected;
         uint8_t activeScreen;
         uint8_t blockInput;
-        uint16_t creditsAnim;
 
 
         const int menuHeight = 56;
@@ -59,10 +57,6 @@ namespace Game {
             return stringBuffer.start().put(">").put(str).put("<").get();
         }
 
-        void putText(int &y, const char *tx, int space) {
-            buffer.drawText(tx,8,y,80,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            y+=7+space;
-        }
 
         void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t col, uint8_t mode, bool filled) {
             if(filled) {
@@ -157,53 +151,7 @@ namespace Game {
             drawLevelControls(Sound::volume, 4);
         }
 
-        void drawCredits(int16_t vpos) {
-            if (activate) activeScreen = SCREEN_MAIN;
-            buffer.setOffset(0,creditsAnim - 60);
-            drawCenteredSprite(48,20, ImageAsset::TextureAtlas_atlas::logo.sprites[0])->setDepth(200)->blend(RenderCommandBlendMode::add);
-            //buffer.drawRect(48,0,1,64)->filledRect(RGB565(60,80,255))->blend(RenderCommandBlendMode::add)->setDepth(200);
-            int y = 40;
-            putText(y,"DEVELOPED BY",0);
-            putText(y,"Eike Decker",5);
 
-            putText(y,"MY PATRONS",2);
-            putText(y,"Ken Burns",0);
-            putText(y,"Flaki",5);
-
-            putText(y,"Your name could",0);
-            putText(y,"be here too!",0);
-            putText(y,"Support me on",0);
-            putText(y,"patreon.com/zet23t",5);
-
-            putText(y,"MICRO VEKTOROIDS",0);
-            putText(y,"is based on",2);
-            putText(y,"SUPER VEKTOROIDS",2);
-            putText(y,"by",2);
-            putText(y,"PIXEL STRIKE GAMES",5);
-
-            putText(y,"FONTS",2);
-            putText(y,"HEMI HEAD",0);
-            putText(y,"by TypoDermic Fonts",15);
-
-            putText(y,"THANKS TO",3);
-            putText(y,"TINY CIRCUITS",0);
-            putText(y,"for the Tiny Arcade",8);
-
-            putText(y,"SPECIAL THANKS TO",3);
-            putText(y,"Swantje,",0);
-            putText(y,"Hilda, Till and Piet",15);
-
-            putText(y,"Thank you for playing",0);
-            putText(y,"Micro VektoRoids",15);
-            putText(y,"Let me know if",0);
-            putText(y,"you liked it!",0);
-            buffer.setOffset(0,0);
-
-            if (frameUnpaused % 4 == 0) {
-                creditsAnim +=1;
-                if (creditsAnim > y + 60) creditsAnim = 0;
-            }
-        }
 
         void drawTargetInfo(int16_t vpos) {
             uint8_t mode = RenderCommandBlendMode::opaque;
@@ -358,23 +306,18 @@ namespace Game {
                 break;
             case 3:
                 if (menuSelected < 0) menuSelected +=4;
-                menuSelected %= 4;
+                menuSelected %= 3;
                 {
                     const uint8_t yoff = 16;
                     buffer.drawText(getMenuText(menuSelected == 0, "SOUND VOLUME"),0,vpos+yoff,96,8,0,0,false, FontAsset::font, 200, mode);
                     buffer.drawText(getMenuText(menuSelected == 1, "BRIGHTNESS"),0,vpos+yoff+8,96,8,0,0,false, FontAsset::font, 200, mode);
-                    buffer.drawText(getMenuText(menuSelected == 2, "CREDITS"),0,vpos+yoff+16,96,8,0,0,false, FontAsset::font, 200, mode);
-                    buffer.drawText(getMenuText(menuSelected == 3, Game::showDebugInfo ? "DEBUG INFO ON" : "DEBUG INFO OFF"),0,vpos+yoff+24,96,8,0,0,false, FontAsset::font, 200, mode);
+                    buffer.drawText(getMenuText(menuSelected == 2, Game::showDebugInfo ? "DEBUG INFO ON" : "DEBUG INFO OFF"),0,vpos+yoff+24,96,8,0,0,false, FontAsset::font, 200, mode);
                 }
                 if (activate) {
                     switch (menuSelected) {
                         case 0: activeScreen = SCREEN_SOUND; break;
                         case 1: activeScreen = SCREEN_BRIGHTNESS; break;
-                        case 2:
-                            creditsAnim = 0;
-                            activeScreen = SCREEN_CREDITS;
-                            break;
-                        case 3: showDebugInfo = !showDebugInfo; break;
+                        case 2: showDebugInfo = !showDebugInfo; break;
                     }
                 }
             }
@@ -426,7 +369,6 @@ namespace Game {
                     default: drawSubmenus(vpos); break;
                     case SCREEN_BRIGHTNESS: drawScreenBrightness(vpos); break;
                     case SCREEN_SOUND: drawScreenSound(vpos); break;
-                    case SCREEN_CREDITS: drawCredits(vpos); break;
                     case SCREEN_CONTROLS: drawScreenControls(vpos); break;
                     case SCREEN_SELF_DESTRUCT: drawScreenSelfDestruct(vpos); break;
                     }
