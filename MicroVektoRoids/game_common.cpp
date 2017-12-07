@@ -13,6 +13,7 @@
 #include "game_ui_intermission.h"
 
 #include "game_level_main.h"
+#include "game_level_tutorial.h"
 #include "game_level_01.h"
 #include "game_level_02.h"
 #include "game_intro.h"
@@ -119,7 +120,8 @@ namespace Game {
 
         }
         switch (currentLevelId) {
-        case DESTINATION_TUTORIAL: Level::Main::tick(); break;
+        case DESTINATION_TUTORIAL: Level::Tutorial::tick(); break;
+        case DESTINATION_MAIN: Level::Main::tick(); break;
         case DESTINATION_01: Level::L01::tick(); break;
         case DESTINATION_02: Level::L02::tick(); break;
         }
@@ -196,6 +198,9 @@ namespace Game {
 
         switch (id) {
         case DESTINATION_TUTORIAL:
+            Level::Tutorial::init();
+            break;
+        case DESTINATION_MAIN:
             Level::Main::init();
             break;
         case DESTINATION_01:

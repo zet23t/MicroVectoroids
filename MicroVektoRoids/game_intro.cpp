@@ -55,13 +55,13 @@ namespace Game {
             "DIFFICULTY",
             "TUTORIAL",
             "NORMAL",
-            "cancel",
+            "\ncancel",
             0,
             "LOADING",
             "STATE 1",
             "STATE 2",
             "STATE 3",
-            "cancel",
+            "\ncancel",
             0,
         };
 

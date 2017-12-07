@@ -54,6 +54,9 @@ namespace Game {
 
         const char *getMenuText(bool selected, const char* str) {
             if (!selected) return str;
+            if (str[0] == '\n') {
+                return stringBuffer.start().put("\n>").put(&str[1]).put("<").get();
+            }
             return stringBuffer.start().put(">").put(str).put("<").get();
         }
 
