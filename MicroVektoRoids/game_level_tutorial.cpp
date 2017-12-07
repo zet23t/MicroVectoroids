@@ -19,6 +19,9 @@ namespace Game {
                 "Welcome back. ",
                 "There's a new active WORMHOLE waiting for you.",
                 0,
+                "Well done you finished your training.",
+                "Greater challenges await you in the next sector.",
+                0
             };
             void init() {
                 shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
@@ -28,7 +31,7 @@ namespace Game {
                 if (PlayerStats::hasVisited(DESTINATION_01)) {
                     textId = 5;
                 } else {
-                    textId = 0;
+                    textId = PlayerStats::hasVisited(DESTINATION_02) ? 8 : 5;
                 }
             }
             void tick() {

@@ -53,7 +53,7 @@ namespace Game {
             "CREDITS",
             0,
             "DIFFICULTY",
-            "TUTORIAL",
+            "TRAINING",
             "NORMAL",
             "\ncancel",
             0,
@@ -132,6 +132,7 @@ namespace Game {
 
             putText(y,"MY PATRONS",2);
             putText(y,"Ken Burns",0);
+            putText(y,"Damien Labonte",0);
             putText(y,"Flaki",5);
 
             putText(y,"Your name could",0);
