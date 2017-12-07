@@ -26,10 +26,11 @@ namespace Game {
             void init() {
                 shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
                 shipManager.ships[2].init(ShipTypeWormHole,-135,200,15,0,"W-01");
-                shipManager.ships[3].init(PlayerStats::hasVisited(DESTINATION_01) ? ShipTypeWormHoleInactive : ShipTypeWormHole,-235,-100,15,0,"W-02");
+                shipManager.ships[3].init(PlayerStats::hasVisited(DESTINATION_01) ? ShipTypeWormHole : ShipTypeWormHoleInactive,-235,-100,15,0,"W-02");
+                shipManager.ships[4].init(PlayerStats::hasVisited(DESTINATION_02) ? ShipTypeWormHole : ShipTypeWormHoleInactive,135,-180,15,0,"W-MAIN");
                 shipManager.ships[2].destinationId = DESTINATION_01;                shipManager.ships[3].destinationId = DESTINATION_02;
-                if (PlayerStats::hasVisited(DESTINATION_01)) {
-                    textId = 5;
+                if (!PlayerStats::hasVisited(DESTINATION_01)) {
+                    textId = 0;
                 } else {
                     textId = PlayerStats::hasVisited(DESTINATION_02) ? 8 : 5;
                 }

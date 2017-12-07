@@ -37,7 +37,7 @@ namespace Game {
                     if (x*x+y*y > 1000)
                         shipManager.ships[i+2].init(3,x,y,15,0,0);
                 }
-                shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W-HOME");
+                shipManager.ships[4].init(!PlayerStats::hasVisited(DESTINATION_02) ? ShipTypeWormHoleInactive : ShipTypeWormHole,-75,-40,15,0,"W-HOME");
             }
             void tick() {
                 if (!UI::Intermission::isActive() && texts[textId]) {

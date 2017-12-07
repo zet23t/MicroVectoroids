@@ -46,7 +46,7 @@ namespace Game {
                 for (int i=0;i<3;i+=1) {
                     int x = (Math::randInt() % 1024) - 512;
                     int y = (Math::randInt() % 1024) - 512;
-                    if (x*x+y*y > 20)
+                    if (x*x+y*y > 1000)
                         asteroidManager.spawn()->init(1,x,y);
                 }
                 /*for (int i=0;i<1;i+=1) {
@@ -55,7 +55,7 @@ namespace Game {
                     if (x*x+y*y > 20)
                         shipManager.ships[i+2].init(3,x,y,15,0,0);
                 }*/
-                shipManager.ships[4].init(ShipTypeWormHoleInactive,-75,-40,15,0,"W-HOME");
+                shipManager.ships[4].init(!PlayerStats::hasVisited(DESTINATION_01) ? ShipTypeWormHoleInactive : ShipTypeWormHole,75,-40,15,0,"W-HOME");
             }
             void tick() {
                 if (!dmgTexts[damageId] && dmgTexts[damageId+1] && shipManager.ships[0].damage != damageWarned) {
