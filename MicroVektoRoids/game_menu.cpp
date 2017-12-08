@@ -161,9 +161,21 @@ namespace Game {
 
             drawScreenBars(s->info, vpos);
             int8_t y = 32-menuHeight / 2+vpos+ 12;
-            buffer.drawText("Zet",10,y,76,8,-1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            buffer.drawText("129",10,y,76,8,1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            drawRect(10,y+7,76,1,0,RenderCommandBlendMode::opaque,true);
+            buffer.drawText("HIGH SCORES",12,y,74,8,0,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            y+=9;
+            const char *test[]= {
+                "Ken", "129",
+                "Damien", "110",
+                "Flaki", "93",
+            };
+            for (int i=0;i<3;i+=1) {
+                drawRect(12,y,72,7, RGB565(16,16,16), RenderCommandBlendMode::average, true);
+                drawCenteredSprite(12+36,y+3,ImageAsset::TextureAtlas_atlas::collectable_score.sprites[(frameUnpaused + i * 2) / 2 % ImageAsset::TextureAtlas_atlas::collectable_score.spriteCount])->setDepth(200)->blend(RenderCommandBlendMode::add);
+                buffer.drawText(test[i*2],12,y+1,31,8,1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                buffer.drawText(test[i*2+1],12+42,y+1,34,8,-1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+
+                y+=8;
+            }
 
         }
 
