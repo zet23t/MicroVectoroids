@@ -372,7 +372,11 @@ namespace Game {
 //
 //        buffer.drawRect(pos.x.getIntegerPart(),pos.y.getIntegerPart(),4,4)->filledRect(RGB565(255,0,0));
     }
-    void Ship::init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy, char *inf) {
+    void Ship::init(int8_t type, int16_t x, int16_t y, const char *inf, uint8_t dest) {
+        init(type,x,y,15,0,inf);
+        destinationId = dest;
+    }
+    void Ship::init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy, const char *inf) {
         this->type = type;
         info = inf;
         pos.setXY(x,y);

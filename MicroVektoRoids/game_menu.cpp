@@ -13,6 +13,7 @@
 #define SCREEN_SOUND 3
 #define SCREEN_CONTROLS 4
 #define SCREEN_SELF_DESTRUCT 5
+#define SCREEN_WORMHOLE_DETAILS 6
 
 namespace Game {
     namespace Menu {
@@ -154,6 +155,18 @@ namespace Game {
             drawLevelControls(Sound::volume, 4);
         }
 
+        void drawWormholeDetails(int16_t vpos) {
+            if (activate) activeScreen = SCREEN_MAIN;
+            Ship *s = &shipManager.ships[UI::HUD::targetIndex];
+
+            drawScreenBars(s->info, vpos);
+            int8_t y = 32-menuHeight / 2+vpos+ 12;
+            buffer.drawText("Zet",10,y,76,8,-1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            buffer.drawText("129",10,y,76,8,1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            drawRect(10,y+7,76,1,0,RenderCommandBlendMode::opaque,true);
+
+        }
+
 
 
         void drawTargetInfo(int16_t vpos) {
@@ -181,9 +194,10 @@ namespace Game {
                         drawRect(40,32-menuHeight / 2+yoff+28,46,7,RGB565(255,0,0), RenderCommandBlendMode::average, true);
                         drawRect(40,32-menuHeight / 2+yoff+28,46,7,RGB565(255,0,0), RenderCommandBlendMode::average, false);
                         if (frameUnpaused / 8 % 2 == 0)
-                            buffer.drawText("ACTIVATE?",40,32-menuHeight / 2+yoff+29,46,16,0,-1,false, FontAsset::font, 200, mode);
+                            buffer.drawText("DETAILS?",40,32-menuHeight / 2+yoff+29,46,16,0,-1,false, FontAsset::font, 200, mode);
                         if (activate) {
-                            initializeLevel(s->destinationId);
+                            //initializeLevel(s->destinationId);
+                            if (activate) activeScreen = SCREEN_WORMHOLE_DETAILS;
                         }
                     }
                 } else {
@@ -374,6 +388,7 @@ namespace Game {
                     case SCREEN_SOUND: drawScreenSound(vpos); break;
                     case SCREEN_CONTROLS: drawScreenControls(vpos); break;
                     case SCREEN_SELF_DESTRUCT: drawScreenSelfDestruct(vpos); break;
+                    case SCREEN_WORMHOLE_DETAILS: drawWormholeDetails(vpos); break;
                     }
                     activate = false;
                     buffer.setClipping(0,96,64,0);

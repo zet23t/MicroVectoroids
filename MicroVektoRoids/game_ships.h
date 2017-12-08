@@ -20,7 +20,7 @@ namespace Game {
         uint8_t shootCooldown;
         uint8_t takenHitCooldown;
         int16_t screenPos[2];
-        char* info;
+        const char* info;
         union {
             uint8_t destinationId;
             uint8_t charge;
@@ -33,7 +33,8 @@ namespace Game {
         void handleProjectileCollisions(uint8_t ptype);
         void tick();
         void draw();
-        void init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy, char* info);
+        void init(int8_t type, int16_t x, int16_t y, const char *inf, uint8_t dest);
+        void init(int8_t type, int16_t x, int16_t y, int8_t dx, int8_t dy, const char* info);
         void shoot();
         bool calcParallaxScreenPos();
         void takeDamage(uint8_t dmg);
