@@ -80,6 +80,8 @@
 		<Unit filename="MicroVektoRoids/game_menu.h" />
 		<Unit filename="MicroVektoRoids/game_particles.cpp" />
 		<Unit filename="MicroVektoRoids/game_particles.h" />
+		<Unit filename="MicroVektoRoids/game_persistence.cpp" />
+		<Unit filename="MicroVektoRoids/game_persistence.h" />
 		<Unit filename="MicroVektoRoids/game_player_stats.cpp" />
 		<Unit filename="MicroVektoRoids/game_player_stats.h" />
 		<Unit filename="MicroVektoRoids/game_projectile.cpp" />

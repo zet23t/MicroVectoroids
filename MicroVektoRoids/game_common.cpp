@@ -11,6 +11,7 @@
 #include "game_player_stats.h"
 #include "game_ui_info.h"
 #include "game_ui_intermission.h"
+#include "game_persistence.h"
 
 #include "game_level_main.h"
 #include "game_level_tutorial.h"
@@ -229,6 +230,7 @@ namespace Game {
     }
 
     void initialize() {
+        DB::init();
         currentLevelId = DESTINATION_INTRO;
         PlayerStats::init();
         atlas = Texture<uint16_t>(ImageAsset::atlas);
