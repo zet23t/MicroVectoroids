@@ -1,12 +1,15 @@
 #include "game_intro.h"
 #include "game_common.h"
 #include "game_menu.h"
+#include "game_player_stats.h"
 
 #define INTRO_MODE_LOGO 255
 #define INTRO_MODE_CREDITS 254
 #define INTRO_MODE_MENU 0
 #define INTRO_MODE_PLAY 5
 #define INTRO_MODE_LOAD 10
+#define INTRO_MODE_INPUTNAME_TRAINING 15
+#define INTRO_MODE_INPUTNAME_NORMAL 16
 
 namespace Game {
     namespace Intro {
@@ -19,10 +22,12 @@ namespace Game {
             mode = INTRO_MODE_PLAY;
         }
         static void menuTutorial() {
-            initializeLevel(DESTINATION_TUTORIAL);
+            mode = INTRO_MODE_INPUTNAME_TRAINING;
+            //initializeLevel(DESTINATION_TUTORIAL);
         }
         static void menuNormal() {
-            initializeLevel(DESTINATION_MAIN);
+            mode = INTRO_MODE_INPUTNAME_NORMAL;
+            //initializeLevel(DESTINATION_MAIN);
         }
         static void menuCancelPlay() {
             mode = INTRO_MODE_MENU;
@@ -174,6 +179,46 @@ namespace Game {
                 selected = 0;
             }
         }
+        void drawInputName() {
+            static int8_t activeElement = 0;
+            int y = 20;
+            buffer.drawText("YOUR NAME",0,y,96,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            y+=10;
+            for (int i=0;i<8;i+=1) {
+                char c = PlayerStats::name[i];
+                int x = i*8 - 8*4 + 48;
+                buffer.drawRect(x-0,y-1,6,9)->filledRect(RGB565(20,80,255))->setDepth(200)
+                    ->blend(activeElement==i && frameUnpaused / 4 %2 == 0 ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
+                buffer.drawRect(x-0,y-2,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                buffer.drawRect(x-0,y+8,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                if (c) {
+                    buffer.drawText(stringBuffer.start().put(c).get(),x,y,8,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                } else if (i < 7) PlayerStats::name[i+1] = ' ';
+            }
+            Fixed2D4 stick = Joystick::getJoystick();
+            if (activeElement < 10 && stick.x > 0 && !blockJoystick) {
+                activeElement += 1;
+                blockJoystick = true;
+            }
+            if (activeElement > 0 && stick.x < 0 && !blockJoystick) {
+                activeElement -= 1;
+                blockJoystick = true;
+            }
+            if (activeElement >=0 && < 8 && !blockJoystick) {
+                char c = PlayerStats::name[activeElement];
+                bool up = stick.y > 0;
+                if (stick.y < 0) c +=1, blockJoystick = 1;
+                if (stick.y > 0) c -=1, blockJoystick = 1;
+
+                if (c < ' ') c = 'z';
+                else if (c > ' ' && c < '0') c = !up ? '0' : ' ';
+                else if (c > '9' && c < 'A') c = !up ? 'A' : '9';
+                else if (c > 'Z' && c < 'a') c = !up ? 'a' : 'Z';
+                else if (c > 'z') c = ' ';
+                PlayerStats::name[activeElement] = c;
+            }
+            if(stick.x == 0 && stick.y == 0) blockJoystick = false;
+        }
 
         void tick() {
             for(int i=0;i<1;i+=1) {
@@ -186,6 +231,10 @@ namespace Game {
             case INTRO_MODE_PLAY:
             case INTRO_MODE_MENU:
                 drawMenu(&menuTexts[mode], &menuActions[mode]);
+                break;
+            case INTRO_MODE_INPUTNAME_NORMAL:
+            case INTRO_MODE_INPUTNAME_TRAINING:
+                drawInputName();
                 break;
             case INTRO_MODE_CREDITS:
                 drawCredits(0);

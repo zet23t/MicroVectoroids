@@ -4,6 +4,7 @@
 namespace Game {
     namespace PlayerStats {
         extern uint32_t score;
+        extern char name[8];
         void init();
         void awardScore(int points);
 
