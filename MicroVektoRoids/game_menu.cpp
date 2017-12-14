@@ -164,14 +164,24 @@ namespace Game {
             buffer.drawText("HIGH SCORES",12,y,74,8,0,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
             y+=9;
             const char *test[]= {
-                "Ken", "129",
-                "Damien", "110",
-                "Flaki", "93",
+                "no data", "n/a",
+                "no data", "n/a",
+                "no data", "n/a",
             };
+            if (s->destinationId < 32) {
+                PlayerStats::HighScoreTable table = PlayerStats::levelScores[s->destinationId];
+                for (int i=0;i<3;i+=1) {
+                    if (table.entries[i].score > 0) {
+                        test[i*2] = stringBuffer.start().putTrimmed(table.entries[i].name,8).get();
+                        test[i*2+1] = stringBuffer.start().putDec(table.entries[i].score).get();
+                    }
+                }
+            }
+
             for (int i=0;i<3;i+=1) {
-                drawRect(12,y,72,7, RGB565(16,16,16), RenderCommandBlendMode::average, true);
+                drawRect(8,y,80,7, RGB565(16,16,16), RenderCommandBlendMode::average, true);
                 drawCenteredSprite(12+36,y+3,ImageAsset::TextureAtlas_atlas::collectable_score.sprites[(frameUnpaused + i * 2) / 2 % ImageAsset::TextureAtlas_atlas::collectable_score.spriteCount])->setDepth(200)->blend(RenderCommandBlendMode::add);
-                buffer.drawText(test[i*2],12,y+1,31,8,1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                buffer.drawText(test[i*2],12,y+1,32,8,1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
                 buffer.drawText(test[i*2+1],12+42,y+1,34,8,-1,-1,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
 
                 y+=8;

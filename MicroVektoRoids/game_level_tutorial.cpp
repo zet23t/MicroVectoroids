@@ -11,15 +11,15 @@ namespace Game {
         namespace Tutorial {
             uint8_t textId;
             const char* texts[] = {
-                "Welcome, Triangle.",
+                "Welcome - Let's get started.",
                 "Use the EDGE RADAR - fly to the green marker",
                 0,
                 "Activate this WORMHOLE.",
                 0,
                 "Welcome back. ",
-                "There's a new active WORMHOLE waiting for you.",
+                "There's a new active WORMHOLE.",
                 0,
-                "Well done you finished your training.",
+                "Well done this finishes your training.",
                 "Greater challenges await you in the next sector.",
                 0
             };

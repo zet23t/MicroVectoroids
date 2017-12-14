@@ -181,30 +181,45 @@ namespace Game {
         }
         void drawInputName() {
             static int8_t activeElement = 0;
-            int y = 20;
-            buffer.drawText("YOUR NAME",0,y,96,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            y+=10;
+            int y = 16;
+            buffer.drawText("YOUR NAME IS",0,y,96,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            y+=14;
+            Fixed2D4 stick = Joystick::getJoystick();
             for (int i=0;i<8;i+=1) {
                 char c = PlayerStats::name[i];
                 int x = i*8 - 8*4 + 48;
-                buffer.drawRect(x-0,y-1,6,9)->filledRect(RGB565(20,80,255))->setDepth(200)
-                    ->blend(activeElement==i && frameUnpaused / 4 %2 == 0 ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
-                buffer.drawRect(x-0,y-2,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
-                buffer.drawRect(x-0,y+8,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
-                if (c) {
+                buffer.drawRect(x-1,y-1,8,9)->filledRect(RGB565(20,80,255))->setDepth(200)
+                    ->blend(activeElement==i && (frameUnpaused / 4 %2 == 0 ||stick.y != 0) ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
+                if (activeElement == i) {
+                    buffer.drawRect(x-0,y-2,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                    buffer.drawRect(x+1,y-3,4,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                    buffer.drawRect(x+2,y-4,2,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                    buffer.drawRect(x-0,y+8,6,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                    buffer.drawRect(x+1,y+9,4,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+                    buffer.drawRect(x+2,y+10,2,1)->filledRect(RGB565(20,80,255))->setDepth(200);
+
+                }
+                if (c > 32) {
                     buffer.drawText(stringBuffer.start().put(c).get(),x,y,8,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-                } else if (i < 7) PlayerStats::name[i+1] = ' ';
+                } else PlayerStats::name[i] = ' ';
             }
-            Fixed2D4 stick = Joystick::getJoystick();
-            if (activeElement < 10 && stick.x > 0 && !blockJoystick) {
+            y+=16;
+            buffer.drawRect(0,y-1,32,9)->filledRect(RGB565(20,80,255))->setDepth(200)
+                    ->blend(activeElement==-1 && frameUnpaused / 4 %2 == 0 ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
+
+            buffer.drawRect(64,y-1,32,9)->filledRect(RGB565(20,80,255))->setDepth(200)
+                    ->blend(activeElement==8 && frameUnpaused / 4 %2 == 0 ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
+            buffer.drawText("< CANCEL",0,y,96,8,-1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            buffer.drawText("START >",0,y,96,8,1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            if (activeElement < 8 && stick.x > 0 && !blockJoystick) {
                 activeElement += 1;
                 blockJoystick = true;
             }
-            if (activeElement > 0 && stick.x < 0 && !blockJoystick) {
+            if (activeElement >= 0 && stick.x < 0 && !blockJoystick) {
                 activeElement -= 1;
                 blockJoystick = true;
             }
-            if (activeElement >=0 && < 8 && !blockJoystick) {
+            if (activeElement >=0 && activeElement < 8 && !blockJoystick) {
                 char c = PlayerStats::name[activeElement];
                 bool up = stick.y > 0;
                 if (stick.y < 0) c +=1, blockJoystick = 1;
@@ -218,6 +233,20 @@ namespace Game {
                 PlayerStats::name[activeElement] = c;
             }
             if(stick.x == 0 && stick.y == 0) blockJoystick = false;
+            if (isReleased(0) || isReleased(1)) {
+                if (activeElement <= -1) {
+                    mode = INTRO_MODE_PLAY;
+                }
+                else if (activeElement >= 8) {
+                    initializeLevel(mode == INTRO_MODE_INPUTNAME_NORMAL ? DESTINATION_MAIN : DESTINATION_TUTORIAL);
+                }
+                else {
+                    char c = PlayerStats::name[activeElement];
+                    if (c >='A' && c <='Z') c = c - 'A' + 'a';
+                    else if (c >='a' && c <='z') c = c + 'A' - 'a';
+                    PlayerStats::name[activeElement]= c;
+                }
+            }
         }
 
         void tick() {
