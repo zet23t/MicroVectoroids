@@ -211,12 +211,14 @@ namespace Game {
                     ->blend(activeElement==8 && frameUnpaused / 4 %2 == 0 ? RenderCommandBlendMode::opaque : RenderCommandBlendMode::average);
             buffer.drawText("< CANCEL",0,y,96,8,-1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
             buffer.drawText("START >",0,y,96,8,1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            if (activeElement < 8 && stick.x > 0 && !blockJoystick) {
+            if (activeElement < 9 && stick.x > 0 && !blockJoystick) {
                 activeElement += 1;
+                if (activeElement > 8) activeElement = -1;
                 blockJoystick = true;
             }
-            if (activeElement >= 0 && stick.x < 0 && !blockJoystick) {
+            if (activeElement >= -1 && stick.x < 0 && !blockJoystick) {
                 activeElement -= 1;
+                if (activeElement < -1) activeElement = 8;
                 blockJoystick = true;
             }
             if (activeElement >=0 && activeElement < 8 && !blockJoystick) {
