@@ -1,5 +1,6 @@
 #include "game_common.h"
 #include "game_player_stats.h"
+#include "game_persistence.h"
 #include <string.h>
 
 namespace Game {
@@ -36,6 +37,8 @@ namespace Game {
         }
         void awardScore(int points) {
             score += points;
+        }
+        void save(DB::Data* d) {
         }
         void init() {
             score = 0;

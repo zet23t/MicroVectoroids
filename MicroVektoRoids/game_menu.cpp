@@ -321,7 +321,6 @@ namespace Game {
             drawCenteredSprite(48+18,vpos+57,ImageAsset::TextureAtlas_atlas::icon_options.sprites[0])->setDepth(200)->blend(RenderCommandBlendMode::bitwiseOr);
 
             Ship *s = shipManager.ships;
-            int menuCount = 1;
             switch(submenuSelected) {
             case 0: // target
                 drawTargetInfo(vpos);

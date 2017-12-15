@@ -142,7 +142,6 @@ namespace Game {
         }
         UI::Intermission::tick();
 
-        Fixed2D4 cam = ship->pos + ship->direction * Fix4(8,0) + ship->velocity * Fix4(1,8);
         int16_t targetX = ship->pos.x.getIntegerPart() + ship->direction.x.getIntegerPart() * 8 + ship->velocity.x.getIntegerPart();
         int16_t targetY = ship->pos.y.getIntegerPart() + ship->direction.y.getIntegerPart() * 8 + ship->velocity.y.getIntegerPart();
         int16_t dx = targetX - camX;
@@ -191,7 +190,6 @@ namespace Game {
             return;
         }
 
-        const Ship* ship = shipManager.ships;
         shipManager.ships[0].init(1,0,0,15,0,0);
         //shipManager.ships[2].init(3,35,8,15,0);
         whiteInAnimation = 255;
