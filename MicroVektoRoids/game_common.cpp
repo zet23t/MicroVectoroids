@@ -125,6 +125,7 @@ namespace Game {
         case DESTINATION_MAIN: Level::Main::tick(); break;
         case DESTINATION_01: Level::L01::tick(); break;
         case DESTINATION_02: Level::L02::tick(); break;
+        case DESTINATION_03: Level::L03::tick(); break;
         }
         Ship* ship = shipManager.ships;
         if (!UI::Intermission::isActive()) {
@@ -208,6 +209,9 @@ namespace Game {
         case DESTINATION_02:
             Level::L02::init();
             break;
+        case DESTINATION_03:
+            Level::L03::init();
+            break;
         }
         PlayerStats::jumped(from, id);
     }
@@ -233,6 +237,7 @@ namespace Game {
         PlayerStats::init();
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         setScreenBrightness(8);
+        DB::load(-1);
         initializeLevel(DESTINATION_INTRO);
     }
 }

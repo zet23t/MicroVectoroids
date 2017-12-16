@@ -61,6 +61,9 @@ public:
 #define DESTINATION_01 1
 #define DESTINATION_02 2
 #define DESTINATION_MAIN 100
+#define DESTINATION_03 3
+#define DESTINATION_04 4
+#define DESTINATION_05 5
 #define DESTINATION_INTRO 222
 
 namespace Game {

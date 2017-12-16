@@ -10,5 +10,7 @@
 
 // start time during which collectables are not collectable
 #define COLLECTABLE_SPAWN_TIME 8
+#define CollectableCount 48
+
 // drag factor applied each frame on collectable velocity
 #define COLLECTABLE_DRAG Fix4(0,14)

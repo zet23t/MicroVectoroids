@@ -3,14 +3,14 @@
 #include "game_ships.h"
 #include "game_asteroids.h"
 #include "game_particles.h"
+#include "game_collectable.h"
 
 namespace Game {
     namespace DB {
         struct GameState {
-            ShipManager shipManager;
-            AsteroidManager asteroidManager;
-            ParticleSystem particleSystem;
-
+            char playerName[8];
+            uint8_t isValid;
+            uint16_t playerScore;
         };
         struct Data {
             uint16_t formatVersion;
@@ -20,11 +20,8 @@ namespace Game {
         };
 
         void init();
-        void save();
-        void load();
-    }
+        void save(int8_t state);
+        void load(int8_t state);
 
-    namespace PlayerStats {
-        void save(DB::Data* d);
     }
 }

@@ -13,7 +13,6 @@ namespace Game {
             bool active;
         };
 
-        #define CollectableCount 48
 
         uint8_t collectableId;
         CollectableObject collectables[CollectableCount];
