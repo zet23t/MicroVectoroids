@@ -5,7 +5,8 @@
 
 namespace Game {
     namespace PlayerStats {
-        uint16_t score, visitedSectors;
+        uint16_t score;
+        uint32_t visitedSectors;
         uint16_t jumps;
         char name[8];
 

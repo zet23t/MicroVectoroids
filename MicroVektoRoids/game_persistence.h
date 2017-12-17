@@ -10,6 +10,7 @@ namespace Game {
         struct GameState {
             char playerName[8];
             uint8_t isValid;
+            uint8_t currentLevelId;
             uint16_t playerScore;
         };
         struct Data {
