@@ -128,7 +128,7 @@ namespace Game {
         case DESTINATION_03: Level::L03::tick(); break;
         }
         Ship* ship = shipManager.ships;
-        if (!UI::Intermission::isActive()) {
+        if (!UI::Intermission::isBlocking()) {
             if (gameState == GameState::Running) {
 
                 frame += 1;

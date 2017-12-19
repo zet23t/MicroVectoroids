@@ -77,21 +77,40 @@ namespace Game {
         Ship const* player = shipManager.ships;
         Fixed2D4 diff = player->pos - pos;
         int mdist = diff.manhattanDistance().getIntegerPart();
-        if (mdist > 200) return;
+        if (mdist > 200 + aiStrength * 100) return;
         Fixed2D4 six = -player->direction - player->velocity * Fix4(2,0);
         if (six.x==0 && six.y == 0) six = -player->direction;
         six = six.normalize();
         Fixed2D4 diffNorm = diff;
         diffNorm.normalize();
+
         bool finalTarget = true;
-        //buffer.drawRect((player->pos + six * Fix4(25,0)).x.getIntegerPart(),(player->pos + six * Fix4(25,0)).y.getIntegerPart(),2,2)->filledRect(0xfc0f);
-        Fix4 dot= diffNorm.dot(six);
-        if (dot > Fix4(0,10)) {
-            if (diffNorm.dot(six.right()) < 0) six = six.right();
-            else six = six.left();
+        Fixed2D4 target;
+
+        if (aiPhase == 0) {
+            if (aiCounter == 0) {
+                aiPhase = 1;
+                aiCounter = Math::randInt()%64+10;
+            }
+            Fix4 dot= diffNorm.dot(six);
+            if (dot > Fix4(0,10)) {
+                if (diffNorm.dot(six.right()) < 0) six = six.right();
+                else six = six.left();
+                finalTarget = false;
+                six = six * Fix4(2,0);
+            }
+            target = player->pos + six * Fix4(25,0);
+
+        }else {
+            Fix4 dot= diffNorm.dot(direction.right());
+            if (aiCounter == 0) {
+                aiPhase = 0;
+                aiCounter = Math::randInt()%4 + 20;
+            }
             finalTarget = false;
+            target = pos + direction * Fix4(16,0)+ (direction.right() * dot * Fix4(6,0));
         }
-        Fixed2D4 target = player->pos + six * Fix4(25,0);
+        //buffer.drawRect((player->pos + six * Fix4(25,0)).x.getIntegerPart(),(player->pos + six * Fix4(25,0)).y.getIntegerPart(),2,2)->filledRect(0xfc0f);
         Fixed2D4 sixdiff = target - pos;
         //if(sixdiff.length() > diff.length() * Fix4(2,0)) {
             //    printf("%f %f\n", sixdiff.manhattanDistance().asFloat(), diff.manhattanDistance().asFloat());
@@ -100,19 +119,20 @@ namespace Game {
         //}
         //buffer.drawRect(target.x.getIntegerPart(),target.y.getIntegerPart(),2,2)->filledRect(0xffff);
 
+        Fix4 dot= diffNorm.dot(six);
         if ((sixdiff.manhattanDistance() > Fix4(10,0)) || !finalTarget) {
             Fixed2D4 turn = sixdiff;
             turn.normalize();
-            direction = direction * Fix4(3,5) + turn;
+            direction = direction * Fix4(3,5) + turn * Fix4(1 + aiStrength,0);
             direction = direction.normalize();
             velocity = velocity * Fix4(0,12);
-            velocity += direction * Fix4(1,0);
-
+            velocity += direction * Fix4(4 + aiStrength,0)* Fix4(0,4);
+            if (aiCounter > 0 && frame % 4 == 0) aiCounter -= 1;
         } else {
             //printf("reached %d\n",frame);
             velocity = velocity * Fix4(0,12);
             diff.normalize();
-            direction = diff + direction * (dot + Fix4(1,0));
+            direction = diff * (Fix4(2 + aiStrength,0)) + direction * (dot);
             direction = direction.normalize();
         }
         if (dot < Fix4(-1,8) && diffNorm.dot(direction) > Fix4(0,8))
@@ -385,6 +405,9 @@ namespace Game {
         charge = 0;
         direction.x = Fix4(0,dx);
         direction.y = Fix4(0,dy);
+        aiStrength= 0;
+        aiPhase = 0;
+        aiCounter = 0;
     }
 
     void Ship::shoot() {
@@ -404,7 +427,7 @@ namespace Game {
             return;
         }
         if (shootCooldown == 0) {
-            shootCooldown = type == 1 ? 8 : 12;
+            shootCooldown = type == 1 ? 8 : 12 - aiStrength;
             Fixed2D4 dir = direction;
             if (UI::HUD::targetLock && type == 1) {
 

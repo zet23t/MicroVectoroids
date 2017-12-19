@@ -24,6 +24,9 @@ namespace Game {
         union {
             uint8_t destinationId;
             uint8_t charge;
+            struct {
+                uint8_t aiStrength, aiPhase, aiCounter;
+            };
         };
 
         void tickPlayer();

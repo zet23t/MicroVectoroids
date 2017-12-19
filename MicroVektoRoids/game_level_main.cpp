@@ -12,24 +12,52 @@ static void addWormhole(uint8_t &id, int16_t x, int16_t y, const char *inf, uint
 namespace Game {
     namespace Level {
         namespace L03 {
+            uint8_t state;
             void init () {
-                for (int i=0;i<6;i+=1) {
+                for (int i=0;i<3;i+=1) {
                     int x = (Math::randInt() % 1024) - 512;
                     int y = (Math::randInt() % 1024) - 512;
                     if (x*x+y*y > 1000)
                         asteroidManager.spawn()->init(1,x,y);
-                }
+                }/*
                 for (int i=0;i<1;i+=1) {
                     int x = (Math::randInt() % 1024) - 512;
                     int y = (Math::randInt() % 1024) - 512;
                     if (x*x+y*y > 20)
                         shipManager.ships[i+2].init(3,x,y,15,0,0);
-                }
-
+                }*/
+                state = 0;
                 uint8_t id = 1;
                 addWormhole(id, -15,20,"W-HOME", DESTINATION_MAIN, PlayerStats::hasVisited(DESTINATION_03));
             }
             void tick() {
+                if (state == 0 && asteroidManager.countAll() > 3) {
+                    state = 1;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+4].init(3,x,y,15,0,0);
+                            shipManager.ships[i+4].aiStrength = 3;
+                            shipManager.ships[i+4].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
+                if (state == 1 && asteroidManager.countAll() < 3) {
+                    state = 2;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+10].init(3,x,y,15,0,0);
+                            shipManager.ships[i+10].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
             }
         }
         namespace Main {
@@ -56,7 +84,7 @@ namespace Game {
             }
             void tick() {
                 if (!UI::Intermission::isActive() && texts[textId]) {
-                    UI::Intermission::show(texts[textId]);
+                    UI::Intermission::show(texts[textId],INTERMISSION_TYPE_OVERLAY);
                     textId += 1;
                 }
             }
