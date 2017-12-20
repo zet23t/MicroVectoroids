@@ -14,6 +14,7 @@ namespace Game {
         Fixed2D4 velocity;
         uint8_t type;
         uint8_t age;
+        uint8_t damage;
         void tick();
         void draw();
         void impact();
@@ -25,7 +26,7 @@ namespace Game {
         void tick();
         void draw();
         void init();
-        void spawn(uint8_t t, Fixed2D4 xy, Fixed2D4 v);
+        Projectile* spawn(uint8_t t, Fixed2D4 xy, Fixed2D4 v);
     };
 
     extern ProjectileManager projectileManager;

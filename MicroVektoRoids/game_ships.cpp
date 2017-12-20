@@ -57,7 +57,7 @@ namespace Game {
                 Fixed2D4 diff = pos - p->pos;
                 if (diff.manhattanDistance() < Fix4(10,0) && diff.length() < Fix4(5,0)) {
                     p->impact();
-                    takeDamage(8);
+                    takeDamage(8 + p->damage);
                 }
             }
         }
@@ -297,11 +297,7 @@ namespace Game {
         switch (type) {
         case 1:
             {
-                if (charge <
-                     ShipJumpStart) {
-                    const int pivotX = -8;
-                    const int pivotY = -8;
-
+                if (charge < ShipJumpStart) {
                     int idir = calcDirectionIndex(direction);
                     int x = pos.x.getIntegerPart(),y = pos.y.getIntegerPart();
                     screenPos[0] = (int16_t)x;
@@ -436,8 +432,9 @@ namespace Game {
                 dir = dir.normalize();
             }
 
-            projectileManager.spawn(type == 1 ? ProjectileTypePlayer : ProjectileTypeEnemy, pos + dir * Fix4(3,0),
+            Projectile* p = projectileManager.spawn(type == 1 ? ProjectileTypePlayer : ProjectileTypeEnemy, pos + dir * Fix4(3,0),
                                     dir * Fix4(type == 1 ? 6 : 4,0) + velocity * Fix4(0,6));
+            if (type == ShipTypeEnemySmall) p->damage += aiStrength;
         }
     }
 

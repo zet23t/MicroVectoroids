@@ -7,6 +7,7 @@ namespace Game {
         extern const uint8_t White;
         extern const uint8_t Red;
         extern const uint8_t Yellow;
+        extern const uint8_t WhiteSmall;
     }
 
     struct Asteroid {
@@ -29,6 +30,7 @@ namespace Game {
         void draw();
         Asteroid* spawn();
         uint8_t countAll();
+        uint8_t countType(uint8_t t);
     };
 
     extern AsteroidManager asteroidManager;

@@ -125,7 +125,7 @@ namespace Game {
         case DESTINATION_MAIN: Level::Main::tick(); break;
         case DESTINATION_01: Level::L01::tick(); break;
         case DESTINATION_02: Level::L02::tick(); break;
-        case DESTINATION_03: Level::L03::tick(); break;
+        case DESTINATION_03a: Level::L03a::tick(); break;
         }
         Ship* ship = shipManager.ships;
         if (!UI::Intermission::isBlocking()) {
@@ -209,8 +209,8 @@ namespace Game {
         case DESTINATION_02:
             Level::L02::init();
             break;
-        case DESTINATION_03:
-            Level::L03::init();
+        case DESTINATION_03a:
+            Level::L03a::init();
             break;
         }
         PlayerStats::jumped(from, id);

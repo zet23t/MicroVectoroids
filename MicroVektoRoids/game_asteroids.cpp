@@ -128,6 +128,14 @@ namespace Game {
         return n;
     }
 
+    uint8_t AsteroidManager::countType(uint8_t t) {
+        uint8_t n = 0;
+        for (int i=0;i<AsteroidsCount;i+=1) {
+            if (asteroids[i].type == t) n+=1;
+        }
+        return n;
+    }
+
     void AsteroidManager::draw() {
         for (int i=0;i<AsteroidsCount;i+=1) {
             if (asteroids[i].type) asteroids[i].draw();

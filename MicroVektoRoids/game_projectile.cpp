@@ -47,15 +47,18 @@ namespace Game {
         type = t;
         velocity = v;
         age = 0;
+        damage = 0;
     }
 
-    void ProjectileManager::spawn(uint8_t t, Fixed2D4 xy, Fixed2D4 v) {
+    Projectile* ProjectileManager::spawn(uint8_t t, Fixed2D4 xy, Fixed2D4 v) {
+        static Projectile p;
         for (int i=0;i<ProjectileMaxCount;i+=1) {
             if (projectiles[i].type == 0) {
                 projectiles[i].init(t,xy,v);
-                return;
+                return &projectiles[i];
             }
         }
+        return &p;
     }
 
     void ProjectileManager::init() {
