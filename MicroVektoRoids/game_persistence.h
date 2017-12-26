@@ -12,6 +12,7 @@ namespace Game {
             uint8_t isValid;
             uint8_t currentLevelId;
             uint16_t playerScore;
+
         };
         struct Data {
             uint16_t formatVersion;

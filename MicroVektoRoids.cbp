@@ -43,13 +43,16 @@
 			<Add directory="td2play/simulator/include" />
 			<Add directory="td2play/simulator/GLFW-3/include" />
 			<Add directory="MicroVektoRoids" />
+			<Add directory="C:/Program Files (x86)/OpenAL 1.1 SDK/include" />
 		</Compiler>
 		<Linker>
 			<Add option="-static-libstdc++ -static-libgcc" />
 			<Add library="GLFW3" />
 			<Add library="opengl32" />
 			<Add library="gdi32" />
+			<Add library="OpenAL32" />
 			<Add directory="td2play/simulator/bin/Debug" />
+			<Add directory="C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win32" />
 		</Linker>
 		<ExtraCommands>
 			<Add before="prebuild.bat" />
@@ -116,6 +119,8 @@
 		<Unit filename="td2play/srclib/lib_input.h" />
 		<Unit filename="td2play/srclib/lib_math.cpp" />
 		<Unit filename="td2play/srclib/lib_math.h" />
+		<Unit filename="td2play/srclib/lib_sound.cpp" />
+		<Unit filename="td2play/srclib/lib_sound.h" />
 		<Unit filename="td2play/srclib/lib_spritefont.h" />
 		<Unit filename="td2play/srclib/lib_spritefont_structs.h" />
 		<Unit filename="td2play/srclib/lib_storage.cpp" />
