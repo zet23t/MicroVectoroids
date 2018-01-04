@@ -9,7 +9,7 @@ namespace Game {
 
         void init() {
             printf("Gamestate size: %d\n", sizeof(Data));
-            db.init("MicroVektoRoids/db.bin");
+            db.init("/MicroVektoRoids/db.bin");
         }
         void save(int8_t state) {
             Data data;
