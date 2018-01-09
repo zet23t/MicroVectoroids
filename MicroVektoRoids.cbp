@@ -58,6 +58,7 @@
 		<ExtraCommands>
 			<Add before="prebuild.bat" />
 			<Add before="td2play\external\sync.bat" />
+			<Mode after="always" />
 		</ExtraCommands>
 		<Unit filename="MicroVektoRoids/MicroVektoRoids.cpp" />
 		<Unit filename="MicroVektoRoids/asset_tilemap.cpp" />
