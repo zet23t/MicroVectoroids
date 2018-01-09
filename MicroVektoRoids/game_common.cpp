@@ -18,6 +18,7 @@
 #include "game_level_01.h"
 #include "game_level_02.h"
 #include "game_intro.h"
+#include "lib_sound.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -107,6 +108,7 @@ namespace Game {
     }
 
     void tick() {
+        Sound::tick();
         frameUnpaused += 1;
         if (currentLevelId == DESTINATION_INTRO) {
             Intro::tick();
@@ -232,6 +234,7 @@ namespace Game {
     }
 
     void initialize() {
+        Sound::init();
         DB::init();
         currentLevelId = DESTINATION_INTRO;
         PlayerStats::init();

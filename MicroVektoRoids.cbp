@@ -40,6 +40,7 @@
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
 			<Add option="-DWIN32" />
+			<Add option="-DTD2PLAY" />
 			<Add directory="td2play/simulator/include" />
 			<Add directory="td2play/simulator/GLFW-3/include" />
 			<Add directory="MicroVektoRoids" />
@@ -115,6 +116,9 @@
 		<Unit filename="td2play/srclib/lib_StringBuffer.h" />
 		<Unit filename="td2play/srclib/lib_font_virtualdj.h" />
 		<Unit filename="td2play/srclib/lib_geom.h" />
+		<Unit filename="td2play/srclib/lib_hxcmod.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="td2play/srclib/lib_image.h" />
 		<Unit filename="td2play/srclib/lib_input.cpp" />
 		<Unit filename="td2play/srclib/lib_input.h" />
