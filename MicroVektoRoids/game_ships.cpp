@@ -5,6 +5,7 @@
 #include "game_asteroids.h"
 #include "game_ui_hud.h"
 #include "game_collectable.h"
+#include "lib_sound.h"
 
 namespace Game {
     ShipManager shipManager;
@@ -431,7 +432,9 @@ namespace Game {
                 dir += UI::HUD::targetVelocity * Fix4(0,1) * dir.length();
                 dir = dir.normalize();
             }
+            static const int8_t samples[] = {100,-100,50,-50,25,-25,-12,12,-6,6};//,80,-80,50,-50,10,-10};
 
+            Sound::playSample(1,samples, sizeof(samples), 0x100,0x200,0x32)->setChange(0x200,-1,-1);
             Projectile* p = projectileManager.spawn(type == 1 ? ProjectileTypePlayer : ProjectileTypeEnemy, pos + dir * Fix4(3,0),
                                     dir * Fix4(type == 1 ? 6 : 4,0) + velocity * Fix4(0,6));
             if (type == ShipTypeEnemySmall) p->damage += aiStrength;

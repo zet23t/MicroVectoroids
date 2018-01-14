@@ -109,6 +109,10 @@ namespace Game {
 
     void tick() {
         Sound::tick();
+        //if (Joystick::getButton(0,Joystick::Phase::CURRENT)
+        //    && !Joystick::getButton(0,Joystick::Phase::PREVIOUS))
+        //        Sound::playSample(1,samples, sizeof(samples), 0x100,0x200,0x32)->setChange(0x200,-1,-1);
+
         frameUnpaused += 1;
         if (currentLevelId == DESTINATION_INTRO) {
             Intro::tick();
@@ -179,6 +183,7 @@ namespace Game {
     }
 
     void initializeLevel(uint8_t id) {
+
         uint8_t from = currentLevelId;
         currentLevelId = id;
         frame = 0;
