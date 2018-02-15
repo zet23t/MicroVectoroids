@@ -51,6 +51,7 @@ namespace Game {
         void tick();
         void draw();
         void init();
+        int countAlive();
     };
     extern ShipManager shipManager;
     extern bool directionalControls;

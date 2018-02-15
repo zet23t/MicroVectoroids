@@ -132,6 +132,8 @@ namespace Game {
         case DESTINATION_01: Level::L01::tick(); break;
         case DESTINATION_02: Level::L02::tick(); break;
         case DESTINATION_03a: Level::L03a::tick(); break;
+        case DESTINATION_03b: Level::L03b::tick(); break;
+        case DESTINATION_03c: Level::L03c::tick(); break;
         }
         Ship* ship = shipManager.ships;
         if (!UI::Intermission::isBlocking()) {
@@ -204,21 +206,13 @@ namespace Game {
         buffer.setClearBackground(true, RGB565(255,255,255));
 
         switch (id) {
-        case DESTINATION_TUTORIAL:
-            Level::Tutorial::init();
-            break;
-        case DESTINATION_MAIN:
-            Level::Main::init();
-            break;
-        case DESTINATION_01:
-            Level::L01::init();
-            break;
-        case DESTINATION_02:
-            Level::L02::init();
-            break;
-        case DESTINATION_03a:
-            Level::L03a::init();
-            break;
+        case DESTINATION_TUTORIAL: Level::Tutorial::init(); break;
+        case DESTINATION_MAIN: Level::Main::init(); break;
+        case DESTINATION_01: Level::L01::init(); break;
+        case DESTINATION_02: Level::L02::init(); break;
+        case DESTINATION_03a: Level::L03a::init(); break;
+        case DESTINATION_03b: Level::L03b::init(); break;
+        case DESTINATION_03c: Level::L03c::init(); break;
         }
         PlayerStats::jumped(from, id);
     }

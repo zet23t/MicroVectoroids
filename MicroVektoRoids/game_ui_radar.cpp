@@ -30,11 +30,11 @@ namespace Game {
                 int sdx = dx * 32;
                 int sdy = dy * 48;
                 int dist = max(abs(dx),abs(dy));
-                int w = 1;
+                int w = 2;
                 if (dist < 120 && (frame / 4 & 1)) {
-                    w = 2;
+                    w = 4;
                 }
-                int barlen = max(1,8-dist/32) + (frame >> 3 & 1)*2;
+                int barlen = max(1,8-dist/32) + (frame >> 3 & 1)*2 + 1;
 
                 if (abs(sdx) >= abs(sdy)) {
                     sdy /= abs(sdx) / 32;

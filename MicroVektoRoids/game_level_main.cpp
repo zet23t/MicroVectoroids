@@ -36,6 +36,8 @@ namespace Game {
                 }
             }
         }
+
+
         namespace L03a {
             uint8_t state;
             void init () {
@@ -77,6 +79,94 @@ namespace Game {
                 }
             }
         }
+
+
+        namespace L03b {
+            uint8_t state;
+            void init () {
+                spawnAsteroids(3, AsteroidType::White,0,0,250,80,0);
+                spawnAsteroids(4, AsteroidType::WhiteSmall,0,0,250,80,0);
+
+                state = 0;
+                uint8_t id = 1;
+                addWormhole(id, -15,20,"W-HOME", DESTINATION_MAIN, PlayerStats::hasVisited(DESTINATION_03b));
+            }
+            void tick() {
+                if (state == 0 && asteroidManager.countType(AsteroidType::White) < 2) {
+                    state = 1;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+4].init(3,x,y,15,0,0);
+                            shipManager.ships[i+4].aiStrength = 3;
+                            shipManager.ships[i+4].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
+                if (state == 1 && asteroidManager.countAll() < 3) {
+                    state = 2;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+4].aiStrength = 4;
+                            shipManager.ships[i+10].init(3,x,y,15,0,0);
+                            shipManager.ships[i+10].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
+            }
+        }
+
+
+        namespace L03c {
+            uint8_t state;
+            void init () {
+                spawnAsteroids(3, AsteroidType::White,0,0,250,80,0);
+                spawnAsteroids(4, AsteroidType::WhiteSmall,0,0,250,80,0);
+
+                state = 0;
+                uint8_t id = 1;
+                addWormhole(id, -15,20,"W-HOME", DESTINATION_MAIN, PlayerStats::hasVisited(DESTINATION_03c));
+            }
+            void tick() {
+                if (state == 0 && asteroidManager.countType(AsteroidType::White) < 2) {
+                    state = 1;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+4].init(3,x,y,15,0,0);
+                            shipManager.ships[i+4].aiStrength = 3;
+                            shipManager.ships[i+4].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
+                if (state == 1 && asteroidManager.countAll() < 3) {
+                    state = 2;
+                    for (int i=0;i<3;i+=1) {
+                        int x = (Math::randInt() % 512) - 256;
+                        int y = (Math::randInt() % 512) - 256;
+                        if (x*x+y*y > 1024){
+
+                            shipManager.ships[i+4].aiStrength = 4;
+                            shipManager.ships[i+10].init(3,x,y,15,0,0);
+                            shipManager.ships[i+10].pos += shipManager.ships[0].pos;
+                        }
+                    }
+                    UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                }
+            }
+        }
+
+
         namespace Main {
             uint8_t textId;
             const char* texts[] = {

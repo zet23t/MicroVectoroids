@@ -44,6 +44,9 @@ namespace Game {
                     UI::Intermission::show(texts[textId]);
                     textId += 1;
                 }
+                if (textId < 5 && shipManager.countAlive() == 0) {
+                    textId = 5;
+                }
 
             }
         }

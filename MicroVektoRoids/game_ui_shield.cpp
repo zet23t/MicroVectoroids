@@ -8,6 +8,7 @@ namespace Game {
         namespace Shield {
 
             static void drawBar(int8_t x, uint8_t dmgAbs, uint8_t maxDmg) {
+                if (dmgAbs == 0) return;
                 const SpriteSheet* bar = &ImageAsset::TextureAtlas_atlas::ui_shield_bar;
                 const SpriteSheet* inner = &ImageAsset::TextureAtlas_atlas::ui_shield_bar_inner;
                 SpriteSheetRect rect = bar->sprites[0];

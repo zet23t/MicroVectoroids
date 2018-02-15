@@ -189,6 +189,18 @@ namespace Game {
             if (velocity.y.absolute() < Fix4(0,3)) velocity.y = 0;
         }
 
+        if (type == 1) {
+            static const int8_t samples[] = {0, 59, 95, 95, 59, 0, -59, -95, -95, -59};//,80,-80,50,-50,10,-10};
+            static const int8_t noise[] = {1, 48, 55, 23, -23, -21, 19, 56, 79, 48, 5, -27, -9, 41, 56, 36, -15, -51, -51, -17, 25, 12, -23, -79, -74, -34, 9, 27, -2, -52, -64, -19, 29, 61, 38, 3, -25, 1, 49, 76, 61, 13, -15, -19, 14, 60, 59, 2, -41, -65};
+            Fix4 v = velocity.length();
+            uint32_t vol = (v * 4).getIntegerPart();
+            if (vol > 255) vol = 255;
+            //printf("%d\n",vol);
+            Sound::playSample(3,noise, sizeof(noise), 0x4 + vol / 64 ,vol,0xffff);//->interpolate = 1;
+            //Sound::playSample(2,samples, sizeof(samples), 0x2,vol / 4,0xffff);//->interpolate = 1;
+
+        }
+
         Fixed2D4 dir = pos - prevPos;
         Fix4 dist = (dir).length();
         if (dist > 0 && takenHitCooldown == 0) {
@@ -454,5 +466,14 @@ namespace Game {
         for (int i=0;i<ShipCount;i+=1) {
             if (ships[i].type) ships[i].draw();
         }
+    }
+
+    int ShipManager::countAlive() {
+        int i = 0;
+
+        for (int i=0;i<ShipCount;i+=1) {
+            if (shipManager.ships[i].type == ShipTypeEnemySmall) i+=1;
+        }
+        return i;
     }
 }

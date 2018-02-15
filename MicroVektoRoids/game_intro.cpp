@@ -243,10 +243,14 @@ namespace Game {
                     initializeLevel(mode == INTRO_MODE_INPUTNAME_NORMAL ? DESTINATION_MAIN : DESTINATION_TUTORIAL);
                 }
                 else {
-                    char c = PlayerStats::name[activeElement];
-                    if (c >='A' && c <='Z') c = c - 'A' + 'a';
-                    else if (c >='a' && c <='z') c = c + 'A' - 'a';
-                    PlayerStats::name[activeElement]= c;
+                    if (isReleased(0)) {
+                        activeElement = 8;
+                    } else {
+                        char c = PlayerStats::name[activeElement];
+                        if (c >='A' && c <='Z') c = c - 'A' + 'a';
+                        else if (c >='a' && c <='z') c = c + 'A' - 'a';
+                        PlayerStats::name[activeElement]= c;
+                    }
                 }
             }
         }
