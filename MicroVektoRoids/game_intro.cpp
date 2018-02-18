@@ -6,7 +6,7 @@
 #define INTRO_MODE_LOGO 255
 #define INTRO_MODE_CREDITS 254
 #define INTRO_MODE_MENU 0
-#define INTRO_MODE_PLAY 5
+#define INTRO_MODE_HIGHSCORES 6
 #define INTRO_MODE_LOAD 10
 #define INTRO_MODE_INPUTNAME_TRAINING 15
 #define INTRO_MODE_INPUTNAME_NORMAL 16
@@ -19,54 +19,27 @@ namespace Game {
         uint16_t creditsAnim;
 
         static void menuNewGame() {
-            mode = INTRO_MODE_PLAY;
+            //mode = INTRO_MODE_PLAY;
+            initializeLevel(DESTINATION_MAIN);
         }
         static void menuTutorial() {
-            mode = INTRO_MODE_INPUTNAME_TRAINING;
-            //initializeLevel(DESTINATION_TUTORIAL);
+            initializeLevel(DESTINATION_TUTORIAL);
         }
-        static void menuNormal() {
-            mode = INTRO_MODE_INPUTNAME_NORMAL;
-            //initializeLevel(DESTINATION_MAIN);
-        }
-        static void menuCancelPlay() {
-            mode = INTRO_MODE_MENU;
-        }
-        static void menuCancelLoad() {
-            mode = INTRO_MODE_MENU;
-        }
-        static void menuLoadGame() {
-            mode = INTRO_MODE_LOAD;
+        static void menuHighScores() {
+            mode = INTRO_MODE_HIGHSCORES;
         }
         static void menuCredits() {
             mode = INTRO_MODE_CREDITS;
-        }
-        static void menuLoadGameState0() {
-            mode = INTRO_MODE_PLAY;
-        }
-        static void menuLoadGameState1() {
-            mode = INTRO_MODE_PLAY;
-        }
-        static void menuLoadGameState2() {
-            mode = INTRO_MODE_PLAY;
         }
 
         const char *menuTexts[] = {
             "PLAY",
             "NEW GAME",
-            "LOAD GAME",
+            "TUTORIAL",
+            "HIGH SCORES",
             "CREDITS",
             0,
-            "DIFFICULTY",
-            "TRAINING",
-            "NORMAL",
-            "\ncancel",
-            0,
-            "LOADING",
-            "STATE 1",
-            "STATE 2",
-            "STATE 3",
-            "\ncancel",
+            "HIGH SCORES",
             0,
         };
 
@@ -75,20 +48,12 @@ namespace Game {
         static Action menuActions[] = {
             0,
             menuNewGame,
-            menuLoadGame,
+            menuTutorial,
+            menuHighScores,
             menuCredits,
             0,
             0,
-            menuTutorial,
-            menuNormal,
-            menuCancelPlay,
             0,
-            0,
-            menuLoadGameState0,
-            menuLoadGameState1,
-            menuLoadGameState2,
-            menuCancelLoad,
-
         };
 
         void putText(int &y, const char *tx, int space) {
@@ -237,7 +202,7 @@ namespace Game {
             if(stick.x == 0 && stick.y == 0) blockJoystick = false;
             if (isReleased(0) || isReleased(1)) {
                 if (activeElement <= -1) {
-                    mode = INTRO_MODE_PLAY;
+                    //mode = INTRO_MODE_PLAY;
                 }
                 else if (activeElement >= 8) {
                     initializeLevel(mode == INTRO_MODE_INPUTNAME_NORMAL ? DESTINATION_MAIN : DESTINATION_TUTORIAL);
@@ -262,8 +227,9 @@ namespace Game {
             }
             buffer.setOffset(0,0);
             switch (mode) {
+            case INTRO_MODE_HIGHSCORES:
+                break;
             case INTRO_MODE_LOAD:
-            case INTRO_MODE_PLAY:
             case INTRO_MODE_MENU:
                 drawMenu(&menuTexts[mode], &menuActions[mode]);
                 break;
