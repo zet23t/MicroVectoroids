@@ -45,12 +45,12 @@ namespace Game {
             score = 0;
             jumps = 0;
             visitedSectors = 0;
-            name[0] = 'N';
+            name[0] = 'Y';
             name[1] = 'o';
-            name[2] = 'b';
-            name[3] = 'o';
-            name[4] = 'd';
-            name[5] = 'y';
+            name[2] = 'u';
+            name[3] = 0;
+            name[4] = 0;
+            name[5] = 0;
             name[6] = 0;
             name[7] = 0;
             levelScores[DESTINATION_01].addEntry("KenBurns", 150);

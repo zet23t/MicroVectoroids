@@ -94,8 +94,12 @@ namespace Game {
                 buffer.drawRect(95,0,1,64)->filledRect(RGB565(0,0,0))->setDepth(100)->blend(RenderCommandBlendMode::average);
                 Fixed2D4 cen = Fixed2D4(x+48,y+32);
                 for (int i=0;i<AsteroidsCount;i+=1) {
-                    if (asteroidManager.asteroids[i].type) {
-                        addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos, RGB565(128,128,128));
+                    uint8_t t = asteroidManager.asteroids[i].type;
+                    if (t) {
+                        addBlip(blipsAsteroids, cen, asteroidManager.asteroids[i].pos,
+                                t == AsteroidType::WhiteSmall ?
+                                RGB565(90,90,90) :
+                                RGB565(140,140,140));
                     }
                 }
                 for (int i=0;i<ShipCount;i+=1) {

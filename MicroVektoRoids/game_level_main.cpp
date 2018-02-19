@@ -170,26 +170,52 @@ namespace Game {
         namespace Main {
             uint8_t textId;
             const char* texts[] = {
-                "Here you are!",
-                "There are a few sectors that need your attention.",
-                "Feel free to clear them as you like.",
+                "Destroy the asteroids and all enemies",
                 0,
 
             };
 
-
+            uint8_t asteroidsCount;
+            uint16_t asteroidsDestroyedCount, nextWave;
             void init() {
                 uint8_t id = 2;
                 shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
-                addWormhole(id, -135,200,"W-03a", DESTINATION_03a, true);
-                addWormhole(id, -225,230,"W-03b", DESTINATION_03b, PlayerStats::hasVisited(DESTINATION_03a));
-                addWormhole(id, -125,340,"W-03c", DESTINATION_03c, PlayerStats::hasVisited(DESTINATION_03b));                if (PlayerStats::hasVisited(DESTINATION_MAIN)) {
-                    textId = 3;
-                } else {
-                    textId = 0;
+                //addWormhole(id, -135,200,"W-03a", DESTINATION_03a, true);
+                //addWormhole(id, -225,230,"W-03b", DESTINATION_03b, PlayerStats::hasVisited(DESTINATION_03a));
+                //addWormhole(id, -125,340,"W-03c", DESTINATION_03c, PlayerStats::hasVisited(DESTINATION_03b));                //if (PlayerStats::hasVisited(DESTINATION_MAIN)) {
+                //    textId = 1;
+                textId = 0;
+                spawnAsteroids(12, AsteroidType::White,0,0,250,80,0);
+                spawnAsteroids(24, AsteroidType::WhiteSmall,0,0,250,80,0);
+                asteroidsCount = asteroidManager.countAll();
+                asteroidsDestroyedCount = 0;
+                nextWave = 3;
+            }
+            void spawnShips(uint8_t n) {
+                int x = shipManager.ships[0].pos.x.getIntegerPart();
+                int y = shipManager.ships[0].pos.y.getIntegerPart();
+
+                for (int i=1;i<ShipCount && n > 0;i+=1) {
+                    if (shipManager.ships[i].type) continue;
+                    int ox = Math::randInt() % 511 - 255;
+                    int oy = Math::randInt() % 511 - 255;
+                    shipManager.ships[i].init(3,x + ox,y + oy,15,0,0);
+                    shipManager.ships[i].aiStrength = n + 1;
+                    n--;
                 }
             }
             void tick() {
+                uint8_t n = asteroidManager.countAll();
+               // printf("%d\n",n);
+                if (n < asteroidsCount) {
+                    asteroidsDestroyedCount += asteroidsCount - n;
+                    printf("%d\n",asteroidsDestroyedCount);
+                    if (asteroidsDestroyedCount > nextWave) {
+                        nextWave += (nextWave % 7) + 2;
+                        spawnShips(nextWave% 5 + 3);
+                    }
+                }
+                asteroidsCount = n;
                 if (!UI::Intermission::isActive() && texts[textId]) {
                     UI::Intermission::show(texts[textId],INTERMISSION_TYPE_OVERLAY);
                     textId += 1;
