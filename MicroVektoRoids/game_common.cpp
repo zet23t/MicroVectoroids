@@ -233,13 +233,19 @@ namespace Game {
     }
 
     void initialize() {
-        Sound::init();
-        DB::init();
-        currentLevelId = DESTINATION_INTRO;
+        static uint8_t isFirstInit = 1;
         PlayerStats::init();
+        if (isFirstInit) {
+            Sound::init();
+            DB::init();
+            DB::load(-1);
+            isFirstInit = 0;
+        }
+        currentLevelId = DESTINATION_INTRO;
         atlas = Texture<uint16_t>(ImageAsset::atlas);
         setScreenBrightness(8);
-        DB::load(-1);
+        asteroidManager.init();
+        shipManager.init();
         initializeLevel(DESTINATION_INTRO);
     }
 }
