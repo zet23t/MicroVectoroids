@@ -78,17 +78,17 @@ namespace Game {
         Ship const* player = shipManager.ships;
         Fixed2D4 diff = player->pos - pos;
         int mdist = diff.manhattanDistance().getIntegerPart();
-        if (mdist > 200 + aiStrength * 100) return;
+        //if (mdist > 200 + aiStrength * 100) return;
         Fixed2D4 six = -player->direction - player->velocity * Fix4(2,0);
         if (six.x==0 && six.y == 0) six = -player->direction;
         six = six.normalize();
         Fixed2D4 diffNorm = diff;
         diffNorm.normalize();
 
-        bool finalTarget = true;
+        bool finalTarget = shipManager.ships[0].type != 0;
         Fixed2D4 target;
 
-        if (aiPhase == 0) {
+        if (aiPhase == 0 && finalTarget) {
             if (aiCounter == 0) {
                 aiPhase = 1;
                 aiCounter = Math::randInt()%64+10;
@@ -136,7 +136,7 @@ namespace Game {
             direction = diff * (Fix4(2 + aiStrength,0)) + direction * (dot);
             direction = direction.normalize();
         }
-        if (dot < Fix4(-1,8) && diffNorm.dot(direction) > Fix4(0,8))
+        if (dot < Fix4(-1,8) && diffNorm.dot(direction) > Fix4(0,8) && shipManager.ships[0].type)
             shoot();
 
         handleProjectileCollisions(ProjectileTypePlayer);

@@ -420,7 +420,8 @@ namespace Game {
 
             }
             if (shipManager.ships[0].type == 0) {
-                buffer.drawText("GAME\nOVER",0,0,96,64,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                const char *tx = stringBuffer.start().put("GAME\nOVER\n\nYOUR SCORE:\n\n").putDec(PlayerStats::score).get();
+                buffer.drawText(tx,0,0,96,64,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
             }
             //buffer.drawText("MicroVektoRoids Alpha",0,0,96,64,1,1,false, FontAsset::font, 200, RenderCommandBlendMode::add);
             buffer.setOffset(camX, camY);

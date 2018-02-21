@@ -18,7 +18,7 @@ namespace Game {
             while (n > 0) {
                 int x = (Math::randInt() % (maxRange * 2)) - maxRange;
                 int y = (Math::randInt() % (maxRange * 2)) - maxRange;
-                int d = x*x+y+y;
+                int d = x*x+y*y;
                 if (d > min2 && d < max2) {
                     n--;
                     Asteroid *a = asteroidManager.spawn();
@@ -185,8 +185,8 @@ namespace Game {
                 //addWormhole(id, -125,340,"W-03c", DESTINATION_03c, PlayerStats::hasVisited(DESTINATION_03b));                //if (PlayerStats::hasVisited(DESTINATION_MAIN)) {
                 //    textId = 1;
                 textId = 0;
-                spawnAsteroids(12, AsteroidType::White,0,0,250,80,0);
-                spawnAsteroids(24, AsteroidType::WhiteSmall,0,0,250,80,0);
+                spawnAsteroids(12, AsteroidType::White,0,0,1000,240,0);
+                spawnAsteroids(44, AsteroidType::WhiteSmall,0,0,600,140,0);
                 asteroidsCount = asteroidManager.countAll();
                 asteroidsDestroyedCount = 0;
                 nextWave = 3;
@@ -197,11 +197,15 @@ namespace Game {
 
                 for (int i=1;i<ShipCount && n > 0;i+=1) {
                     if (shipManager.ships[i].type) continue;
-                    int ox = Math::randInt() % 511 - 255;
-                    int oy = Math::randInt() % 511 - 255;
-                    shipManager.ships[i].init(3,x + ox,y + oy,15,0,0);
-                    shipManager.ships[i].aiStrength = n + 1;
-                    n--;
+                    while(1) {
+                        int ox = Math::randInt() % 511 - 255;
+                        int oy = Math::randInt() % 511 - 255;
+                        if (ox*ox+oy*oy < 120) continue;
+                        shipManager.ships[i].init(3,x + ox,y + oy,15,0,0);
+                        shipManager.ships[i].aiStrength = n + 1;
+                        n--;
+                        break;
+                    }
                 }
             }
             void tick() {
@@ -213,6 +217,8 @@ namespace Game {
                     if (asteroidsDestroyedCount > nextWave) {
                         nextWave += (nextWave % 7) + 2;
                         spawnShips(nextWave% 5 + 3);
+
+                        UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
                     }
                 }
                 asteroidsCount = n;
