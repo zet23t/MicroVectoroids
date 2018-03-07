@@ -1,6 +1,7 @@
 #include "game_projectile.h"
 #include "game_particles.h"
 #include "game_common.h"
+#include "lib_sound.h"
 
 namespace Game {
     ProjectileManager projectileManager;
@@ -15,6 +16,9 @@ namespace Game {
         particleSystem.spawn(t, pos, velocity.left() * Fix4(0,6));
         particleSystem.spawn(t, pos, velocity.left() * Fix4(0,3) - velocity * Fix4(0,3));
         particleSystem.spawn(t, pos, velocity.right() * Fix4(0,3) - velocity * Fix4(0,3));
+
+        static const int8_t b[] = {100,-100,50,-50,25,-25,-12,12,-6,6};
+        Sound::playSample(0,b, sizeof(b), 0x20 + (Math::randInt()&0xf) ,0x150,100)->setChange(0x700,-1,-2)->interpolate = 0;
         type = 0;
     }
 

@@ -14,6 +14,7 @@ namespace Game {
         Fixed2D4 pos;
         Fixed2D4 prevPos;
         Fixed2D4 direction;
+        Fixed2D4 acceleration;
         Fixed2D4 velocity;
         uint8_t type;
         uint8_t damage;

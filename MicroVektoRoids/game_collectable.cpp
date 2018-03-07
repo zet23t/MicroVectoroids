@@ -3,6 +3,7 @@
 #include "game_player_stats.h"
 #include "game_ships.h"
 #include "game_balancing.h"
+#include "lib_sound.h"
 
 namespace Game {
     namespace Collectable {
@@ -34,6 +35,7 @@ namespace Game {
                 collectables[i].velocity = collectables[i].velocity  * COLLECTABLE_DRAG;
                 if (collectables[i].age < COLLECTABLE_SPAWN_TIME || !ship->type) {
                     collectables[i].age+=1;
+
                     continue;
                 }
                 Fixed2D4 pos = collectables[i].position;
@@ -42,6 +44,11 @@ namespace Game {
                 if (abs(dx) < PLAYER_SHIP_DUST_COLLECTION_RANGE && abs(dy) < PLAYER_SHIP_DUST_COLLECTION_RANGE) {
                     collectables[i].active = false;
                     PlayerStats::awardScore(5);
+                    static const int8_t b[] = {100,-100,80,-80,60,-60,80,-80,100,-100};
+                    static uint8_t k = 110;
+                    Sound::playSample(k++,b, sizeof(b), 0x3d,0x100,100)->setChange(0x600,-3,0);
+                    Sound::playSample(k++,b, sizeof(b), 0x60,0x80,100)->setChange(0x300,-1,0)->interpolate = 1;
+                    if (k > 115) k = 110;
                     continue;
                 }
                 if (abs(dx) < PLAYER_SHIP_DUST_ATTRACTION_RANGE && abs(dy) < PLAYER_SHIP_DUST_ATTRACTION_RANGE) {

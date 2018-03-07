@@ -23,7 +23,7 @@ namespace Game {
             if (!directionalControls) {
                 input.normalize();
                 if (input.dot(direction) > Fix4(0,12)) {
-                    velocity += direction * Fix4(0,12);
+                    acceleration += direction * Fix4(0,12);
                 }
 
                 Fix4 force = Fix4(0,7);
@@ -46,7 +46,7 @@ namespace Game {
                 direction += direction.left() * input.x * Fix4(0,4);
                 direction.normalize();
                 if (input.y > 0) input.y = 0;
-                velocity += direction * Fix4(0,10) * -input.y;
+                acceleration += direction * Fix4(0,10) * -input.y;
             }
         }
     }
@@ -163,6 +163,10 @@ namespace Game {
                     takeDamage(16);
                 takenHitCooldown = 8;
 
+                static const int8_t b[] = {100,-100,80,-80,60,-60};
+                Sound::playSample(0,b, sizeof(b), 0x3,0x100,100)->setChange(0x60,-3,0);
+                Sound::playSample(0,b, sizeof(b), 0x2,0x80,100)->setChange(0x30,-1,0)->interpolate = 1;
+
                 break;
             }
         }
@@ -181,7 +185,7 @@ namespace Game {
         if (takenHitCooldown > 0) takenHitCooldown -= 1;
         if (type == 1) {
         }
-
+        velocity += acceleration;
         pos += velocity * Fix4(0,6);
         if ((frame & 2) == 2 ) {
             velocity = velocity * (Fix4(0,15));
@@ -190,13 +194,27 @@ namespace Game {
         }
 
         if (type == 1) {
-            static const int8_t samples[] = {0, 59, 95, 95, 59, 0, -59, -95, -95, -59};//,80,-80,50,-50,10,-10};
-            static const int8_t noise[] = {1, 48, 55, 23, -23, -21, 19, 56, 79, 48, 5, -27, -9, 41, 56, 36, -15, -51, -51, -17, 25, 12, -23, -79, -74, -34, 9, 27, -2, -52, -64, -19, 29, 61, 38, 3, -25, 1, 49, 76, 61, 13, -15, -19, 14, 60, 59, 2, -41, -65};
+            static const int8_t a[] = {40,30,20,10,0,-10,-20,-30,-40,-30,-20,-10,0,10,20,30};
+            static const int8_t b[] = {30,40,45,40,30,-30,-40,-45,-40,-30};
             Fix4 v = velocity.length();
+            Fix4 acc = acceleration.length();
             uint32_t vol = (v * 4).getIntegerPart();
+            uint32_t volAcc = (acc * 50).getIntegerPart() * abs(a[(Time::millis / 32)%sizeof(a)]) * (10+vol/8);
             if (vol > 255) vol = 255;
-            //printf("%d\n",vol);
-            Sound::playSample(3,noise, sizeof(noise), 0x4 + vol / 64 ,vol,0xffff);//->interpolate = 1;
+            if (volAcc > 255) volAcc = 255;
+
+            int8_t f = b[(Time::millis)%sizeof(b)];
+            int16_t ff = 0x2 + vol / 34 + f;
+            if (ff < 16) ff = 16;
+            if (ff > 64) ff = 64;
+
+            Sound::playSample(4,b, sizeof(b), ff ,vol,0xffff)->interpolate = 1;
+            Sound::playSample(5,a, sizeof(a), ff*4/3 ,vol / 8,0xffff)->interpolate = 1;
+            Sound::playSample(6,a, sizeof(a), 0x2f ,volAcc + vol / 4,0xffff)->interpolate = 0;
+
+            //Sound::playSample(6,noise, sizeof(noise)-1, ff / 2,vol / 24,0xffff)->interpolate = 0;
+            //Sound::playSample(4,noise, sizeof(noise)-1, 0x32 + vol / 4 - f ,vol / 2,0xffff)->interpolate = 0;
+            //Sound::playSample(3,noise, sizeof(noise), 0x4 + vol / 64 ,vol/32,0xffff);//->interpolate = 1;
             //Sound::playSample(2,samples, sizeof(samples), 0x2,vol / 4,0xffff);//->interpolate = 1;
 
         }
@@ -213,6 +231,7 @@ namespace Game {
                 p -= dir;
             }
         }
+        acceleration = Fixed2D4();
     }
 
     uint8_t Ship::maxDamage() {
@@ -225,6 +244,9 @@ namespace Game {
 
     void Ship::explode() {
         uint8_t t = type == ShipTypePlayer ? ParticleType::PlayerShipExplosion : ParticleType::EnemyShipExplosion;
+        static const int8_t b[] = {100,-100,50,-50,25,-25,-12,12,-6,6};
+        Sound::playSample(0,b, sizeof(b), 0x10 + (Math::randInt()&0xf) ,0x1a0,200)->setChange(0x1100,-1,-1)->interpolate = 0;
+        Sound::playSample(0,b, sizeof(b), 0x16 + (Math::randInt()&0xf) ,0x1f0,200)->setChange(0x1000,-1,-2)->interpolate = 0;
         for (int i=0;i<20;i+=1) {
             Fixed2D4 r;
             Fixed2D4 p = r.randomCircle(Fix4(8,0));
@@ -445,8 +467,13 @@ namespace Game {
                 dir = dir.normalize();
             }
             static const int8_t samples[] = {100,-100,50,-50,25,-25,-12,12,-6,6};//,80,-80,50,-50,10,-10};
+            int dist = (shipManager.ships[0].pos - pos).manhattanDistance().getIntegerPart();
+            dist=(400 - dist) / 2;
+            if (dist > 0) {
 
-            Sound::playSample(1,samples, sizeof(samples), 0x100,0x200,0x32)->setChange(0x200,-1,-1);
+                Sound::playSample(0,samples, sizeof(samples), 0x80,dist,0x60)->setChange(0x200,-1,-1);
+                Sound::playSample(0,samples, sizeof(samples), 0x60,dist,0x60)->setChange(0x300,-1,-1);
+            }
             Projectile* p = projectileManager.spawn(type == 1 ? ProjectileTypePlayer : ProjectileTypeEnemy, pos + dir * Fix4(3,0),
                                     dir * Fix4(type == 1 ? 6 : 4,0) + velocity * Fix4(0,6));
             if (type == ShipTypeEnemySmall) p->damage += aiStrength;

@@ -4,6 +4,7 @@
 #include "game_particles.h"
 #include "game_collectable.h"
 #include "game_balancing.h"
+#include "lib_sound.h"
 
 namespace Game {
     AsteroidManager asteroidManager;
@@ -98,6 +99,9 @@ namespace Game {
             }
         }
         if (type == AsteroidType::White || type == AsteroidType::WhiteSmall) {
+            static const int8_t b[] = {100,-100,50,-50,25,-25,-12,12,-6,6};
+            Sound::playSample(0,b, sizeof(b), 0x10 + (Math::randInt()&0xf) ,0x180,200)->setChange(0x900,-1,-1)->interpolate = 0;
+            Sound::playSample(0,b, sizeof(b), 0x16 + (Math::randInt()&0xf) ,0x180,200)->setChange(0x800,-1,-2)->interpolate = 0;
             for (int i=0;i<18;i+=1) {
                 Fixed2D4 vel;
                 vel = vel.randomCircle(Fix4(2,5));

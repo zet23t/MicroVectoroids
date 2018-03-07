@@ -170,13 +170,12 @@ namespace Game {
         namespace Main {
             uint8_t textId;
             const char* texts[] = {
-                "Destroy the asteroids and all enemies",
+                "Collect as much dust as you can",
                 0,
-
             };
 
             uint8_t asteroidsCount;
-            uint16_t asteroidsDestroyedCount, nextWave;
+            uint16_t asteroidsDestroyedCount, nextWave, waveNumber;
             void init() {
                 uint8_t id = 2;
                 shipManager.ships[1].init(ShipTypeStation,15,8,15,0,0);
@@ -190,6 +189,9 @@ namespace Game {
                 asteroidsCount = asteroidManager.countAll();
                 asteroidsDestroyedCount = 0;
                 nextWave = 3;
+                waveNumber =0;
+
+                UI::Intermission::show(texts[0], INTERMISSION_TYPE_OVERLAY);
             }
             void spawnShips(uint8_t n) {
                 int x = shipManager.ships[0].pos.x.getIntegerPart();
@@ -198,9 +200,9 @@ namespace Game {
                 for (int i=1;i<ShipCount && n > 0;i+=1) {
                     if (shipManager.ships[i].type) continue;
                     while(1) {
-                        int ox = Math::randInt() % 511 - 255;
-                        int oy = Math::randInt() % 511 - 255;
-                        if (ox*ox+oy*oy < 120) continue;
+                        int ox = Math::randInt() % 1024 - 511;
+                        int oy = Math::randInt() % 1024 - 511;
+                        if (ox*ox+oy*oy < 120*120) continue;
                         shipManager.ships[i].init(3,x + ox,y + oy,15,0,0);
                         shipManager.ships[i].aiStrength = n + 1;
                         n--;
@@ -213,11 +215,13 @@ namespace Game {
                // printf("%d\n",n);
                 if (n < asteroidsCount) {
                     asteroidsDestroyedCount += asteroidsCount - n;
-                    printf("%d\n",asteroidsDestroyedCount);
+                    //printf("%d\n",asteroidsDestroyedCount);
                     if (asteroidsDestroyedCount > nextWave) {
+                        waveNumber ++;
                         nextWave += (nextWave % 7) + 2;
-                        spawnShips(nextWave% 5 + 3);
-
+                        int num = nextWave% 5 + 3;
+                        if (num > waveNumber + 1) num = waveNumber + 1;
+                        spawnShips(num);
                         UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
                     }
                 }
