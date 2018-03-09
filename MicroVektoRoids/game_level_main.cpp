@@ -4,6 +4,7 @@
 #include "game_common.h"
 #include "game_player_stats.h"
 #include "game_ui_intermission.h"
+#include "lib_sound.h"
 
 static void addWormhole(uint8_t &id, int16_t x, int16_t y, const char *inf, uint8_t dest, bool active) {
     Game::shipManager.ships[id++].init(active ? ShipTypeWormHole : ShipTypeWormHoleInactive,x,y,inf, dest);
@@ -192,6 +193,7 @@ namespace Game {
                 waveNumber =0;
 
                 UI::Intermission::show(texts[0], INTERMISSION_TYPE_OVERLAY);
+
             }
             void spawnShips(uint8_t n) {
                 int x = shipManager.ships[0].pos.x.getIntegerPart();
@@ -211,6 +213,21 @@ namespace Game {
                 }
             }
             void tick() {
+                static int play = 0;
+                static int pause = 0;
+
+
+                if (play > 0) {
+                    pause -= 30;
+                    if (pause < 0) {
+
+                        static const int8_t b[] = {100,100,80,-80,-100,-100,-80,80};
+                        Sound::playSample(0,b, sizeof(b), 24,200,40);//->setChange(0x600,-3,-1);
+                        pause +=500;
+                        play--;
+                    }
+
+                }
                 uint8_t n = asteroidManager.countAll();
                // printf("%d\n",n);
                 if (n < asteroidsCount) {
@@ -223,6 +240,8 @@ namespace Game {
                         if (num > waveNumber + 1) num = waveNumber + 1;
                         spawnShips(num);
                         UI::Intermission::show("INTRUDERS DETECTED", INTERMISSION_TYPE_OVERLAY);
+                        play = 5;
+                        pause = 0;
                     }
                 }
                 asteroidsCount = n;

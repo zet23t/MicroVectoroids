@@ -163,7 +163,7 @@ namespace Game {
                     takeDamage(16);
                 takenHitCooldown = 8;
 
-                static const int8_t b[] = {100,-100,80,-80,60,-60};
+                static const int8_t b[] = {100,90,-90,-100,-80,80,-60,60};
                 Sound::playSample(0,b, sizeof(b), 0x3,0x100,100)->setChange(0x60,-3,0);
                 Sound::playSample(0,b, sizeof(b), 0x2,0x80,100)->setChange(0x30,-1,0)->interpolate = 1;
 
@@ -194,12 +194,12 @@ namespace Game {
         }
 
         if (type == 1) {
-            static const int8_t a[] = {40,30,20,10,0,-10,-20,-30,-40,-30,-20,-10,0,10,20,30};
+            static const int8_t a[] = {40,38,36,30,20,10,0,-10,-20,-30,-36,-38,-40,-38,-36,-20,-10,0,10,20,30,26,38};
             static const int8_t b[] = {30,40,45,40,30,-30,-40,-45,-40,-30};
             Fix4 v = velocity.length();
             Fix4 acc = acceleration.length();
-            uint32_t vol = (v * 4).getIntegerPart();
-            uint32_t volAcc = (acc * 50).getIntegerPart() * abs(a[(Time::millis / 32)%sizeof(a)]) * (10+vol/8);
+            uint32_t vol = (v * 9).getIntegerPart();
+            uint32_t volAcc = (acc * 80).getIntegerPart() * (abs(a[(Time::millis / 32)%sizeof(a)]) + 10) * (10+vol/8);
             if (vol > 255) vol = 255;
             if (volAcc > 255) volAcc = 255;
 
@@ -208,9 +208,9 @@ namespace Game {
             if (ff < 16) ff = 16;
             if (ff > 64) ff = 64;
 
-            Sound::playSample(4,b, sizeof(b), ff ,vol,0xffff)->interpolate = 1;
-            Sound::playSample(5,a, sizeof(a), ff*4/3 ,vol / 8,0xffff)->interpolate = 1;
-            Sound::playSample(6,a, sizeof(a), 0x2f ,volAcc + vol / 4,0xffff)->interpolate = 0;
+            Sound::playSample(4,a, sizeof(a), ff ,vol,10)->interpolate = 1;
+            Sound::playSample(5,a, sizeof(a), ff ,vol / 8,10)->interpolate = 1;
+            Sound::playSample(6,a, sizeof(a), 0x20 + vol/8 ,volAcc + vol / 4,10)->interpolate = 0;
 
             //Sound::playSample(6,noise, sizeof(noise)-1, ff / 2,vol / 24,0xffff)->interpolate = 0;
             //Sound::playSample(4,noise, sizeof(noise)-1, 0x32 + vol / 4 - f ,vol / 2,0xffff)->interpolate = 0;
