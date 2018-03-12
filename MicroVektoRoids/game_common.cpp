@@ -1,4 +1,5 @@
 #include "game_common.h"
+#include "game_sound.h"
 #include "game_asteroids.h"
 #include "game_particles.h"
 #include "game_projectile.h"
@@ -108,7 +109,7 @@ namespace Game {
     }
 
     void tick() {
-        Sound::tick();
+        ::Sound::tick();
         //if (Joystick::getButton(0,Joystick::Phase::CURRENT)
         //    && !Joystick::getButton(0,Joystick::Phase::PREVIOUS))
         //        Sound::playSample(1,samples, sizeof(samples), 0x100,0x200,0x32)->setChange(0x200,-1,-1);
@@ -236,10 +237,11 @@ namespace Game {
         static uint8_t isFirstInit = 1;
         PlayerStats::init();
         if (isFirstInit) {
-            Sound::init();
+            ::Sound::init();
             DB::init();
             DB::load(-1);
             isFirstInit = 0;
+            Game::Sound::volume = 4;
         }
         currentLevelId = DESTINATION_INTRO;
         atlas = Texture<uint16_t>(ImageAsset::atlas);

@@ -2,6 +2,7 @@
 #include "game_common.h"
 #include "game_menu.h"
 #include "game_player_stats.h"
+#include "lib_sound.h"
 
 #define INTRO_MODE_LOGO 255
 #define INTRO_MODE_CREDITS 254
@@ -55,6 +56,14 @@ namespace Game {
             0,
             0,
         };
+        void playMenuSelectSound() {
+            static const int8_t b[] = {100,100,80,-80,-100,-100,-80,80};
+            Sound::playSample(0,b, sizeof(b), 324,200,40)->setChange(600,-3,-1);
+        }
+        void playPushButtonSound() {
+            static const int8_t b[] = {100,-100,80,-80,100,-100,80,-80};
+            Sound::playSample(0,b, sizeof(b), 256,200,40)->setChange(120,-1,-1);
+        }
 
         void putText(int &y, const char *tx, int space) {
             buffer.drawText(tx,8,y,80,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
@@ -78,10 +87,12 @@ namespace Game {
             if (!blockJoystick && stick.y>0) {
                 blockJoystick = 5;
                 selected = (selected + 1) % n;
+                playMenuSelectSound();
             }
             if (!blockJoystick && stick.y<0) {
                 blockJoystick= 5;
                 selected = (selected - 1 + n) % n;
+                playMenuSelectSound();
             }
             //buffer.drawText(Menu::getMenuText(selected == 1,"NORMAL"),0,36,96,16,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
             if (isReleased(0) || isReleased(1))
@@ -225,9 +236,20 @@ namespace Game {
                 buffer.setOffset(frameUnpaused * 2 + i,0);
                 drawBackgrounds();
             }
+            if (isReleased(0) || isReleased(1)) {
+                playPushButtonSound();
+            }
             buffer.setOffset(0,0);
             switch (mode) {
             case INTRO_MODE_HIGHSCORES:
+                if (isReleased(0) || isReleased(1)) {
+                    mode = INTRO_MODE_MENU;
+                    //initializeLevel(DESTINATION_MAIN);
+                }
+                {
+                    int y = 30;
+                    putText(y,"Not implemented\n(sorry)",2);
+                }
                 break;
             case INTRO_MODE_LOAD:
             case INTRO_MODE_MENU:

@@ -198,7 +198,7 @@ namespace Game {
             static const int8_t b[] = {30,40,45,40,30,-30,-40,-45,-40,-30};
             Fix4 v = velocity.length();
             Fix4 acc = acceleration.length();
-            uint32_t vol = (v * 9).getIntegerPart();
+            uint32_t vol = (v * 9).getIntegerPart() + 10;
             uint32_t volAcc = (acc * 80).getIntegerPart() * (abs(a[(Time::millis / 32)%sizeof(a)]) + 10) * (10+vol/8);
             if (vol > 255) vol = 255;
             if (volAcc > 255) volAcc = 255;

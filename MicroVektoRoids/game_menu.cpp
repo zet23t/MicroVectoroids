@@ -7,6 +7,7 @@
 #include "game_sound.h"
 #include "game_player_stats.h"
 #include "game_asteroids.h"
+#include "lib_sound.h"
 
 #define SCREEN_MAIN 0
 #define SCREEN_BRIGHTNESS 2
@@ -36,6 +37,7 @@ namespace Game {
                         gameState = GameState::Menu;
                     }
                     else {
+                        // check high scores
                         Game::initialize();
                     }
                 }
@@ -153,6 +155,8 @@ namespace Game {
             if (activate) activeScreen = SCREEN_MAIN;
             drawScreenBars("SOUND VOLUME", vpos);
             drawLevelControls(Sound::volume, 4);
+            ::Sound::setGlobalVolume((uint8_t)(Sound::volume*2));
+
         }
 
         void drawWormholeDetails(int16_t vpos) {
