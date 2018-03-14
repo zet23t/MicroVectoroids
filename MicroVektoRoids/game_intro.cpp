@@ -247,8 +247,7 @@ namespace Game {
                     //initializeLevel(DESTINATION_MAIN);
                 }
                 {
-                    int y = 30;
-                    putText(y,"Not implemented\n(sorry)",2);
+                    initializeLevel(DESTINATION_HIGHSCORE);
                 }
                 break;
             case INTRO_MODE_LOAD:

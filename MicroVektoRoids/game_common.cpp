@@ -107,6 +107,54 @@ namespace Game {
         drawSpaceBackground(2, RGB565(120,120,120),3);
         drawSpaceBackground(3, RGB565(120,120,120),7);
     }
+    struct HighScoreEntry {
+        uint16_t score;
+        char name[7];
+    };
+
+    HighScoreEntry entries[3] = {
+        {2600, "Ken   "},
+        {1950, "Damien"},
+        {50, "Flaki "},
+
+    };
+
+    void addHighScoreEntry(uint16_t score) {
+        for (int i=0;i<3;i+=1) {
+            if (score >= entries[i].score) {
+                for (int j=i+1;j<3;j+=1) {
+                    entries[j] = entries[j-1];
+                }
+                entries[i].score = score;
+                for (int j=0;j<sizeof(entries[i].name);j+=1) {
+                    entries[i].name[j] = ' ';
+                }
+                break;
+            }
+        }
+    }
+
+    void handleHighscoreTickAndDraw() {
+        static uint8_t pressed;
+        buffer.drawText("HIGH SCORES",0,10,96,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+        buffer.drawRect(5,20,96-10,1)->filledRect(0xffff);
+        for (int8_t i=0;i<3;i+=1) {
+            HighScoreEntry entry = entries[i];
+            int16_t y = i *10 + 24;
+            buffer.drawText(stringBuffer.start().putDec(entry.score).put(" - ").get(),
+                            0,y,52,8,1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            buffer.drawText(stringBuffer.start().put(entry.name).get(),
+                            52,y,96-52,8,-1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+        }
+
+        if (isPressed(0) || isPressed(1)) {
+            pressed = 1;
+        }
+        if (pressed && (isReleased(0) || isReleased(1))) {
+            pressed = 0;
+            initializeLevel(DESTINATION_INTRO);
+        }
+    }
 
     void tick() {
         ::Sound::tick();
@@ -126,6 +174,13 @@ namespace Game {
 
             buffer.setClearBackground(true, RGB565(whiteInAnimation,whiteInAnimation,whiteInAnimation));
 
+        }
+        if (currentLevelId == DESTINATION_HIGHSCORE) {
+            handleHighscoreTickAndDraw();
+            buffer.setOffset(camX - 48, camY -32);
+            drawBackgrounds();
+
+            return;
         }
         switch (currentLevelId) {
         case DESTINATION_TUTORIAL: Level::Tutorial::tick(); break;
@@ -231,6 +286,12 @@ namespace Game {
                 return;
             }
         }
+    }
+
+    void finishGameOver() {
+        addHighScoreEntry(PlayerStats::score);
+        initializeLevel(DESTINATION_HIGHSCORE);
+
     }
 
     void initialize() {

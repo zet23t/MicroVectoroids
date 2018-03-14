@@ -65,6 +65,7 @@ public:
 #define DESTINATION_03b 4
 #define DESTINATION_03c 5
 #define DESTINATION_INTRO 222
+#define DESTINATION_HIGHSCORE 223
 
 namespace Game {
     namespace GameState {
@@ -89,6 +90,7 @@ namespace Game {
     bool isPressed(int id);
     bool isReleased(int id);
 
+    void finishGameOver();
     RenderCommand<uint16_t>* drawCenteredSprite(int x,int y,SpriteSheetRect rect);
     RenderCommand<uint16_t>* drawSprite(int x,int y,SpriteSheetRect rect);
 }

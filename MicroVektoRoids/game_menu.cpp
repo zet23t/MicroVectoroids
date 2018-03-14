@@ -38,7 +38,7 @@ namespace Game {
                     }
                     else {
                         // check high scores
-                        Game::initialize();
+                        Game::finishGameOver();
                     }
                 }
                 else {
