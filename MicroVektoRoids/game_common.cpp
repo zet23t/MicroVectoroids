@@ -136,15 +136,76 @@ namespace Game {
 
     void handleHighscoreTickAndDraw() {
         static uint8_t pressed;
+        static uint8_t position;
+        static uint32_t stickActionTime;
+        uint8_t scored =255;
+
         buffer.drawText("HIGH SCORES",0,10,96,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
         buffer.drawRect(5,20,96-10,1)->filledRect(0xffff);
+
         for (int8_t i=0;i<3;i+=1) {
             HighScoreEntry entry = entries[i];
             int16_t y = i *10 + 24;
+
             buffer.drawText(stringBuffer.start().putDec(entry.score).put(" - ").get(),
                             0,y,52,8,1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
-            buffer.drawText(stringBuffer.start().put(entry.name).get(),
-                            52,y,96-52,8,-1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            if (entry.score == PlayerStats::score && PlayerStats::score > 0 && scored == 255) {
+                scored = i;
+                buffer.drawRect(4,y,96-8,7)->filledRect(RGB565(0,0,96))->blend(RenderCommandBlendMode::add);
+                for (int j=0;j<6;j++) {
+                    int16_t x = 52 + j * 6;
+                    for (int k=0;k< (position == j && Time::millis % 200 < 100 ? 3 : 1); k+=1 ) {
+                        buffer.drawRect(x,y,5,7)->filledRect(RGB565(0,0,64))->blend(RenderCommandBlendMode::add);
+                    }
+                    if (position == j && Time::millis % 200 < 100){
+                        buffer.drawRect(x,y-1,5,1)->filledRect(0xffff);
+                        buffer.drawRect(x+1,y-2,3,1)->filledRect(0xffff);
+                        buffer.drawRect(x+2,y-3,1,1)->filledRect(0xffff);
+                        buffer.drawRect(x,y+8,5,1)->filledRect(0xffff);
+                        buffer.drawRect(x+1,y+9,3,1)->filledRect(0xffff);
+                        buffer.drawRect(x+2,y+10,1,1)->filledRect(0xffff);
+                    }
+                    buffer.drawText(stringBuffer.start().put(entry.name[j]).get(),
+                                x,y,6,8,0,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+                }
+            } else {
+                buffer.drawText(stringBuffer.start().put(entry.name).get(),
+                                52,y,96-52,8,-1,0,false, FontAsset::font, 200, RenderCommandBlendMode::opaque);
+            }
+        }
+
+        if (scored<255 && stickActionTime < Time::millis) {
+            auto stick = Joystick::getJoystick();
+            if (stick.x > Fix4(0,4)) {
+                position = (position + 1) % 6;
+                stickActionTime = Time::millis + 150;
+            }
+            if (stick.x < Fix4(-1,12)) {
+                position = (position + 5) % 6;
+                stickActionTime = Time::millis + 150;
+            }
+            if (stick.y > Fix4(0,4)) {
+                char c = entries[scored].name[position] + 1;
+                if (c == 'z'+1) c = 'A';
+                if (c == 'Z'+1) c = '0';
+                if (c == '9'+1) c = ' ';
+                if (c == ' '+1) c = 'a';
+                entries[scored].name[position] = c;
+                stickActionTime = Time::millis + 150;
+            }
+
+            if (stick.y < Fix4(-1,12)) {
+                char c = entries[scored].name[position] - 1;
+                if (c == 'a'-1) c = ' ';
+                if (c == ' '-1) c = '9';
+                if (c == '0'-1) c = 'Z';
+                if (c == 'A'-1) c = 'z';
+                entries[scored].name[position] = c;
+                stickActionTime = Time::millis + 150;
+            }
+            if (stick.x == 0 && stick.y == 0) {
+                stickActionTime = 0;
+            }
         }
 
         if (isPressed(0) || isPressed(1)) {
@@ -152,7 +213,12 @@ namespace Game {
         }
         if (pressed && (isReleased(0) || isReleased(1))) {
             pressed = 0;
-            initializeLevel(DESTINATION_INTRO);
+            if (scored<255) {
+                PlayerStats::score = 0;
+            }
+            else {
+                initializeLevel(DESTINATION_INTRO);
+            }
         }
     }
 
