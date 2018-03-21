@@ -20,6 +20,7 @@
 #include "game_level_02.h"
 #include "game_intro.h"
 #include "lib_sound.h"
+#include "lib_flashstore.h"
 
 TinyScreen display = TinyScreen(TinyScreenPlus);
 RenderBuffer<uint16_t,RENDER_COMMAND_COUNT> buffer;
@@ -214,6 +215,7 @@ namespace Game {
         if (pressed && (isReleased(0) || isReleased(1))) {
             pressed = 0;
             if (scored<255) {
+                FlashStore::store(0x0001,"MicroVektoRoids",sizeof(entries),entries);
                 PlayerStats::score = 0;
             }
             else {
@@ -335,6 +337,10 @@ namespace Game {
         case DESTINATION_03a: Level::L03a::init(); break;
         case DESTINATION_03b: Level::L03b::init(); break;
         case DESTINATION_03c: Level::L03c::init(); break;
+        case DESTINATION_HIGHSCORE:
+
+                FlashStore::restore(0x0001,sizeof(entries),entries);
+                break;
         }
         PlayerStats::jumped(from, id);
     }

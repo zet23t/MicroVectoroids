@@ -115,6 +115,8 @@
 		<Unit filename="td2play/srclib/lib_RenderBuffer.h" />
 		<Unit filename="td2play/srclib/lib_StringBuffer.cpp" />
 		<Unit filename="td2play/srclib/lib_StringBuffer.h" />
+		<Unit filename="td2play/srclib/lib_flashstore.cpp" />
+		<Unit filename="td2play/srclib/lib_flashstore.h" />
 		<Unit filename="td2play/srclib/lib_font_virtualdj.h" />
 		<Unit filename="td2play/srclib/lib_geom.h" />
 		<Unit filename="td2play/srclib/lib_hxcmod.c">
